@@ -2,6 +2,8 @@ export type Language = 'en' | 'ne'
 export const copy = {
   en: {
     home: 'Learning home',
+    collapseSidebar: 'Collapse sidebar',
+    expandSidebar: 'Expand sidebar',
     tutor: 'AI tutor',
     books: 'My textbooks',
     wikipedia: 'Offline Wikipedia',
@@ -99,6 +101,8 @@ export const copy = {
   },
   ne: {
     home: 'सिकाइ गृह',
+    collapseSidebar: 'साइडबार खुम्च्याउनुहोस्',
+    expandSidebar: 'साइडबार फैलाउनुहोस्',
     tutor: 'एआई शिक्षक',
     books: 'मेरा पाठ्यपुस्तक',
     wikipedia: 'अफलाइन विकिपिडिया',

@@ -122,6 +122,45 @@ test('keyboard navigation reaches the learning content', async ({ page }) => {
   await expect(page.locator('#main')).toBeInViewport()
 })
 
+test('desktop sidebar collapses to an icon rail and remembers the choice', async ({ page }) => {
+  await page.goto('/tutor')
+  const sidebar = page.locator('.sidebar')
+  const shell = page.locator('.app-shell')
+  const toggle = page.locator('.sidebar-toggle')
+  const width = page.viewportSize()?.width ?? 0
+
+  if (width <= 640) {
+    await expect(toggle).not.toBeVisible()
+    await expect(page.locator('.brand-label')).toHaveText('Digital Himalaya')
+    await expect(sidebar.getByRole('link', { name: 'AI tutor' })).toBeVisible()
+    return
+  }
+
+  await expect(toggle).toHaveAccessibleName('Collapse sidebar')
+  await expect(toggle).toHaveAttribute('aria-pressed', 'false')
+  await expect(sidebar).toHaveCSS('width', width <= 850 ? '190px' : '226px')
+  await toggle.click()
+  await expect(toggle).toHaveAccessibleName('Expand sidebar')
+  await expect(toggle).toHaveAttribute('aria-pressed', 'true')
+  await expect(sidebar).toHaveCSS('width', '92px')
+  await expect(page.locator('.workspace')).toHaveCSS('margin-left', '92px')
+  await expect(sidebar.getByRole('link', { name: 'AI tutor' })).toHaveAttribute('title', 'AI tutor')
+  await expect(page.getByRole('heading', { name: 'AI tutor' })).toBeVisible()
+
+  await page.reload()
+  await expect(shell).toHaveClass(/is-sidebar-collapsed/)
+  await expect(toggle).toHaveAccessibleName('Expand sidebar')
+  await toggle.click()
+  await expect(toggle).toHaveAccessibleName('Collapse sidebar')
+  await expect(sidebar).toHaveCSS('width', width <= 850 ? '190px' : '226px')
+
+  if (width > 850) {
+    await page.setViewportSize({ width: 800, height: 900 })
+    await expect(sidebar).toHaveCSS('width', '190px')
+    expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true)
+  }
+})
+
 test('mobile navigation stays available while scrolling', async ({ page }) => {
   test.skip((page.viewportSize()?.width ?? 0) > 640, 'The desktop navigation uses a fixed sidebar.')
   await page.goto('/')

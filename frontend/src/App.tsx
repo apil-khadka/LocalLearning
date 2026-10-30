@@ -4,6 +4,7 @@ import {
   ChatCircleDots,
   House,
   Mountains as MountainIcon,
+  SidebarSimple,
   WifiHigh,
 } from '@phosphor-icons/react'
 import * as ToggleGroup from '@radix-ui/react-toggle-group'
@@ -15,8 +16,19 @@ import Tutor from './pages/Tutor'
 import Books from './pages/Books'
 import Staff from './pages/Staff'
 
+const SIDEBAR_PREFERENCE_KEY = 'digital-himalaya-sidebar-collapsed'
+
+function readSidebarPreference() {
+  try {
+    return window.localStorage.getItem(SIDEBAR_PREFERENCE_KEY) === 'true'
+  } catch {
+    return false
+  }
+}
+
 export default function App() {
   const [language, setLanguage] = useState<Language>('en')
+  const [sidebarCollapsed, setSidebarCollapsed] = useState(readSidebarPreference)
   const [services, setServices] = useState<Services | null>(null)
   const [connection, setConnection] = useState<'checking' | 'connected' | 'disconnected'>(
     'checking',
@@ -41,30 +53,68 @@ export default function App() {
   useEffect(() => {
     document.documentElement.lang = language
   }, [language])
+  const toggleSidebar = () => {
+    const nextCollapsed = !sidebarCollapsed
+    setSidebarCollapsed(nextCollapsed)
+    try {
+      window.localStorage.setItem(SIDEBAR_PREFERENCE_KEY, String(nextCollapsed))
+    } catch {
+      // The sidebar remains usable for this page when storage is unavailable.
+    }
+  }
   return (
-    <div className="app-shell">
+    <div className={`app-shell${sidebarCollapsed ? ' is-sidebar-collapsed' : ''}`}>
       <a className="skip-link" href="#main">
         {t.resources}
       </a>
       <aside className="sidebar">
-        <Link className="brand" to="/">
-          <img src="/brand/digital-himalaya-mark.png" width="44" height="44" alt="" />
-          <span>
-            Digital <strong>Himalaya</strong>
-          </span>
-        </Link>
-        <nav aria-label={t.resources}>
-          <NavLink to="/" end>
+        <div className="sidebar-head">
+          <Link className="brand" to="/" aria-label={`Digital Himalaya - ${t.home}`}>
+            <img src="/brand/digital-himalaya-mark.png" width="44" height="44" alt="" />
+            <span className="brand-label">
+              Digital <strong>Himalaya</strong>
+            </span>
+          </Link>
+          <button
+            type="button"
+            className="sidebar-toggle"
+            aria-label={sidebarCollapsed ? t.expandSidebar : t.collapseSidebar}
+            aria-controls="primary-navigation"
+            aria-pressed={sidebarCollapsed}
+            title={sidebarCollapsed ? t.expandSidebar : t.collapseSidebar}
+            onClick={toggleSidebar}
+          >
+            <SidebarSimple size={21} weight="bold" aria-hidden="true" />
+          </button>
+        </div>
+        <nav id="primary-navigation" className="sidebar-nav" aria-label={t.resources}>
+          <NavLink
+            to="/"
+            end
+            aria-label={t.home}
+            title={sidebarCollapsed ? t.home : undefined}
+            data-tooltip={sidebarCollapsed ? t.home : undefined}
+          >
             <House size={23} aria-hidden="true" />
-            {t.home}
+            <span className="nav-label">{t.home}</span>
           </NavLink>
-          <NavLink to="/tutor">
+          <NavLink
+            to="/tutor"
+            aria-label={t.tutor}
+            title={sidebarCollapsed ? t.tutor : undefined}
+            data-tooltip={sidebarCollapsed ? t.tutor : undefined}
+          >
             <ChatCircleDots size={23} aria-hidden="true" />
-            {t.tutor}
+            <span className="nav-label">{t.tutor}</span>
           </NavLink>
-          <NavLink to="/books">
+          <NavLink
+            to="/books"
+            aria-label={t.books}
+            title={sidebarCollapsed ? t.books : undefined}
+            data-tooltip={sidebarCollapsed ? t.books : undefined}
+          >
             <BookOpen size={23} aria-hidden="true" />
-            {t.books}
+            <span className="nav-label">{t.books}</span>
           </NavLink>
         </nav>
         <div className="sidebar-note">
