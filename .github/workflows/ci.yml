@@ -7,7 +7,7 @@ permissions:
   contents: read
 jobs:
   backend:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     services:
       qdrant:
         image: qdrant/qdrant:v1.15.5
@@ -26,7 +26,7 @@ jobs:
         env:
           QDRANT_TEST_URL: http://127.0.0.1:6333
   frontend:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
@@ -55,7 +55,7 @@ jobs:
           name: browser-failure-evidence
           path: frontend/test-results/
   containers:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     steps:
       - uses: actions/checkout@v4
       - run: cp .env.example .env
