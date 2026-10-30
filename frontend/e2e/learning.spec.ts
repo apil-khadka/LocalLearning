@@ -68,6 +68,10 @@ test('staff import flows through the API, books open, and tutor shows real retri
   await page.getByLabel('Your question').fill('Explain force and mass.')
   await page.getByRole('button', { name: 'Ask the tutor' }).click()
   await expect(page.getByText('Textbook passages retrieved', { exact: true })).toBeVisible()
+  await expect(page.locator('.message.assistant .message-content strong')).toHaveText(
+    'A force changes motion.',
+  )
+  await expect(page.locator('.message.assistant h3')).toHaveText('Example')
   await expect(page.getByRole('link', { name: 'E2E force and motion, pages 1' })).toHaveAttribute(
     'href',
     /\/api\/textbooks\/[a-f0-9]{32}\/file#page=1/,

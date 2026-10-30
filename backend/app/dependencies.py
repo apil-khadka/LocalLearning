@@ -71,11 +71,15 @@ class LocalServices:
             if not self.openai_client:
                 raise DependencyUnavailable("The AI provider is not configured.")
             try:
+                options = {}
+                if self.settings.chat_reasoning_effort:
+                    options["reasoning_effort"] = self.settings.chat_reasoning_effort
                 response = await self.openai_client.chat.completions.create(
                     model=self.settings.chat_model,
                     messages=messages,
                     temperature=0.3,
                     max_tokens=600,
+                    **options,
                 )
                 answer = response.choices[0].message.content
                 if not isinstance(answer, str) or not answer.strip():

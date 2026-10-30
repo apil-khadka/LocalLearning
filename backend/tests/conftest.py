@@ -35,7 +35,13 @@ class FakeLocalStack:
             data = {"embeddings": [[1.0, 0.0, 0.0] for _ in body["input"]]}
         elif path == "/api/chat":
             self.last_chat = body
-            data = {"message": {"content": "Test model output. What happens when mass doubles?"}}
+            data = {
+                "message": {
+                    "content": "**A force changes motion.**\n\n"
+                    "### Example\n"
+                    "If the same force acts on twice the mass, acceleration is halved."
+                }
+            }
         elif path == "/collections":
             data = {
                 "result": {"collections": [{"name": "dh_curriculum_v1"}] if self.collection else []}

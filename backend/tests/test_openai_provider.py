@@ -52,6 +52,7 @@ def test_openai_compatible_provider_uses_configured_endpoint_and_model(tmp_path)
         chat_api_base_url="https://inference.test/v1",
         chat_api_key="test-token-that-is-never-a-real-credential",
         chat_model="meta-models/muse-spark-open-1026",
+        chat_reasoning_effort="low",
         ollama_base_url="",
         qdrant_url="",
     )
@@ -71,6 +72,7 @@ def test_openai_compatible_provider_uses_configured_endpoint_and_model(tmp_path)
     assert calls[0].headers["authorization"] == "Bearer test-token-that-is-never-a-real-credential"
     payload = json.loads(calls[0].content)
     assert payload["model"] == "meta-models/muse-spark-open-1026"
+    assert payload["reasoning_effort"] == "low"
     assert payload["messages"][-1]["role"] == "user"
     assert services["tutor"]["status"] == "configured"
     assert services["dependencies"]["chat_model"] == "configured"

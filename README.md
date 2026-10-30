@@ -82,11 +82,13 @@ CHAT_PROVIDER=openai-compatible
 CHAT_API_BASE_URL=https://inference.baseten.co/v1
 CHAT_API_KEY=your-private-key
 CHAT_MODEL=meta-models/muse-spark-open-1026
+CHAT_REASONING_EFFORT=low
 ```
 
 The key is never committed.
 To switch chat to local Ollama, use `CHAT_PROVIDER=ollama` and set `OLLAMA_BASE_URL` and `OLLAMA_MODEL`.
 To switch to another OpenAI-compatible service, change `CHAT_API_BASE_URL`, `CHAT_API_KEY`, and `CHAT_MODEL`.
+Clear `CHAT_REASONING_EFFORT` if the new service does not support Muse-style reasoning controls.
 RAG still uses the separate local Ollama embedding model and Qdrant settings; with both unset, chat works as a clearly labeled general explanation without textbook citations.
 
 Set a random staff token of at least 32 characters in `.env` using a password manager or a local generator.

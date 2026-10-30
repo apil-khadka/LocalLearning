@@ -16,6 +16,7 @@ class Settings(BaseSettings):
     chat_api_base_url: str = "https://inference.baseten.co/v1"
     chat_api_key: SecretStr = SecretStr("")
     chat_model: str = "meta-models/muse-spark-open-1026"
+    chat_reasoning_effort: Literal["", "low", "medium", "high", "xhigh"] = ""
     ollama_base_url: str = ""
     ollama_model: str = "qwen3:4b-instruct"
     embed_model: str = "embeddinggemma"

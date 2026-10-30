@@ -1,5 +1,6 @@
 import { useEffect, useState, type FormEvent } from 'react'
 import { ChatCircleDots, PaperPlaneTilt, Sparkle } from '@phosphor-icons/react'
+import ReactMarkdown from 'react-markdown'
 import { api, type Book, type Reply, type Services } from '../lib/api'
 import type { Copy, Language } from '../lib/i18n'
 import { ErrorNotice, Field, Status } from '../components/ui'
@@ -148,7 +149,13 @@ export default function Tutor({
             {messages.map((message, i) => (
               <article key={i} className={`message ${message.role}`}>
                 <strong>{message.role === 'user' ? t.question : t.tutor}</strong>
-                <p>{message.content}</p>
+                {message.role === 'assistant' ? (
+                  <div className="message-content">
+                    <ReactMarkdown>{message.content}</ReactMarkdown>
+                  </div>
+                ) : (
+                  <p className="message-content">{message.content}</p>
+                )}
                 {message.reply && (
                   <>
                     <small>{message.reply.grounding === 'textbook' ? t.grounded : t.general}</small>
