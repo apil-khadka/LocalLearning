@@ -63,7 +63,7 @@ test('staff import flows through the API, books open, and tutor shows real retri
     page.locator('.catalog-results').getByRole('heading', { name: 'E2E force and motion' }),
   ).toBeVisible()
   const readerUrl = await page
-    .getByRole('link', { name: 'Open textbook', exact: true })
+    .getByRole('link', { name: 'Open textbook: E2E force and motion' })
     .getAttribute('href')
   expect(readerUrl).toMatch(/^\/books\/[a-f0-9]{32}$/)
   const bookId = readerUrl!.split('/').at(-1)
@@ -180,9 +180,10 @@ test('textbook filters include Kindergarten and cross-grade resources', async ({
       .locator('.catalog-results')
       .getByRole('heading', { name: 'Basic level reference material' }),
   ).toBeVisible()
-  await expect(page.getByTitle('Preview: Early childhood curriculum')).toBeVisible()
+  await expect(page.locator('.book-preview, .preview-document')).toHaveCount(0)
   await page.getByRole('checkbox', { name: 'Select book: Early childhood curriculum' }).check()
   await expect(page.locator('.catalog-toolbar .selection-count')).toContainText('1 selected')
+  await expect(page.locator('.book-preview, .preview-document')).toHaveCount(0)
   await grade.selectOption('0')
   await expect(
     page.locator('.catalog-results').getByRole('heading', { name: 'Early childhood curriculum' }),
@@ -194,7 +195,9 @@ test('textbook filters include Kindergarten and cross-grade resources', async ({
   ).toBeVisible()
 })
 
-test('textbook catalog searches, previews, selects, and paginates', async ({ page }) => {
+test('textbook catalog searches, selects, and paginates without a default preview', async ({
+  page,
+}) => {
   const books = Array.from({ length: 25 }, (_, index) => ({
     id: String(index + 1).padStart(32, '0'),
     title: `Grade ${index + 1} ${index % 2 ? 'Mathematics' : 'Science'}`,
@@ -233,6 +236,7 @@ test('textbook catalog searches, previews, selects, and paginates', async ({ pag
     })
   })
   await page.goto('/books')
+  await expect(page.locator('.book-preview, .preview-document')).toHaveCount(0)
   expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true)
   await expect(page.locator('.catalog-count')).toContainText('Showing 1–24 of 25 books')
   await expect(
@@ -240,6 +244,7 @@ test('textbook catalog searches, previews, selects, and paginates', async ({ pag
   ).toBeVisible()
   await page.getByRole('checkbox', { name: 'Select book: Grade 1 Science' }).check()
   await expect(page.locator('.catalog-toolbar .selection-count')).toContainText('1 selected')
+  await expect(page.locator('.book-preview, .preview-document')).toHaveCount(0)
   await expect(page).toHaveURL(/\/books$/)
   await page.getByRole('button', { name: 'Next page' }).click()
   await expect(page.locator('.catalog-count')).toContainText('Showing 25–25 of 25 books')
@@ -284,9 +289,11 @@ test('clicking a textbook opens its in-app reader and keeps text readable', asyn
   )
 
   await page.goto('/books')
+  await expect(page.locator('.reader-document, .book-preview, .preview-document')).toHaveCount(0)
   await page.getByRole('link', { name: 'Open textbook: Early childhood curriculum' }).click()
   await expect(page).toHaveURL(`/books/${book.id}`)
   await expect(page.locator('.reader-heading h1')).toHaveText(book.title)
+  await expect(page.locator('.reader-document')).toBeVisible()
   await expect(page.getByText('Grade K · Early Childhood Education')).toBeVisible()
   await expect(page.locator('.reader-text pre')).toContainText('Learning begins with curiosity.')
   await expect(page.getByRole('link', { name: 'Back to textbooks' })).toBeVisible()

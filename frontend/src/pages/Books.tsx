@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from 'react'
+import { useEffect, useState } from 'react'
 import {
   ArrowRight,
   BookOpen,
@@ -31,7 +31,6 @@ export default function Books({ t }: { t: Copy }) {
   const [pageSize, setPageSize] = useState(24)
   const [page, setPage] = useState(0)
   const [selected, setSelected] = useState<Record<string, Book>>({})
-  const [previewId, setPreviewId] = useState('')
   const [error, setError] = useState<unknown>(null)
   const [loading, setLoading] = useState(true)
   const [attempt, setAttempt] = useState(0)
@@ -70,10 +69,6 @@ export default function Books({ t }: { t: Copy }) {
 
   const books = catalog?.items ?? EMPTY_BOOKS
   const selectedBooks = Object.values(selected)
-  const preview = useMemo(
-    () => selected[previewId] ?? books.find((book) => book.id === previewId) ?? books[0] ?? null,
-    [books, previewId, selected],
-  )
   const firstResult = catalog && catalog.total ? catalog.offset + 1 : 0
   const lastResult = catalog ? Math.min(catalog.offset + catalog.items.length, catalog.total) : 0
   const pageCount = catalog ? Math.max(1, Math.ceil(catalog.total / pageSize)) : 1
@@ -94,10 +89,8 @@ export default function Books({ t }: { t: Copy }) {
     const next = { ...selected }
     if (next[book.id]) {
       delete next[book.id]
-      if (previewId === book.id) setPreviewId(Object.keys(next)[0] ?? '')
     } else {
       next[book.id] = book
-      setPreviewId(book.id)
     }
     setSelected(next)
   }
@@ -106,14 +99,11 @@ export default function Books({ t }: { t: Copy }) {
     const next = { ...selected }
     if (allOnPageSelected) books.forEach((book) => delete next[book.id])
     else books.forEach((book) => (next[book.id] = book))
-    if (previewId && !next[previewId]) setPreviewId(Object.keys(next)[0] ?? books[0]?.id ?? '')
-    else if (!previewId && books[0]) setPreviewId(books[0].id)
     setSelected(next)
   }
 
   function clearSelection() {
     setSelected({})
-    setPreviewId('')
   }
 
   return (
@@ -218,11 +208,10 @@ export default function Books({ t }: { t: Copy }) {
           <section className="catalog-results" aria-label={t.bookResults}>
             {books.map((book) => {
               const isSelected = Boolean(selected[book.id])
-              const isPreview = preview?.id === book.id
               const status = indexState(book)
               return (
                 <article
-                  className={`catalog-book${isPreview ? ' is-preview' : ''}${isSelected ? ' is-selected' : ''}`}
+                  className={`catalog-book${isSelected ? ' is-selected' : ''}`}
                   key={book.id}
                 >
                   <label className="book-check" aria-label={`${t.selectBook}: ${book.title}`}>
@@ -298,60 +287,6 @@ export default function Books({ t }: { t: Copy }) {
               </div>
             </nav>
           </section>
-
-          <aside className="book-preview" aria-label={t.bookPreview}>
-            {preview ? (
-              <>
-                <div className="preview-heading">
-                  <span>{t.preview}</span>
-                  {selectedBooks.length > 0 && (
-                    <span className="preview-selection-count">
-                      {selectedBooks.length} {t.selected}
-                    </span>
-                  )}
-                </div>
-                <div className="preview-document">
-                  <iframe
-                    title={`${t.preview}: ${preview.title}`}
-                    src={`/api/textbooks/${preview.id}/file#page=1&toolbar=0`}
-                    loading="lazy"
-                  />
-                </div>
-                <div className="preview-details">
-                  <div className="preview-book-meta">
-                    {bookGrade(preview, t)} <span aria-hidden="true">·</span> {preview.subject}
-                  </div>
-                  <h2>{preview.title}</h2>
-                  <p>{preview.chapter}</p>
-                  <dl>
-                    <div>
-                      <dt>{t.pagesLabel}</dt>
-                      <dd>{preview.pages}</dd>
-                    </div>
-                    <div>
-                      <dt>{t.indexStatusLabel}</dt>
-                      <dd>{t[indexState(preview) as keyof Copy] ?? t.notIndexed}</dd>
-                    </div>
-                  </dl>
-                  {preview.ocr_required_pages.length > 0 && (
-                    <p className="preview-ocr">
-                      {t.ocr}: {preview.ocr_required_pages.join(', ')}
-                    </p>
-                  )}
-                  <Link className="button secondary preview-open" to={`/books/${preview.id}`}>
-                    {t.openBook}
-                    <ArrowRight size={18} aria-hidden="true" />
-                  </Link>
-                </div>
-              </>
-            ) : (
-              <div className="preview-empty">
-                <BookOpen size={32} aria-hidden="true" />
-                <h2>{t.chooseBook}</h2>
-                <p>{t.chooseBookNote}</p>
-              </div>
-            )}
-          </aside>
         </div>
       )}
     </>
