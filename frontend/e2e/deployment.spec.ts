@@ -45,3 +45,51 @@ test('production bundle runs locally, with separate student and staff boundaries
   expect(externalRequests).toEqual([])
   expect(errors).toEqual([])
 })
+
+test('production tutor renders the model Markdown as formatted content', async ({ page }) => {
+  test.skip(!process.env.DEPLOYMENT_URL, 'Set DEPLOYMENT_URL to test the built containers')
+  const base = process.env.DEPLOYMENT_URL!
+  const answer = [
+    'No matching textbook passage was found, so this is a **general explanation, not a textbook answer**.',
+    '',
+    '### Why do plants need sunlight?',
+    '',
+    'Plants need sunlight to make their own food. This process is called **photosynthesis**.',
+    '',
+    '1. Carbon dioxide from the air',
+    '2. Water from the soil',
+  ].join('\n')
+
+  await page.route('**/api/tutor/chat', (route) =>
+    route.fulfill({
+      status: 200,
+      contentType: 'application/json',
+      body: JSON.stringify({ answer, grounding: 'general', model: 'test-model', sources: [] }),
+    }),
+  )
+  await page.goto(`${base}/tutor`)
+  await page.getByLabel('Your question').fill('Why do plants need sunlight?')
+  await page.getByRole('button', { name: 'Ask the tutor' }).click()
+
+  const content = page.locator('.message.assistant .message-content')
+  await expect(content.locator('strong')).toHaveText([
+    'general explanation, not a textbook answer',
+    'photosynthesis',
+  ])
+  await expect(content.locator('h3')).toHaveText('Why do plants need sunlight?')
+  await expect(content.locator('ol li')).toHaveText([
+    'Carbon dioxide from the air',
+    'Water from the soil',
+  ])
+  await expect(content).not.toContainText(/\*\*|^###/)
+})
+
+test('production app shell asks the browser to revalidate its HTML', async ({ request }) => {
+  test.skip(!process.env.DEPLOYMENT_URL, 'Set DEPLOYMENT_URL to test the built containers')
+  const base = process.env.DEPLOYMENT_URL!
+  for (const path of ['/', '/tutor']) {
+    const response = await request.get(new URL(path, base).toString())
+    expect(response.ok()).toBe(true)
+    expect(response.headers()['cache-control']).toContain('no-cache')
+  }
+})
