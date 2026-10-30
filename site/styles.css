@@ -1383,7 +1383,7 @@ footer p {
 .story-frame-stage {
   position: relative;
   overflow: hidden;
-  aspect-ratio: 1120 / 778;
+  aspect-ratio: 16 / 10;
   background: #e9efeb;
 }
 .story-frame {

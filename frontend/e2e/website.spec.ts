@@ -44,6 +44,10 @@ test('public website explains its limits, diagrams switch, and all local assets 
   await expect(page.getByRole('heading', { level: 1 })).toContainText('Learning shouldn’t')
   await expect(page.getByText('School and curriculum acceptance pending')).toBeVisible()
   await expect(page.locator('.screenshot-gallery img')).toHaveCount(2)
+  await expect(page.locator('.screenshot-gallery img').first()).toHaveAttribute(
+    'alt',
+    /full-width top navigation/,
+  )
   await page.locator('.screenshot-gallery').scrollIntoViewIfNeeded()
   await expect
     .poll(() =>
@@ -109,6 +113,15 @@ test('new public pages describe the learner flow and current project state', asy
   await page.goto('https://digital-himalaya.test/how-it-works/')
   await expect(page.getByRole('heading', { level: 1 })).toContainText('school library')
   await expect(page.locator('.story-frame')).toHaveCount(5)
+  await expect(page.locator('[data-story-frame="1"]')).toHaveAttribute(
+    'alt',
+    /216 local results, and no default preview/,
+  )
+  await expect(page.locator('[data-story-frame="2"]')).toHaveAttribute('alt', /CC0/)
+  await expect(page.locator('[data-story-frame="4"]')).toHaveAttribute(
+    'alt',
+    /no channels have been installed yet/,
+  )
   await expect
     .poll(() =>
       page
@@ -168,6 +181,12 @@ test('new public pages describe the learner flow and current project state', asy
   await page.getByLabel('Main').getByRole('link', { name: 'Project status' }).click()
   await expect(page).toHaveURL(/\/project\/$/)
   await expect(page.getByRole('heading', { level: 1 })).toContainText('school pilot still ahead')
+  await expect(page.locator('.status-row').first()).toContainText('216 CDC PDFs')
+  await expect(page.locator('.status-row').first()).toContainText('Grade 12')
+  await expect(page.locator('.verification-list')).toContainText('24')
+  await expect(
+    page.getByRole('heading', { name: 'Import reviewed Kolibri courses and create school roles' }),
+  ).toBeVisible()
   await expect(
     page.getByRole('heading', { name: 'Connect local embeddings and Qdrant' }),
   ).toBeVisible()

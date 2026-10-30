@@ -35,9 +35,9 @@
           <p class="section-kicker">How learning moves</p>
           <h1>From a school library to a question worth checking.</h1>
           <p class="lead">
-            Books and installed lessons can stay on the school network. The tutor is optional. When
-            its services are configured, it can answer from matching textbook pages and show what it
-            used.
+            Books and installed lessons can stay on the school network. The tutor is optional. The
+            portal and Kolibri demo facility now run locally; tutor retrieval and course imports are
+            still to be completed.
           </p>
           <div class="actions">
             <a class="button primary" href="../project/">See what is ready</a>
@@ -48,6 +48,9 @@
           <p class="flow-summary-title">Current boundaries</p>
           <p><span class="state-mark local"></span><strong>Core portal</strong> on the LAN</p>
           <p><span class="state-mark optional"></span><strong>AI tutor</strong> off by default</p>
+          <p>
+            <span class="state-mark local"></span><strong>Kolibri</strong> provisioned, no channels
+          </p>
           <p>
             <span class="state-mark pending"></span><strong>School pilot</strong> not yet verified
           </p>
@@ -85,9 +88,9 @@
               <p class="journey-label">Student joins school Wi-Fi</p>
               <h3>Open the portal on a phone or computer.</h3>
               <p>
-                The student browser connects to the local portal. Imported books are served by the
-                school system. Kolibri lessons and Kiwix references are available only after their
-                services and content have been set up.
+                The student browser connects to the local portal. The private prototype catalog has
+                216 CDC PDFs assigned across Kindergarten through Grade 12. Kolibri is reachable as
+                a separate service, but its channels still need to be imported.
               </p>
               <span class="journey-state">Portal and file access tested</span>
             </div>
@@ -145,51 +148,51 @@
                   <img
                     class="story-frame is-active"
                     data-story-frame="0"
-                    data-caption="The portal reports the local server and the resources configured for this prototype."
-                    src="../assets/screenshots/flow/portal.jpg"
-                    alt="Digital Himalaya student home screen with a connected server, textbook link, tutor, and Kolibri status."
-                    width="1120"
-                    height="778"
+                    data-caption="The current portal uses a compact top navigation and reports which local resources are reachable."
+                    src="../assets/screenshots/flow/portal-home.jpg"
+                    alt="Current Digital Himalaya learner home screen with top navigation, learning resources, and reachable Kolibri status."
+                    width="1440"
+                    height="900"
                     aria-hidden="false"
                   />
                   <img
                     class="story-frame"
                     data-story-frame="1"
-                    data-caption="Search the local catalog, filter by grade or subject, and preview a textbook before opening it."
-                    src="../assets/screenshots/flow/books.png"
-                    alt="Textbook catalog with grade and subject filters, paginated results, and an inline PDF preview."
-                    width="1281"
-                    height="844"
+                    data-caption="The private local catalog has 216 K–12 titles. Search, filter, paginate, and select without an automatic preview panel."
+                    src="../assets/screenshots/flow/textbook-catalog.jpg"
+                    alt="Updated textbook catalog with search, grade and subject filters, page controls, multi-select, 216 local results, and no default preview."
+                    width="1440"
+                    height="900"
                     aria-hidden="true"
                   />
                   <img
                     class="story-frame"
                     data-story-frame="2"
-                    data-caption="A student asks why plants need sunlight."
-                    src="../assets/screenshots/flow/question.jpg"
-                    alt="AI tutor page with a student's question about why plants need sunlight."
-                    width="1120"
-                    height="778"
+                    data-caption="Clicking a title opens a dedicated reader route. This public image uses the repository’s CC0 force-and-motion sample."
+                    src="../assets/screenshots/flow/textbook-reader.jpg"
+                    alt="Dedicated reader screen displaying the public CC0 Force and Motion demonstration note."
+                    width="1440"
+                    height="900"
                     aria-hidden="true"
                   />
                   <img
                     class="story-frame"
                     data-story-frame="3"
-                    data-caption="The tutor clearly labels this as a general answer with no textbook passage."
-                    src="../assets/screenshots/flow/answer.jpg"
-                    alt="Tutor answer explains photosynthesis and states that no matching textbook passage was found."
-                    width="1120"
-                    height="778"
+                    data-caption="The tutor screen has grade, subject, and chapter selectors. AI stays off by default until retrieval and review are ready."
+                    src="../assets/screenshots/flow/tutor-ready.jpg"
+                    alt="Current tutor interface with grade, subject, and chapter selectors and a question box; AI is off by default."
+                    width="1440"
+                    height="900"
                     aria-hidden="true"
                   />
                   <img
                     class="story-frame"
                     data-story-frame="4"
-                    data-caption="Kolibri opens separately at its first-run setup. No course channel is loaded."
-                    src="../assets/screenshots/flow/kolibri.jpg"
-                    alt="Kolibri first-run setup asking whether the device is for individual or group learning."
-                    width="1120"
-                    height="778"
+                    data-caption="Kolibri now has a provisioned local facility. Its separate channel manager is ready, but no courses have been imported."
+                    src="../assets/screenshots/flow/kolibri-management.jpg"
+                    alt="Kolibri channel manager open for the local facility, showing that no channels have been installed yet."
+                    width="1440"
+                    height="900"
                     aria-hidden="true"
                   />
                 </div>
@@ -197,8 +200,8 @@
               <figcaption id="story-image-caption" aria-live="polite">
                 <span>Prototype screen</span>
                 <strong>
-                  The portal reports the local server and the resources configured for this
-                  prototype.
+                  The current portal uses a compact top navigation and reports which local resources
+                  are reachable.
                 </strong>
               </figcaption>
             </figure>
@@ -208,39 +211,41 @@
                 <h3>Start with the resources on the school server.</h3>
                 <p>
                   The home screen shows the local connection and which optional services are
-                  reachable or still unconfigured.
+                  reachable or still unconfigured. Kolibri is now reachable from the portal.
                 </p>
               </li>
               <li class="story-scene" data-story-step="1">
                 <p class="journey-label">The local book catalog</p>
-                <h3>Find, filter, and preview a textbook.</h3>
+                <h3>Browse 216 local K–12 titles.</h3>
                 <p>
-                  Search the school library by grade and subject, move through pages, select titles,
-                  and preview a book before opening it.
+                  Search by title, subject, or chapter, filter by grade and subject, paginate, and
+                  select books. The catalog stays clear until a student opens a title.
                 </p>
               </li>
               <li class="story-scene" data-story-step="2">
-                <p class="journey-label">A question to the tutor</p>
-                <h3>Ask in a short, clear sentence.</h3>
+                <p class="journey-label">A dedicated book reader</p>
+                <h3>Open a title in its own reading screen.</h3>
                 <p>
-                  This recording shows one test question about sunlight and photosynthesis. It
-                  contains no student account or personal data.
+                  Clicking a catalog entry opens its own route with document details and readable
+                  content. The screenshot uses the repository's CC0 demonstration note, not a
+                  private CDC PDF.
                 </p>
               </li>
               <li class="story-scene" data-story-step="3">
-                <p class="journey-label">An honest fallback</p>
-                <h3>See when the answer has no textbook source.</h3>
+                <p class="journey-label">The optional tutor</p>
+                <h3>Choose a grade, subject, and chapter.</h3>
                 <p>
-                  No Qdrant endpoint was configured for this recording, so the tutor labels its
-                  response as general and asks the learner to check with a teacher.
+                  The interface is ready for questions, but AI remains disabled and the local book
+                  catalog has not been indexed. That boundary is visible in the current setup.
                 </p>
               </li>
               <li class="story-scene" data-story-step="4">
                 <p class="journey-label">Separate classroom service</p>
-                <h3>Kolibri keeps its own setup and course library.</h3>
+                <h3>Kolibri is provisioned; course import is next.</h3>
                 <p>
-                  The recording ends at Kolibri's first-run screen. It demonstrates the handoff, not
-                  a configured facility or installed learning channels.
+                  The local facility is configured and reachable from the portal. Kolibri keeps its
+                  own accounts and course progress; no channels or learner accounts have been
+                  imported yet.
                 </p>
               </li>
             </ol>
@@ -248,10 +253,10 @@
           <div class="walkthrough-film">
             <div>
               <p class="section-kicker">Full recording</p>
-              <h3>Watch the 13-second prototype session</h3>
+              <h3>Watch the updated local prototype flow</h3>
               <p>
-                Silent screen capture from local integration testing. AI is normally disabled by
-                default; this tutor response is not textbook-grounded.
+                Silent capture of the current portal, catalog, CC0 sample reader, tutor setup, and
+                Kolibri channel manager. Private K–12 PDFs are not included in this public website.
               </p>
             </div>
             <video
@@ -259,8 +264,8 @@
               controls
               playsinline
               preload="metadata"
-              poster="../assets/screenshots/flow/answer.jpg"
-              aria-label="Silent screen recording of the local portal, tutor question, general answer, and Kolibri setup"
+              poster="../assets/screenshots/flow/textbook-catalog.jpg"
+              aria-label="Silent screen recording of the current portal, K–12 catalog, sample book reader, tutor setup, and Kolibri channel manager"
             >
               <source src="../assets/videos/prototype-walkthrough.mp4" type="video/mp4" />
               <a href="../assets/videos/prototype-walkthrough.mp4">Download the MP4 walkthrough</a>
@@ -287,7 +292,7 @@
               <ul>
                 <li>Hosted AI calls and downloading new material from online providers.</li>
                 <li>Local tutor retrieval until Ollama embeddings and Qdrant are configured.</li>
-                <li>Kolibri lessons until staff complete setup and import approved channels.</li>
+                <li>Kolibri lessons until staff import approved channels.</li>
               </ul>
             </div>
           </div>

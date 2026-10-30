@@ -35,8 +35,9 @@
           <p class="section-kicker">Project status · 30 October 2026</p>
           <h1>A working software foundation. A school pilot still ahead.</h1>
           <p class="lead">
-            The portal, service boundaries, and test workflows are in place. Real curriculum review,
-            local retrieval setup, and school hardware acceptance remain open work.
+            The portal now has a private K–12 book catalog and a dedicated reader, while a separate
+            Kolibri facility is provisioned locally. Retrieval, course imports, and school field
+            acceptance remain open work.
           </p>
           <div class="actions">
             <a class="button primary" href="#in-place">Review the build</a>
@@ -72,9 +73,10 @@
               <p>
                 Responsive English and Nepali UI, protected staff import, page-aware document text,
                 and local file access. The private prototype catalog now contains 216 CDC PDFs
-                across Kindergarten through Grade 12, plus a cross-grade reference; book files stay
-                out of the public repository. The browser now adds server-side search, grade and
-                subject filters, pagination, multi-select, and an inline PDF preview.
+                assigned across Kindergarten through Grade 12, plus a cross-grade reference; the
+                book files stay out of this public website. Students can search the catalog, filter
+                by grade and subject, paginate, select titles, and open a book in its own reader
+                screen.
               </p>
             </div>
           </article>
@@ -84,8 +86,9 @@
               <h3>Switchable tutor providers</h3>
               <p>
                 Chat supports local Ollama or an OpenAI-compatible endpoint, and embeddings can be
-                configured independently for Ollama or an OpenAI-compatible endpoint. Staff can
-                index one saved book at a time; the private catalog is not indexed yet. AI remains
+                configured independently for Ollama or an OpenAI-compatible endpoint. Tutor answers
+                render Markdown and distinguish sourced answers from no-match explanations. The
+                private catalog is not indexed yet, Qdrant is unconfigured locally, and AI remains
                 off by default.
               </p>
             </div>
@@ -96,8 +99,9 @@
               <h3>Optional Kolibri service</h3>
               <p>
                 Compose can run Kolibri separately, and the portal reports its reachability and
-                links to its own learning interface. Kolibri setup and course imports are managed
-                there.
+                links to its own learning interface. A local demo facility and admin account are
+                provisioned; Kolibri keeps its own identities and content. No channels or learner
+                accounts have been added yet.
               </p>
             </div>
           </article>
@@ -137,14 +141,15 @@
           </div>
           <ul class="verification-list">
             <li><strong>58</strong><span>backend tests passed</span></li>
-            <li><strong>27</strong><span>browser tests passed</span></li>
-            <li><strong>6</strong><span>production checks passed</span></li>
+            <li><strong>24</strong><span>browser cases passed</span></li>
+            <li><strong>8</strong><span>live/deployment cases skipped</span></li>
           </ul>
         </div>
         <div class="wrap verification-note">
-          Two opt-in backend checks and seven browser cases were skipped in the default local test
-          command. The full E2E suite with the local deployment passed 27 checks and skipped one
-          mobile-navigation case outside the desktop viewport.
+          Latest local checks also passed <code>make check</code> and <code>make build</code>. Two
+          opt-in backend checks and six production browser checks were skipped. Kolibri
+          authentication, repeat-safe provisioning, and the portal service link were verified
+          locally.
           <a href="https://github.com/apil-khadka/LocalLearning/actions/workflows/ci.yml">
             View GitHub Checks <span aria-hidden="true">↗</span>
           </a>
@@ -177,10 +182,11 @@
           <article class="status-row">
             <span class="status-kind pending">Prepare</span>
             <div>
-              <h3>Complete Kolibri setup and choose course channels</h3>
+              <h3>Import reviewed Kolibri courses and create school roles</h3>
               <p>
-                Create its facility, review channel rights and language, import content, then verify
-                lessons and progress with teachers. No channels are loaded yet.
+                Review channel rights and language, import content, create coach and learner
+                accounts, then verify lessons and progress with teachers. The local facility is
+                ready, but no channels are loaded yet.
               </p>
             </div>
           </article>
