@@ -62,8 +62,12 @@ test('staff import flows through the API, books open, and tutor shows real retri
   await expect(
     page.locator('.catalog-results').getByRole('heading', { name: 'E2E force and motion' }),
   ).toBeVisible()
-  const fileUrl = await page.getByRole('link', { name: 'Open textbook' }).getAttribute('href')
-  const file = await page.request.get(fileUrl!)
+  const readerUrl = await page
+    .getByRole('link', { name: 'Open textbook', exact: true })
+    .getAttribute('href')
+  expect(readerUrl).toMatch(/^\/books\/[a-f0-9]{32}$/)
+  const bookId = readerUrl!.split('/').at(-1)
+  const file = await page.request.get(`/api/textbooks/${bookId}/file`)
   expect(file.status()).toBe(200)
   expect(await file.text()).toContain('Newton')
   const tutorBooks = await page.request.get('/api/textbooks?grade=8')
@@ -236,6 +240,7 @@ test('textbook catalog searches, previews, selects, and paginates', async ({ pag
   ).toBeVisible()
   await page.getByRole('checkbox', { name: 'Select book: Grade 1 Science' }).check()
   await expect(page.locator('.catalog-toolbar .selection-count')).toContainText('1 selected')
+  await expect(page).toHaveURL(/\/books$/)
   await page.getByRole('button', { name: 'Next page' }).click()
   await expect(page.locator('.catalog-count')).toContainText('Showing 25–25 of 25 books')
   await expect(
@@ -247,6 +252,85 @@ test('textbook catalog searches, previews, selects, and paginates', async ({ pag
   await expect(
     page.locator('.catalog-results').getByRole('heading', { name: 'Grade 1 Science' }),
   ).toHaveCount(0)
+})
+
+test('clicking a textbook opens its in-app reader and keeps text readable', async ({ page }) => {
+  const book = {
+    id: 'c'.repeat(32),
+    title: 'Early childhood curriculum',
+    filename: 'early-childhood.txt',
+    grade: 0,
+    subject: 'Early Childhood Education',
+    chapter: 'Whole book',
+    license: 'Prototype test fixture',
+    source: 'Local test fixture',
+    pages: 4,
+    status: 'ready',
+    chunks: 0,
+    index_status: 'not_indexed',
+    ocr_required_pages: [],
+  }
+  await page.route('**/api/textbooks/catalog*', (route) =>
+    route.fulfill({
+      json: { items: [book], total: 1, limit: 24, offset: 0, subjects: [book.subject] },
+    }),
+  )
+  await page.route(`**/api/textbooks/${book.id}`, (route) => route.fulfill({ json: book }))
+  await page.route(`**/api/textbooks/${book.id}/file`, (route) =>
+    route.fulfill({
+      contentType: 'text/plain',
+      body: 'Learning begins with curiosity.\n\nRead together.',
+    }),
+  )
+
+  await page.goto('/books')
+  await page.getByRole('link', { name: 'Open textbook: Early childhood curriculum' }).click()
+  await expect(page).toHaveURL(`/books/${book.id}`)
+  await expect(page.locator('.reader-heading h1')).toHaveText(book.title)
+  await expect(page.getByText('Grade K · Early Childhood Education')).toBeVisible()
+  await expect(page.locator('.reader-text pre')).toContainText('Learning begins with curiosity.')
+  await expect(page.getByRole('link', { name: 'Back to textbooks' })).toBeVisible()
+  await expect(page.getByRole('link', { name: 'Open original file in a new tab' })).toHaveAttribute(
+    'target',
+    '_blank',
+  )
+  expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true)
+
+  await page.getByRole('link', { name: 'Back to textbooks' }).click()
+  await expect(page).toHaveURL('/books')
+})
+
+test('PDF textbooks open in a large embedded viewer', async ({ page }) => {
+  const book = {
+    id: 'd'.repeat(32),
+    title: 'Grade 9 Science',
+    filename: 'grade-9-science.pdf',
+    grade: 9,
+    subject: 'Science',
+    chapter: 'Whole book',
+    license: 'Prototype test fixture',
+    source: 'Local test fixture',
+    pages: 41,
+    status: 'ready',
+    chunks: 0,
+    index_status: 'not_indexed',
+    ocr_required_pages: [],
+  }
+  await page.route(`**/api/textbooks/${book.id}`, (route) => route.fulfill({ json: book }))
+  await page.route(`**/api/textbooks/${book.id}/file`, (route) =>
+    route.fulfill({ contentType: 'application/pdf', body: '%PDF-1.4\n%EOF' }),
+  )
+
+  await page.goto(`/books/${book.id}`)
+  const reader = page.getByTitle(`Book content: ${book.title}`)
+  await expect(reader).toBeVisible()
+  await expect(reader).toHaveAttribute(
+    'src',
+    new RegExp(`/api/textbooks/${book.id}/file#toolbar=1`),
+  )
+  expect(await reader.evaluate((frame) => frame.clientHeight)).toBeGreaterThan(350)
+  await expect(page.getByText('41 pages', { exact: true })).toBeVisible()
+  expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true)
 })
 
 test('tutor outage is visible and preserves the question for retry', async ({ page }) => {

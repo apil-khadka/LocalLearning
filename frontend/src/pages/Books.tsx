@@ -1,12 +1,13 @@
 import { useEffect, useMemo, useState } from 'react'
 import {
-  ArrowSquareOut,
+  ArrowRight,
   BookOpen,
   CaretLeft,
   CaretRight,
   MagnifyingGlass,
   X,
 } from '@phosphor-icons/react'
+import { Link } from 'react-router-dom'
 import { api, type Book, type TextbookCatalog } from '../lib/api'
 import type { Copy } from '../lib/i18n'
 import { ErrorNotice, Field } from '../components/ui'
@@ -228,10 +229,10 @@ export default function Books({ t }: { t: Copy }) {
                     <input type="checkbox" checked={isSelected} onChange={() => toggleBook(book)} />
                     <span aria-hidden="true" />
                   </label>
-                  <button
+                  <Link
                     className="catalog-book-main"
-                    onClick={() => setPreviewId(book.id)}
-                    aria-pressed={isPreview}
+                    to={`/books/${book.id}`}
+                    aria-label={`${t.openBook}: ${book.title}`}
                   >
                     <span className="catalog-book-icon">
                       <BookOpen size={21} aria-hidden="true" />
@@ -247,7 +248,8 @@ export default function Books({ t }: { t: Copy }) {
                         {book.chapter} <span aria-hidden="true">·</span> {book.pages} {t.pages}
                       </span>
                     </span>
-                  </button>
+                    <ArrowRight className="catalog-book-arrow" size={18} aria-hidden="true" />
+                  </Link>
                   <span className={`index-status index-${status}`}>
                     {t[status as keyof Copy] ?? t.notIndexed}
                   </span>
@@ -336,15 +338,10 @@ export default function Books({ t }: { t: Copy }) {
                       {t.ocr}: {preview.ocr_required_pages.join(', ')}
                     </p>
                   )}
-                  <a
-                    className="button secondary preview-open"
-                    href={`/api/textbooks/${preview.id}/file`}
-                    target="_blank"
-                    rel="noreferrer"
-                  >
+                  <Link className="button secondary preview-open" to={`/books/${preview.id}`}>
                     {t.openBook}
-                    <ArrowSquareOut size={18} aria-hidden="true" />
-                  </a>
+                    <ArrowRight size={18} aria-hidden="true" />
+                  </Link>
                 </div>
               </>
             ) : (

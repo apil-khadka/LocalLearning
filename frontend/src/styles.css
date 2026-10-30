@@ -1303,19 +1303,29 @@ footer {
 }
 .catalog-book-main {
   display: grid;
-  grid-template-columns: 38px minmax(0, 1fr);
+  grid-template-columns: 38px minmax(0, 1fr) 20px;
   align-items: center;
   gap: 12px;
   min-width: 0;
   min-height: 60px;
   padding: 2px 0;
   border: 0;
+  border-radius: 8px;
   background: transparent;
+  color: var(--ink);
   text-align: left;
+  text-decoration: none;
 }
 .catalog-book-main:hover {
   filter: none;
   color: var(--ink);
+}
+.catalog-book-arrow {
+  color: #67837a;
+  transition: transform 160ms ease;
+}
+.catalog-book-main:hover .catalog-book-arrow {
+  transform: translateX(3px);
 }
 .catalog-book-icon {
   display: grid;
@@ -1479,6 +1489,142 @@ footer {
   margin: 0;
   font-size: 0.9rem;
 }
+.book-reader {
+  display: grid;
+  gap: 20px;
+}
+.reader-navigation,
+.reader-document-bar,
+.reader-document-label {
+  display: flex;
+  align-items: center;
+}
+.reader-navigation {
+  justify-content: space-between;
+  gap: 14px;
+}
+.reader-back {
+  min-height: 42px;
+}
+.reader-original-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  min-height: 42px;
+  color: var(--muted);
+  font-size: 0.9rem;
+  font-weight: 700;
+}
+.reader-heading {
+  display: grid;
+  grid-template-columns: 48px minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 14px;
+  padding: 20px 22px;
+  border: 1px solid var(--line);
+  border-radius: 16px;
+  background: #edf3ef;
+}
+.reader-book-icon {
+  display: grid;
+  place-items: center;
+  width: 46px;
+  height: 48px;
+  border-radius: 12px;
+  background: #deebe3;
+  color: var(--green);
+}
+.reader-heading-copy {
+  min-width: 0;
+}
+.reader-meta {
+  color: var(--muted);
+  font-size: 0.9rem;
+  font-weight: 700;
+}
+.reader-heading h1 {
+  margin: 3px 0;
+  overflow-wrap: anywhere;
+  font-family: inherit;
+  font-size: clamp(1.2rem, 2vw, 1.7rem);
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  line-height: 1.3;
+}
+.reader-heading p {
+  margin: 0;
+  color: var(--muted);
+  font-size: 0.92rem;
+}
+.reader-page-count {
+  display: grid;
+  justify-items: center;
+  min-width: 68px;
+  color: var(--muted);
+  font-size: 0.8rem;
+}
+.reader-page-count strong {
+  color: var(--ink);
+  font-size: 1.2rem;
+  line-height: 1.2;
+}
+.reader-document {
+  overflow: hidden;
+  border: 1px solid var(--line);
+  border-radius: 15px;
+  background: #e7ede8;
+  box-shadow: 0 8px 24px rgb(22 63 59 / 6%);
+}
+.reader-document-bar {
+  min-height: 50px;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 10px 16px;
+  border-bottom: 1px solid var(--line);
+  background: white;
+  color: var(--muted);
+  font-size: 0.85rem;
+  font-weight: 700;
+}
+.reader-document-label {
+  gap: 8px;
+  color: var(--ink);
+}
+.reader-document-frame {
+  height: min(72vh, 940px);
+  min-height: 500px;
+  background: #e7ede8;
+}
+.reader-document-frame iframe {
+  display: block;
+  width: 100%;
+  height: 100%;
+  border: 0;
+  background: white;
+}
+.reader-text {
+  overflow: auto;
+  padding: clamp(22px, 5vw, 56px);
+  background: #fff;
+}
+.reader-text pre {
+  max-width: 78ch;
+  margin: 0 auto;
+  color: #263e40;
+  font-family: inherit;
+  font-size: 1.08rem;
+  line-height: 1.85;
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+}
+.reader-loading span {
+  min-height: 72vh;
+}
+.reader-error {
+  display: grid;
+  justify-items: start;
+  gap: 12px;
+}
 .index-library-controls {
   display: grid;
   grid-template-columns: minmax(0, 1fr) auto;
@@ -1589,7 +1735,7 @@ footer {
     padding: 11px 10px;
   }
   .catalog-book-main {
-    grid-template-columns: 32px minmax(0, 1fr);
+    grid-template-columns: 32px minmax(0, 1fr) 16px;
     gap: 9px;
   }
   .catalog-book-icon {
@@ -1612,6 +1758,50 @@ footer {
   }
   .index-library-controls {
     grid-template-columns: 1fr;
+  }
+  .book-reader {
+    gap: 14px;
+  }
+  .reader-navigation {
+    align-items: flex-start;
+  }
+  .reader-original-link {
+    max-width: 46%;
+    min-height: 38px;
+    font-size: 0.78rem;
+    text-align: right;
+  }
+  .reader-heading {
+    grid-template-columns: 38px minmax(0, 1fr) auto;
+    gap: 9px;
+    padding: 14px 12px;
+  }
+  .reader-book-icon {
+    width: 36px;
+    height: 38px;
+  }
+  .reader-meta,
+  .reader-heading p {
+    font-size: 0.8rem;
+  }
+  .reader-page-count {
+    min-width: 40px;
+  }
+  .reader-document-frame {
+    height: 68vh;
+    min-height: 390px;
+  }
+  .reader-text {
+    padding: 22px 18px;
+  }
+}
+@media (max-width: 380px) {
+  .reader-page-count {
+    display: none;
+  }
+  .reader-document-frame {
+    height: 66vh;
+    min-height: 350px;
   }
 }
 @media (prefers-reduced-motion: reduce) {

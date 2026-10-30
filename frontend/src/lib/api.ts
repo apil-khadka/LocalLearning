@@ -16,6 +16,7 @@ export type Services = {
 export type Book = {
   id: string
   title: string
+  filename?: string
   grade: number | null
   subject: string
   chapter: string

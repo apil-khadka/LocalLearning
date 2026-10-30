@@ -7,6 +7,7 @@ import { copy, type Language } from './lib/i18n'
 import Home from './pages/Home'
 import Tutor from './pages/Tutor'
 import Books from './pages/Books'
+import BookReader from './pages/BookReader'
 import Staff from './pages/Staff'
 
 const SIDEBAR_PREFERENCE_KEY = 'digital-himalaya-sidebar-collapsed'
@@ -149,6 +150,7 @@ export default function App() {
               element={<Tutor t={t} language={language} services={services} />}
             />
             <Route path="/books" element={<Books t={t} />} />
+            <Route path="/books/:id" element={<BookReader t={t} />} />
             <Route path="/staff" element={<Staff t={t} refresh={refresh} />} />
             <Route
               path="*"
