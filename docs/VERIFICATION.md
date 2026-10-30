@@ -9,7 +9,7 @@ This record describes software checks, not acceptance of a school deployment.
 `make test` passed with 31 backend tests and 17 browser tests; 2 opt-in live-service backend tests and 7 deployment-specific browser cases were skipped.
 A separate production-container run passed all 4 desktop and Android-sized tutor Markdown and app-shell cache regression checks.
 The full Playwright suite with `DEPLOYMENT_URL` also passed earlier against the rebuilt local containers, with 21 passed and 1 expected desktop-only mobile-navigation skip.
-The GitHub Actions backend, frontend, and container jobs passed for commit `c3577a1e99dea4f609871cb0f8088576e966cc06`.
+The GitHub Actions backend, frontend, and container jobs passed for commit `da29f812ccbd1289427c5a60bfbd643f01789296` in [run 41062097349](https://github.com/apil-khadka/LocalLearning/actions/runs/41062097349).
 
 The OpenAI-compatible provider has mocked contract coverage, and one live non-identifying request to the requested `meta-models/muse-spark-open-1026` model returned HTTP 200.
 That live answer had general grounding and no textbook sources because Qdrant was not configured.
