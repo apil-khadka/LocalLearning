@@ -1,0 +1,305 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="theme-color" content="#163f3b" />
+    <link rel="icon" type="image/png" href="../assets/digital-himalaya-mark.png" />
+    <meta
+      name="description"
+      content="Follow how a teacher prepares local learning resources, students use them over school Wi-Fi, and an optional tutor handles questions."
+    />
+    <title>How it works - Digital Himalaya</title>
+    <link rel="stylesheet" href="../styles.css" />
+  </head>
+  <body>
+    <a class="skip" href="#main">Skip to content</a>
+    <header class="site-header wrap">
+      <a class="brand" href="../index.html" aria-label="Digital Himalaya home">
+        <img src="../assets/digital-himalaya-mark.png" width="46" height="46" alt="" />
+        <span>Digital <strong>Himalaya</strong></span>
+      </a>
+      <nav aria-label="Main">
+        <a href="../how-it-works/" aria-current="page">How it works</a>
+        <a href="../index.html#preview">The portal</a>
+        <a href="../index.html#architecture">Architecture</a>
+        <a href="../project/">Project status</a>
+        <a class="repo-link" href="https://github.com/apil-khadka/LocalLearning">
+          View on GitHub <span aria-hidden="true">↗</span>
+        </a>
+      </nav>
+    </header>
+    <main id="main">
+      <section class="page-hero wrap">
+        <div>
+          <p class="section-kicker">How learning moves</p>
+          <h1>From a school library to a question worth checking.</h1>
+          <p class="lead">
+            Books and installed lessons can stay on the school network. The tutor is optional. When
+            its services are configured, it can answer from matching textbook pages and show what it
+            used.
+          </p>
+          <div class="actions">
+            <a class="button primary" href="../project/">See what is ready</a>
+            <a class="button secondary" href="../index.html#preview">View the portal</a>
+          </div>
+        </div>
+        <aside class="flow-summary" aria-label="Current system boundaries">
+          <p class="flow-summary-title">Current boundaries</p>
+          <p><span class="state-mark local"></span><strong>Core portal</strong> on the LAN</p>
+          <p><span class="state-mark optional"></span><strong>AI tutor</strong> off by default</p>
+          <p>
+            <span class="state-mark pending"></span><strong>School pilot</strong> not yet verified
+          </p>
+        </aside>
+      </section>
+
+      <section class="journey-section section wrap" aria-labelledby="journey-title">
+        <div class="section-heading">
+          <div>
+            <p class="section-kicker">The learner journey</p>
+            <h2 id="journey-title">A simple path, with each handoff visible.</h2>
+          </div>
+          <p>
+            Teachers choose the material. The student portal serves it locally. The tutor adds a
+            separate, reviewable path for questions.
+          </p>
+        </div>
+        <ol class="journey-list" aria-label="The learner journey">
+          <li class="journey-step">
+            <span class="journey-number" aria-hidden="true">1</span>
+            <div>
+              <p class="journey-label">Staff prepares the material</p>
+              <h3>Import only content the school has reviewed.</h3>
+              <p>
+                An authorized staff member imports a PDF or text file. The API stores its catalog
+                details and page-aware text in the school's data volume. Copyright and curriculum
+                approval happen before import.
+              </p>
+              <span class="journey-state">Import flow tested locally</span>
+            </div>
+          </li>
+          <li class="journey-step">
+            <span class="journey-number" aria-hidden="true">2</span>
+            <div>
+              <p class="journey-label">Student joins school Wi-Fi</p>
+              <h3>Open the portal on a phone or computer.</h3>
+              <p>
+                The student browser connects to the local portal. Imported books are served by the
+                school system. Kolibri lessons and Kiwix references are available only after their
+                services and content have been set up.
+              </p>
+              <span class="journey-state">Portal and file access tested</span>
+            </div>
+          </li>
+          <li class="journey-step">
+            <span class="journey-number" aria-hidden="true">3</span>
+            <div>
+              <p class="journey-label">Tutor finds relevant pages</p>
+              <h3>Ask for help when the school enables the service.</h3>
+              <p>
+                With local embeddings and Qdrant configured, the API can search approved textbook
+                passages. Chat can use local Ollama or a configured OpenAI-compatible provider. A
+                hosted provider receives the question, recent conversation, and retrieved excerpts.
+              </p>
+              <span class="journey-state"
+                >AI disabled by default · Qdrant unconfigured locally</span
+              >
+            </div>
+          </li>
+          <li class="journey-step">
+            <span class="journey-number" aria-hidden="true">4</span>
+            <div>
+              <p class="journey-label">Student and teacher check the answer</p>
+              <h3>Sources are visible, and a no-match answer says so.</h3>
+              <p>
+                Retrieved pages appear with the answer for review. If no passage matches, the tutor
+                labels its response as a general explanation instead of implying it came from a
+                textbook. Teachers remain responsible for checking accuracy and language quality.
+              </p>
+              <span class="journey-state">Source and no-match states covered by tests</span>
+            </div>
+          </li>
+        </ol>
+      </section>
+
+      <section class="captured-walkthrough section" aria-labelledby="walkthrough-title">
+        <div class="wrap">
+          <div class="section-heading">
+            <div>
+              <p class="section-kicker">Captured prototype flow</p>
+              <h2 id="walkthrough-title">Scroll through the screens. Play the whole run.</h2>
+            </div>
+            <p>
+              The frame follows the story as you read. The recording is a real local prototype
+              session, not a school deployment.
+            </p>
+          </div>
+          <div class="scroll-story">
+            <figure class="story-visual" aria-labelledby="story-image-caption">
+              <div class="story-browser">
+                <div class="browser-bar" aria-hidden="true">
+                  <span></span><span></span><span></span><small>Digital Himalaya prototype</small>
+                </div>
+                <div class="story-frame-stage">
+                  <img
+                    class="story-frame is-active"
+                    data-story-frame="0"
+                    data-caption="The portal reports the local server and the resources configured for this prototype."
+                    src="../assets/screenshots/flow/portal.jpg"
+                    alt="Digital Himalaya student home screen with a connected server, textbook link, tutor, and Kolibri status."
+                    width="1120"
+                    height="778"
+                    aria-hidden="false"
+                  />
+                  <img
+                    class="story-frame"
+                    data-story-frame="1"
+                    data-caption="A student asks why plants need sunlight."
+                    src="../assets/screenshots/flow/question.jpg"
+                    alt="AI tutor page with a student's question about why plants need sunlight."
+                    width="1120"
+                    height="778"
+                    aria-hidden="true"
+                  />
+                  <img
+                    class="story-frame"
+                    data-story-frame="2"
+                    data-caption="The tutor clearly labels this as a general answer with no textbook passage."
+                    src="../assets/screenshots/flow/answer.jpg"
+                    alt="Tutor answer explains photosynthesis and states that no matching textbook passage was found."
+                    width="1120"
+                    height="778"
+                    aria-hidden="true"
+                  />
+                  <img
+                    class="story-frame"
+                    data-story-frame="3"
+                    data-caption="Kolibri opens separately at its first-run setup. No course channel is loaded."
+                    src="../assets/screenshots/flow/kolibri.jpg"
+                    alt="Kolibri first-run setup asking whether the device is for individual or group learning."
+                    width="1120"
+                    height="778"
+                    aria-hidden="true"
+                  />
+                </div>
+              </div>
+              <figcaption id="story-image-caption" aria-live="polite">
+                <span>Prototype screen</span>
+                <strong>
+                  The portal reports the local server and the resources configured for this
+                  prototype.
+                </strong>
+              </figcaption>
+            </figure>
+            <ol class="story-scenes" aria-label="Scenes in the prototype walkthrough">
+              <li class="story-scene is-active" data-story-step="0" aria-current="step">
+                <p class="journey-label">The local portal</p>
+                <h3>Start with the resources on the school server.</h3>
+                <p>
+                  The home screen shows the local connection and which optional services are
+                  reachable or still unconfigured.
+                </p>
+              </li>
+              <li class="story-scene" data-story-step="1">
+                <p class="journey-label">A question to the tutor</p>
+                <h3>Ask in a short, clear sentence.</h3>
+                <p>
+                  This recording shows one test question about sunlight and photosynthesis. It
+                  contains no student account or personal data.
+                </p>
+              </li>
+              <li class="story-scene" data-story-step="2">
+                <p class="journey-label">An honest fallback</p>
+                <h3>See when the answer has no textbook source.</h3>
+                <p>
+                  No Qdrant endpoint was configured for this recording, so the tutor labels its
+                  response as general and asks the learner to check with a teacher.
+                </p>
+              </li>
+              <li class="story-scene" data-story-step="3">
+                <p class="journey-label">Separate classroom service</p>
+                <h3>Kolibri keeps its own setup and course library.</h3>
+                <p>
+                  The recording ends at Kolibri's first-run screen. It demonstrates the handoff, not
+                  a configured facility or installed learning channels.
+                </p>
+              </li>
+            </ol>
+          </div>
+          <div class="walkthrough-film">
+            <div>
+              <p class="section-kicker">Full recording</p>
+              <h3>Watch the 13-second prototype session</h3>
+              <p>
+                Silent screen capture from local integration testing. AI is normally disabled by
+                default; this tutor response is not textbook-grounded.
+              </p>
+            </div>
+            <video
+              class="walkthrough-video"
+              controls
+              playsinline
+              preload="metadata"
+              poster="../assets/screenshots/flow/answer.jpg"
+              aria-label="Silent screen recording of the local portal, tutor question, general answer, and Kolibri setup"
+            >
+              <source src="../assets/videos/prototype-walkthrough.mp4" type="video/mp4" />
+              <a href="../assets/videos/prototype-walkthrough.mp4">Download the MP4 walkthrough</a>
+            </video>
+          </div>
+        </div>
+      </section>
+
+      <section class="network-boundary section" aria-labelledby="boundary-title">
+        <div class="wrap">
+          <p class="section-kicker">What works without the WAN</p>
+          <h2 id="boundary-title">Local access depends on what was prepared.</h2>
+          <div class="boundary-columns">
+            <div>
+              <h3>Can stay on the school network</h3>
+              <ul>
+                <li>The portal and books already imported into its local catalog.</li>
+                <li>Kolibri channels already installed on the school server.</li>
+                <li>Chat handled by a reachable local Ollama service, when enabled.</li>
+              </ul>
+            </div>
+            <div>
+              <h3>Needs setup or an internet connection</h3>
+              <ul>
+                <li>Hosted AI calls and downloading new material from online providers.</li>
+                <li>Local tutor retrieval until Ollama embeddings and Qdrant are configured.</li>
+                <li>Kolibri lessons until staff complete setup and import approved channels.</li>
+              </ul>
+            </div>
+          </div>
+          <p class="boundary-note">
+            Offline readiness is a deployment check, not a property of the word “offline-first.”
+            Every required book, lesson, service, and device still needs a WAN-off test at school.
+          </p>
+        </div>
+      </section>
+
+      <section class="page-next wrap">
+        <div>
+          <p class="section-kicker">Where the build stands</p>
+          <h2>See what works today and what still needs proof.</h2>
+          <p>The project status page separates software checks from school acceptance.</p>
+        </div>
+        <a class="button light" href="../project/">Open project status</a>
+      </section>
+    </main>
+    <footer class="wrap">
+      <a class="brand" href="../index.html">
+        <img src="../assets/digital-himalaya-mark.png" width="36" height="36" alt="" />
+        <span>Digital <strong>Himalaya</strong></span>
+      </a>
+      <p>Built for local learning. Software licensed under Apache 2.0.</p>
+      <a href="../project/">Project status</a>
+      <a href="https://github.com/apil-khadka/LocalLearning/blob/main/docs/KOLIBRI_GUIDE.md">
+        Kolibri guide
+      </a>
+    </footer>
+    <script src="../story.js" defer></script>
+  </body>
+</html>

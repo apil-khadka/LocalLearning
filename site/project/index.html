@@ -1,0 +1,217 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="theme-color" content="#163f3b" />
+    <link rel="icon" type="image/png" href="../assets/digital-himalaya-mark.png" />
+    <meta
+      name="description"
+      content="See what Digital Himalaya has implemented, which checks have passed, and what a school pilot still needs."
+    />
+    <title>Project status - Digital Himalaya</title>
+    <link rel="stylesheet" href="../styles.css" />
+  </head>
+  <body>
+    <a class="skip" href="#main">Skip to content</a>
+    <header class="site-header wrap">
+      <a class="brand" href="../index.html" aria-label="Digital Himalaya home">
+        <img src="../assets/digital-himalaya-mark.png" width="46" height="46" alt="" />
+        <span>Digital <strong>Himalaya</strong></span>
+      </a>
+      <nav aria-label="Main">
+        <a href="../how-it-works/">How it works</a>
+        <a href="../index.html#preview">The portal</a>
+        <a href="../index.html#architecture">Architecture</a>
+        <a href="../project/" aria-current="page">Project status</a>
+        <a class="repo-link" href="https://github.com/apil-khadka/LocalLearning">
+          View on GitHub <span aria-hidden="true">↗</span>
+        </a>
+      </nav>
+    </header>
+    <main id="main">
+      <section class="page-hero project-hero wrap">
+        <div>
+          <p class="section-kicker">Project status · 30 October 2026</p>
+          <h1>A working software foundation. A school pilot still ahead.</h1>
+          <p class="lead">
+            The portal, service boundaries, and test workflows are in place. Real curriculum review,
+            local retrieval setup, and school hardware acceptance remain open work.
+          </p>
+          <div class="actions">
+            <a class="button primary" href="#in-place">Review the build</a>
+            <a class="button secondary" href="https://github.com/apil-khadka/LocalLearning">
+              Explore the repository
+            </a>
+          </div>
+        </div>
+        <aside class="status-stamp" aria-label="Current release status">
+          <span class="status-ring" aria-hidden="true"></span>
+          <p class="status-stamp-title">Current stage</p>
+          <strong>Prototype foundation</strong>
+          <p>Local containers and browser workflows run. No school deployment is claimed.</p>
+        </aside>
+      </section>
+
+      <section class="status-section section wrap" id="in-place">
+        <div class="section-heading">
+          <div>
+            <p class="section-kicker">Implemented and checked</p>
+            <h2>What is in the repository now.</h2>
+          </div>
+          <p>
+            “Tested” describes software behavior under the stated setup. It does not mean that a
+            school has approved content or completed a field pilot.
+          </p>
+        </div>
+        <div class="status-ledger">
+          <article class="status-row">
+            <span class="status-kind verified">Implemented</span>
+            <div>
+              <h3>Student portal and textbook catalog</h3>
+              <p>
+                Responsive English and Nepali UI, protected staff import, page-aware document text,
+                and local file access.
+              </p>
+            </div>
+          </article>
+          <article class="status-row">
+            <span class="status-kind verified">Implemented</span>
+            <div>
+              <h3>Switchable tutor providers</h3>
+              <p>
+                Chat supports local Ollama or an OpenAI-compatible endpoint. A live request with the
+                requested Muse Spark model succeeded in the prototype. AI remains off by default.
+              </p>
+            </div>
+          </article>
+          <article class="status-row">
+            <span class="status-kind verified">Implemented</span>
+            <div>
+              <h3>Optional Kolibri service</h3>
+              <p>
+                Compose can run Kolibri separately, and the portal reports its reachability and
+                links to its own learning interface. Kolibri setup and course imports are managed
+                there.
+              </p>
+            </div>
+          </article>
+          <article class="status-row">
+            <span class="status-kind tested">Tested with limits</span>
+            <div>
+              <h3>Retrieval, source labels, and fallback behavior</h3>
+              <p>
+                Tests cover Qdrant storage and filtered retrieval, page metadata, no-match answers,
+                and service failures. A disposable Qdrant test passed earlier; the current local
+                stack has no Qdrant URL configured.
+              </p>
+            </div>
+          </article>
+          <article class="status-row">
+            <span class="status-kind verified">Implemented</span>
+            <div>
+              <h3>Container build, deployment boundaries, and public documentation</h3>
+              <p>
+                Docker Compose, a Makefile, CI, a separate student/staff entry point, and a
+                school-network design are in place. No router configuration has been applied.
+              </p>
+            </div>
+          </article>
+        </div>
+      </section>
+
+      <section class="verification-band" aria-labelledby="verification-title">
+        <div class="wrap verification-layout">
+          <div>
+            <p class="section-kicker">Latest software verification</p>
+            <h2 id="verification-title">Checks passed. Field evidence remains open.</h2>
+            <p>
+              Local checks passed on 30 October 2026. Browser and provider tests use isolated test
+              services unless a live-service check is explicitly configured.
+            </p>
+          </div>
+          <ul class="verification-list">
+            <li><strong>28</strong><span>backend tests passed</span></li>
+            <li><strong>17</strong><span>browser tests passed</span></li>
+            <li><strong>4</strong><span>production tutor checks passed</span></li>
+          </ul>
+        </div>
+        <div class="wrap verification-note">
+          Two opt-in backend checks and seven deployment-only browser checks were skipped in the
+          default local test command. The full E2E suite with the local deployment passed 21 checks
+          and skipped one desktop-only mobile-navigation case.
+          <a href="https://github.com/apil-khadka/LocalLearning/actions/workflows/ci.yml">
+            View GitHub Checks <span aria-hidden="true">↗</span>
+          </a>
+        </div>
+      </section>
+
+      <section class="status-section section wrap" id="next-gates">
+        <div class="section-heading">
+          <div>
+            <p class="section-kicker">Still needs school evidence</p>
+            <h2>Next gates before a pilot.</h2>
+          </div>
+          <p>
+            These checks require configured services, reviewed learning material, or school
+            hardware. They cannot be completed by a passing CI run.
+          </p>
+        </div>
+        <div class="status-ledger open-gates">
+          <article class="status-row">
+            <span class="status-kind pending">Configure</span>
+            <div>
+              <h3>Connect local embeddings and Qdrant</h3>
+              <p>
+                Set verified service addresses, load approved chapters, and measure retrieval
+                quality with teachers. The current Qdrant URL is blank.
+              </p>
+            </div>
+          </article>
+          <article class="status-row">
+            <span class="status-kind pending">Prepare</span>
+            <div>
+              <h3>Complete Kolibri setup and choose course channels</h3>
+              <p>
+                Create its facility, review channel rights and language, import content, then verify
+                lessons and progress with teachers. No channels are loaded yet.
+              </p>
+            </div>
+          </article>
+          <article class="status-row">
+            <span class="status-kind pending">Validate</span>
+            <div>
+              <h3>Test the school network and learner experience</h3>
+              <p>
+                Use target Ubuntu hardware and real phones. Test WAN-off access, staff isolation,
+                capacity, backup restore, power recovery, and fluent Nepali educational quality.
+              </p>
+            </div>
+          </article>
+        </div>
+      </section>
+
+      <section class="page-next wrap">
+        <div>
+          <p class="section-kicker">Follow the experience</p>
+          <h2>See how a learner moves through the system.</h2>
+          <p>Read the student flow and the boundaries between local and hosted services.</p>
+        </div>
+        <a class="button light" href="../how-it-works/">Open how it works</a>
+      </section>
+    </main>
+    <footer class="wrap">
+      <a class="brand" href="../index.html">
+        <img src="../assets/digital-himalaya-mark.png" width="36" height="36" alt="" />
+        <span>Digital <strong>Himalaya</strong></span>
+      </a>
+      <p>Built for local learning. Software licensed under Apache 2.0.</p>
+      <a href="https://github.com/apil-khadka/LocalLearning/blob/main/docs/VERIFICATION.md">
+        Verification record
+      </a>
+      <a href="https://github.com/apil-khadka/LocalLearning/blob/main/docs/BUILD_PLAN.md">
+        Build plan
+      </a>
+    </footer>
+  </body>
+</html>

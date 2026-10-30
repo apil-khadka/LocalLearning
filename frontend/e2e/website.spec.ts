@@ -3,15 +3,14 @@ import { readFile } from 'node:fs/promises'
 import path from 'node:path'
 import AxeBuilder from '@axe-core/playwright'
 
-test('public website explains its limits, diagrams switch, and all local assets resolve', async ({
-  page,
-}, testInfo) => {
+async function serveSite(page: import('@playwright/test').Page, errors: string[]) {
   const root = path.resolve('../site')
-  const errors: string[] = []
   page.on('pageerror', (e) => errors.push(e.message))
   await page.route('https://digital-himalaya.test/**', async (route) => {
     const pathname = new URL(route.request().url()).pathname
-    const file = path.resolve(root, '.' + (pathname === '/' ? '/index.html' : pathname))
+    const normalized =
+      pathname === '/' ? '/index.html' : pathname.endsWith('/') ? `${pathname}index.html` : pathname
+    const file = path.resolve(root, '.' + normalized)
     if (!file.startsWith(root + path.sep)) return route.abort()
     const types: Record<string, string> = {
       '.html': 'text/html',
@@ -19,6 +18,8 @@ test('public website explains its limits, diagrams switch, and all local assets 
       '.js': 'text/javascript',
       '.svg': 'image/svg+xml',
       '.png': 'image/png',
+      '.jpg': 'image/jpeg',
+      '.mp4': 'video/mp4',
       '.woff2': 'font/woff2',
     }
     try {
@@ -32,9 +33,16 @@ test('public website explains its limits, diagrams switch, and all local assets 
       await route.fulfill({ status: 404 })
     }
   })
+}
+
+test('public website explains its limits, diagrams switch, and all local assets resolve', async ({
+  page,
+}, testInfo) => {
+  const errors: string[] = []
+  await serveSite(page, errors)
   await page.goto('https://digital-himalaya.test/')
   await expect(page.getByRole('heading', { level: 1 })).toContainText('Learning shouldn’t')
-  await expect(page.getByText('Field and real-model acceptance pending')).toBeVisible()
+  await expect(page.getByText('School and curriculum acceptance pending')).toBeVisible()
   await expect(page.locator('.screenshot-gallery img')).toHaveCount(2)
   await page.locator('.screenshot-gallery').scrollIntoViewIfNeeded()
   await expect
@@ -89,5 +97,89 @@ test('public website explains its limits, diagrams switch, and all local assets 
       .violations,
   ).toEqual([])
   await page.screenshot({ path: testInfo.outputPath('website.png'), fullPage: true })
+  expect(errors).toEqual([])
+})
+
+test('new public pages describe the learner flow and current project state', async ({
+  page,
+}, testInfo) => {
+  const errors: string[] = []
+  await serveSite(page, errors)
+
+  await page.goto('https://digital-himalaya.test/how-it-works/')
+  await expect(page.getByRole('heading', { level: 1 })).toContainText('school library')
+  await expect(page.locator('.story-frame')).toHaveCount(4)
+  await expect
+    .poll(() =>
+      page
+        .locator('.story-frame')
+        .evaluateAll((images) =>
+          images.every(
+            (image) =>
+              image instanceof HTMLImageElement && image.complete && image.naturalWidth > 0,
+          ),
+        ),
+    )
+    .toBe(true)
+  const videoAsset = await page.locator('video source').getAttribute('src')
+  expect(videoAsset).toContain('prototype-walkthrough.mp4')
+  if (videoAsset === null) throw new Error('The prototype walkthrough source is missing.')
+  const videoFetch = await page.evaluate(async (src) => {
+    const response = await fetch(new URL(src, location.href))
+    const content = await response.arrayBuffer()
+    return {
+      status: response.status,
+      type: response.headers.get('content-type'),
+      size: content.byteLength,
+    }
+  }, videoAsset)
+  expect(videoFetch).toEqual({ status: 200, type: 'video/mp4', size: expect.any(Number) })
+  expect(videoFetch.size).toBeGreaterThan(100_000)
+  for (const index of [0, 1, 2, 3]) {
+    const scene = page.locator(`[data-story-step="${index}"]`)
+    await scene.evaluate((element) =>
+      element.scrollIntoView({ block: 'center', behavior: 'instant' }),
+    )
+    await expect(scene).toHaveAttribute('aria-current', 'step')
+    await expect(page.locator(`[data-story-frame="${index}"]`)).toHaveClass(/is-active/)
+    if (index === 1) {
+      const stickyTop = await page
+        .locator('.story-visual')
+        .evaluate((element) => Math.round(element.getBoundingClientRect().top))
+      expect(stickyTop).toBeGreaterThanOrEqual(100)
+      expect(stickyTop).toBeLessThan(205)
+    }
+  }
+  await expect(
+    page.getByRole('list', { name: 'The learner journey' }).getByRole('listitem'),
+  ).toHaveCount(4)
+  await expect(page.getByText('AI disabled by default · Qdrant unconfigured locally')).toBeVisible()
+  await expect(page.getByRole('link', { name: 'How it works' })).toHaveAttribute(
+    'aria-current',
+    'page',
+  )
+  expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true)
+  await expect(
+    (await new AxeBuilder({ page }).withTags(['wcag2a', 'wcag2aa', 'wcag21aa']).analyze())
+      .violations,
+  ).toEqual([])
+  await page.screenshot({ path: testInfo.outputPath('how-it-works.png'), fullPage: true })
+
+  await page.getByLabel('Main').getByRole('link', { name: 'Project status' }).click()
+  await expect(page).toHaveURL(/\/project\/$/)
+  await expect(page.getByRole('heading', { level: 1 })).toContainText('school pilot still ahead')
+  await expect(
+    page.getByRole('heading', { name: 'Connect local embeddings and Qdrant' }),
+  ).toBeVisible()
+  await expect(page.getByRole('link', { name: 'Project status' })).toHaveAttribute(
+    'aria-current',
+    'page',
+  )
+  await expect(
+    (await new AxeBuilder({ page }).withTags(['wcag2a', 'wcag2aa', 'wcag21aa']).analyze())
+      .violations,
+  ).toEqual([])
+  expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true)
+  await page.screenshot({ path: testInfo.outputPath('project-status.png'), fullPage: true })
   expect(errors).toEqual([])
 })
