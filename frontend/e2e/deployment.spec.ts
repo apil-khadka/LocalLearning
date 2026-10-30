@@ -68,6 +68,9 @@ test('production tutor renders the model Markdown as formatted content', async (
     }),
   )
   await page.goto(`${base}/tutor`)
+  const subject = page.getByLabel('Subject', { exact: true })
+  await expect(subject).toHaveJSProperty('tagName', 'SELECT')
+  await expect(subject.getByRole('option', { name: 'Science', exact: true })).toBeAttached()
   await page.getByLabel('Your question').fill('Why do plants need sunlight?')
   await page.getByRole('button', { name: 'Ask the tutor' }).click()
 

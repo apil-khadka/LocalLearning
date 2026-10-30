@@ -7,6 +7,16 @@ import { ErrorNotice, Field, Status } from '../components/ui'
 
 type Message = { role: 'user' | 'assistant'; content: string; reply?: Reply }
 
+const commonSubjects = [
+  'Science',
+  'Mathematics',
+  'English',
+  'Nepali',
+  'Social Studies',
+  'Health and Physical Education',
+  'Computer Science',
+]
+
 export default function Tutor({
   t,
   language,
@@ -37,6 +47,14 @@ export default function Tutor({
         .filter((b) => b.subject.toLowerCase() === subject.trim().toLowerCase())
         .map((b) => b.chapter),
     ),
+  ]
+  const subjects = [
+    ...new Map(
+      [...commonSubjects, ...books.map((book) => book.subject), subject]
+        .map((value) => value.trim())
+        .filter(Boolean)
+        .map((value) => [value.toLowerCase(), value] as const),
+    ).values(),
   ]
   const reset = () => {
     setMessages([])
@@ -102,16 +120,21 @@ export default function Tutor({
               </select>
             </Field>
             <Field label={t.subject}>
-              <input
+              <select
                 value={subject}
-                maxLength={120}
                 required
                 onChange={(e) => {
                   setSubject(e.target.value)
                   setChapter('')
                   reset()
                 }}
-              />
+              >
+                {subjects.map((value) => (
+                  <option key={value} value={value}>
+                    {value}
+                  </option>
+                ))}
+              </select>
             </Field>
             <Field label={t.chapter}>
               <select
