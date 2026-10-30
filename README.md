@@ -6,7 +6,7 @@ An offline-first learning portal for school networks in Nepal, with local books,
 AI starts disabled.
 Model inference, curriculum quality, Nepali language quality, school Wi-Fi capacity, and power recovery must pass the [deployment acceptance checks](docs/DEMO_SCRIPT.md) on the actual hardware.
 
-[Project website](https://apil-khadka.github.io/LocalLearning/) · [Build plan](docs/BUILD_PLAN.md) · [Architecture](docs/ARCHITECTURE.md) · [Network design](docs/NETWORK.md) · [Verification](docs/VERIFICATION.md)
+[Project website](https://apil-khadka.github.io/LocalLearning/) · [Build plan](docs/BUILD_PLAN.md) · [Architecture](docs/ARCHITECTURE.md) · [Network design](docs/NETWORK.md) · [Kolibri operations guide](docs/KOLIBRI_GUIDE.md) · [Verification](docs/VERIFICATION.md)
 
 ## What is here
 
@@ -117,6 +117,7 @@ Kolibri is an optional Compose profile so the base application does not pull or 
 Set `KOLIBRI_PUBLIC_URL=http://127.0.0.1:8092` and `KOLIBRI_PROBE_URL=http://kolibri:8080` in `.env`, then run `make education-up` to start it alongside the portal.
 Kolibri keeps its database, user records, and imported content in a separate persistent `kolibri-data` volume.
 Complete Kolibri's first-run facility setup and import approved channels in its own interface; this project does not download course content or provision accounts.
+Use the [Kolibri operations guide](docs/KOLIBRI_GUIDE.md) for role setup, rights review, offline channel imports, update review, verification, and backup steps.
 For a school LAN, set `KOLIBRI_BIND` to the server's reserved LAN IP and `KOLIBRI_PUBLIC_URL` to the student-reachable address after reviewing firewall rules.
 Keep the education profile off when an existing NOMAD or Kolibri deployment already provides the service, and configure its verified URLs instead.
 Run `make education-down` to stop only the Kolibri container without deleting its stored data.

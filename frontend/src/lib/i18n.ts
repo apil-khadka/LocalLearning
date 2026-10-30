@@ -64,6 +64,25 @@ export const copy = {
     logout: 'Sign out',
     privacyToken: 'The token is kept in page memory only. Use a trusted staff connection.',
     diagnostics: 'Local service checks',
+    kolibriAdmin: 'Kolibri course management',
+    kolibriIntro:
+      'Manage channels, classes, lessons, and learner progress in Kolibri. Kolibri applies its own user roles and permissions.',
+    kolibriOpen: 'Open Kolibri',
+    kolibriNeedsSetup: 'Set KOLIBRI_PUBLIC_URL and restart the API to add the Kolibri entry point.',
+    kolibriWorkflow: 'Channel import and update workflow',
+    kolibriSetupStep:
+      'Complete Kolibri device and facility setup. Keep the super-admin credentials in the school’s private credential store.',
+    kolibriRightsStep:
+      'Review the license and attribution for every channel and resource before importing it.',
+    kolibriImportStep:
+      'In Kolibri, open Device > Channels > Import and choose Kolibri Studio, a connected device, or a prepared storage drive.',
+    kolibriUpdateStep:
+      'For updates, open Device > Channels > Manage > View changes. Review additions, changes, and removals before updating selected resources.',
+    kolibriVerifyStep:
+      'Update during a quiet period, then check assigned lessons and quizzes using a coach and learner account.',
+    kolibriSeparationNote:
+      'PDFs and text imported into this portal do not become Kolibri resources. Kolibri accounts and progress stay separate from this staff workspace.',
+    kolibriGuide: 'Open the full Kolibri operations guide',
     importTitle: 'Import a chapter',
     title: 'Document title',
     license: 'License / permission',
@@ -142,6 +161,25 @@ export const copy = {
     logout: 'बाहिर निस्कनुहोस्',
     privacyToken: 'टोकन पृष्ठको मेमोरीमा मात्र रहन्छ। सुरक्षित स्टाफ नेटवर्क प्रयोग गर्नुहोस्।',
     diagnostics: 'स्थानीय सेवाको जाँच',
+    kolibriAdmin: 'कोलिब्री पाठ्यक्रम व्यवस्थापन',
+    kolibriIntro:
+      'कोलिब्रीमा च्यानल, कक्षा, पाठ र विद्यार्थीको प्रगति व्यवस्थापन गर्नुहोस्। प्रयोगकर्ता भूमिका र अनुमति कोलिब्रीले नै लागू गर्छ।',
+    kolibriOpen: 'कोलिब्री खोल्नुहोस्',
+    kolibriNeedsSetup:
+      'कोलिब्री प्रवेश बिन्दु थप्न KOLIBRI_PUBLIC_URL राखेर API पुनः सुरु गर्नुहोस्।',
+    kolibriWorkflow: 'च्यानल थप्ने र अद्यावधिक गर्ने तरिका',
+    kolibriSetupStep:
+      'कोलिब्रीको उपकरण र संस्थाको पहिलो सेटअप पूरा गर्नुहोस्। सुपर-एडमिन प्रमाण विद्यालयको निजी सुरक्षित स्थानमा राख्नुहोस्।',
+    kolibriRightsStep: 'हरेक च्यानल र सामग्री थप्नुअघि त्यसको इजाजतपत्र र श्रेय जाँच्नुहोस्।',
+    kolibriImportStep:
+      'कोलिब्रीमा Device > Channels > Import खोल्नुहोस् र Kolibri Studio, जोडिएको उपकरण वा तयार भण्डारण ड्राइभ छान्नुहोस्।',
+    kolibriUpdateStep:
+      'अद्यावधिकका लागि Device > Channels > Manage > View changes खोल्नुहोस्। चयनित सामग्री अद्यावधिक गर्नुअघि थपिएका, फेरिएका र हटाइएका कुरा जाँच्नुहोस्।',
+    kolibriVerifyStep:
+      'कम प्रयोग हुने समयमा अद्यावधिक गर्नुहोस्। त्यसपछि शिक्षक र विद्यार्थी खाताबाट तोकिएका पाठ र अभ्यास जाँच्नुहोस्।',
+    kolibriSeparationNote:
+      'यस पोर्टलमा थपिएका PDF र पाठ फाइल कोलिब्री सामग्री बन्दैनन्। कोलिब्रीका खाता र प्रगति यस स्टाफ कार्यस्थलबाट अलग रहन्छन्।',
+    kolibriGuide: 'कोलिब्री सञ्चालनको विस्तृत निर्देशिका खोल्नुहोस्',
     importTitle: 'पाठ थप्नुहोस्',
     title: 'कागजातको शीर्षक',
     license: 'इजाजतपत्र / अनुमति',

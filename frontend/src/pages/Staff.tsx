@@ -107,6 +107,43 @@ export default function Staff({ t, refresh }: { t: Copy; refresh: () => void }) 
                 ))}
             </div>
           </section>
+          <section className="panel kolibri-management">
+            <h2>{t.kolibriAdmin}</h2>
+            <p>{t.kolibriIntro}</p>
+            <div className="kolibri-entry">
+              <Status value={status?.services.kolibri.status ?? 'unconfigured'} t={t} />
+              {status?.services.kolibri.url ? (
+                <a
+                  className="button primary button-link"
+                  href={status.services.kolibri.url}
+                  target="_blank"
+                  rel="noreferrer"
+                >
+                  {t.kolibriOpen}
+                </a>
+              ) : (
+                <p className="small-note">{t.kolibriNeedsSetup}</p>
+              )}
+            </div>
+            <details className="kolibri-workflow">
+              <summary>{t.kolibriWorkflow}</summary>
+              <ol>
+                <li>{t.kolibriSetupStep}</li>
+                <li>{t.kolibriRightsStep}</li>
+                <li>{t.kolibriImportStep}</li>
+                <li>{t.kolibriUpdateStep}</li>
+                <li>{t.kolibriVerifyStep}</li>
+              </ol>
+              <p className="small-note">{t.kolibriSeparationNote}</p>
+              <a
+                href="https://github.com/apil-khadka/LocalLearning/blob/main/docs/KOLIBRI_GUIDE.md"
+                target="_blank"
+                rel="noreferrer"
+              >
+                {t.kolibriGuide}
+              </a>
+            </details>
+          </section>
           <form onSubmit={ingest} className="panel">
             <h2>{t.importTitle}</h2>
             <fieldset disabled={busy}>

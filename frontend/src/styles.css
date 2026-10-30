@@ -662,6 +662,36 @@ footer {
   display: grid;
   gap: 8px;
 }
+.kolibri-entry {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 16px;
+  margin-top: 18px;
+}
+.kolibri-entry .small-note {
+  margin: 0;
+}
+.kolibri-workflow {
+  margin-top: 22px;
+  padding-top: 18px;
+  border-top: 1px solid var(--line);
+}
+.kolibri-workflow summary {
+  cursor: pointer;
+  font-weight: 650;
+}
+.kolibri-workflow ol {
+  display: grid;
+  gap: 10px;
+  padding-left: 24px;
+  line-height: 1.55;
+}
+.button-link {
+  display: inline-flex;
+  align-items: center;
+  text-decoration: none;
+}
 .connection-error {
   padding: 16px 5%;
   background: #fff0ef;

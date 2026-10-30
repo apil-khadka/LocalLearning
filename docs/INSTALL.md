@@ -22,6 +22,7 @@ The optional `education` Compose profile runs the official Kolibri 0.19.5 contai
 The image listens on ports 8080 and 8081 internally; this project publishes them as host ports 8092 and 8093 by default.
 To use the embedded service locally, set `KOLIBRI_PUBLIC_URL=http://127.0.0.1:8092` and `KOLIBRI_PROBE_URL=http://kolibri:8080` in `.env`, then run `make education-up`.
 Finish Kolibri's own first-run facility setup, create the appropriate coach and learner accounts, and import only reviewed channels using its interface.
+Follow the [Kolibri operations guide](KOLIBRI_GUIDE.md) for a complete content-selection, import, update, verification, and backup procedure.
 Kolibri channels must be imported from Kolibri Studio, another Kolibri device, or a prepared Kolibri storage drive; this application does not scrape or load course content into Kolibri.
 For a school deployment, change `KOLIBRI_BIND` to the reserved server LAN address and set `KOLIBRI_PUBLIC_URL` to the address reachable by student devices only after firewall review.
 Keep `KOLIBRI_PROBE_URL=http://kolibri:8080` when using the bundled service; for an existing NOMAD-managed Kolibri service, set both URLs to verified addresses and leave the `education` profile stopped.

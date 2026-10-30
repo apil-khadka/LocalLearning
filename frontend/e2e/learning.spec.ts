@@ -35,6 +35,14 @@ test('staff import flows through the API, books open, and tutor shows real retri
   await page.getByLabel('Staff access token').fill(token)
   await page.getByRole('button', { name: 'Open staff workspace' }).click()
   await expect(page.getByRole('heading', { name: 'Import a chapter' })).toBeVisible()
+  await expect(page.getByRole('heading', { name: 'Kolibri course management' })).toBeVisible()
+  await expect(page.getByRole('link', { name: 'Open Kolibri' })).toHaveAttribute(
+    'href',
+    'http://kolibri.test:8080',
+  )
+  await expect(page.getByRole('link', { name: 'Open Kolibri' })).toHaveAttribute('target', '_blank')
+  await page.getByText('Channel import and update workflow').click()
+  await expect(page.getByText(/Review additions, changes, and removals/)).toBeVisible()
   await page.getByLabel('Document title').fill('E2E force and motion')
   await page.getByLabel('Chapter', { exact: true }).fill('Force and Motion')
   await page.getByLabel('License / permission').fill('CC0-1.0')
