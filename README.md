@@ -6,7 +6,7 @@ An offline-first learning portal for school networks in Nepal, with local books,
 AI starts disabled.
 Model inference, curriculum quality, Nepali language quality, school Wi-Fi capacity, and power recovery must pass the [deployment acceptance checks](docs/DEMO_SCRIPT.md) on the actual hardware.
 
-[Project website](https://apil-khadka.github.io/LocalLearning/) · [Build plan](docs/BUILD_PLAN.md) · [Architecture](docs/ARCHITECTURE.md) · [Network design](docs/NETWORK.md) · [Kolibri operations guide](docs/KOLIBRI_GUIDE.md) · [Verification](docs/VERIFICATION.md)
+[Project website](https://apil-khadka.github.io/LocalLearning/) · [Product brief](PRODUCT.md) · [Build plan](docs/BUILD_PLAN.md) · [Architecture](docs/ARCHITECTURE.md) · [Network design](docs/NETWORK.md) · [Kolibri operations guide](docs/KOLIBRI_GUIDE.md) · [Verification](docs/VERIFICATION.md)
 
 ## What is here
 
@@ -26,9 +26,9 @@ The default AI chat endpoint is disabled until an operator adds a key and sets `
 When the OpenAI-compatible provider is selected, learner questions, conversation history and retrieved excerpts are sent to that configured provider.
 Keep `CHAT_PROVIDER=ollama` to process chat on a reachable local Ollama service instead.
 The source planning attachments are private local material and are excluded from both Git and Docker builds.
-The first prototype book sample can be fetched locally with `make books-pilot`.
-It is a text-only Wikijunior biology book with revision-level attribution, saved under ignored `content/private/` and excluded from public builds.
-It is integration test content, not a Nepal-approved curriculum source.
+Prototype book samples can be fetched locally with `make books-pilot` and `make books-more`.
+They are text-only Wikibooks books or selected chapters with revision-level attribution, saved under ignored `content/private/` and excluded from public builds.
+They are integration-test fixtures, not Nepal-approved curriculum sources.
 
 ## Run locally
 
@@ -101,6 +101,7 @@ After teacher review, enable AI and restart the API to test real questions.
 
 The OLE Nepal and Nepal CDC catalog links are documented in [the book-source review](docs/research/book-sources.md).
 The current E-Pustakalaya terms do not allow copying content to a separate host without written permission, and the CDC catalog entries reviewed did not state reuse terms.
+The additional prototype fetcher and title-level source review are documented in [additional book sources](docs/research/additional-book-sources.md).
 
 Configure `KIWIX_PUBLIC_URL` and `KOLIBRI_PUBLIC_URL` only after opening downloaded content from a student device.
 Optional `*_PROBE_URL` values provide a server-reachable equivalent when the public address differs.

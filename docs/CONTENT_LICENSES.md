@@ -20,8 +20,9 @@ Review and retain the license and attribution for every Kolibri channel and reso
 The initial book-source review is in [book-sources.md](research/book-sources.md).
 That review found different terms at E-Pustakalaya per item, no reuse terms on the CDC catalog entries reviewed, and a CC BY 4.0 Open Textbook Library candidate.
 Downloaded pilot files belong under the ignored `content/private/` directory and must not enter the public repository.
-The first locally fetched text-only test book is Wikijunior:Biology under CC BY-SA 4.0; its revision-level attribution manifest is kept beside it in ignored storage.
-It is a prototype fixture, not a curriculum approval or a public content bundle.
+Locally fetched text-only Wikibooks prototypes include Wikijunior:Biology and selected chapters from Wikijunior:Human Body, Wikijunior:Solar System, and Geometry for Elementary School under CC BY-SA 4.0; revision-level attribution manifests are kept beside the content in ignored storage.
+They are prototype fixtures, not curriculum approvals or public content bundles.
+The Solar System text comes from current Wikibooks pages, not the historical PDF copy.
 
 Frontend dependencies include Nunito Sans and Noto Sans Devanagari font packages, Phosphor icons, Radix UI, React and React Router.
 Their license files remain in installed packages and must be retained with redistributed bundles; the image build copies notices into its served distribution.

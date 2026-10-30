@@ -30,7 +30,9 @@ def fetch_book() -> tuple[str, list[dict]]:
         with urlopen(request, timeout=20) as response:
             body = response.read(MAX_RESPONSE_BYTES + 1)
         if len(body) > MAX_RESPONSE_BYTES:
-            raise RuntimeError("The Wikibooks API response exceeded the prototype size limit.")
+            raise RuntimeError(
+                "The Wikibooks API response exceeded the prototype size limit."
+            )
         payload = json.loads(body)
         if payload.get("error"):
             raise RuntimeError("The Wikibooks API rejected the catalog request.")
