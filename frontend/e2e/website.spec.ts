@@ -43,6 +43,10 @@ test('public website explains its limits, diagrams switch, and all local assets 
   await page.goto('https://digital-himalaya.test/')
   await expect(page.getByRole('heading', { level: 1 })).toContainText('Learning shouldn’t')
   await expect(page.getByText('School and curriculum acceptance pending')).toBeVisible()
+  await expect(page.getByLabel('Main').getByRole('link', { name: 'Kolibri' })).toHaveAttribute(
+    'href',
+    'kolibri/',
+  )
   await expect(page.locator('.screenshot-gallery img')).toHaveCount(2)
   await expect(page.locator('.screenshot-gallery img').first()).toHaveAttribute(
     'alt',
@@ -200,5 +204,41 @@ test('new public pages describe the learner flow and current project state', asy
   ).toEqual([])
   expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true)
   await page.screenshot({ path: testInfo.outputPath('project-status.png'), fullPage: true })
+
+  await page.getByLabel('Main').getByRole('link', { name: 'Kolibri' }).click()
+  await expect(page).toHaveURL(/\/kolibri\/$/)
+  await expect(page.getByRole('heading', { level: 1 })).toContainText('Ready-made tools')
+  for (const material of [
+    'Videos',
+    'Audio',
+    'Documents and books',
+    'Exercises',
+    'Interactive apps',
+  ]) {
+    await expect(page.getByRole('heading', { name: material })).toBeVisible()
+  }
+  await expect(page.locator('.kolibri-status-card > p:last-child')).toContainText(
+    'No learning channels, classes, or learner accounts',
+  )
+  await expect(page.locator('.kolibri-status-card img')).toHaveAttribute(
+    'alt',
+    /no channels are installed yet/,
+  )
+  await expect
+    .poll(() =>
+      page.locator('.kolibri-status-card img').evaluate((image) => {
+        return image instanceof HTMLImageElement && image.complete && image.naturalWidth > 0
+      }),
+    )
+    .toBe(true)
+  await expect(
+    page.getByRole('link', { name: 'Learner materials and activities' }),
+  ).toHaveAttribute('href', 'https://kolibri.readthedocs.io/en/latest/learn.html')
+  await expect(
+    (await new AxeBuilder({ page }).withTags(['wcag2a', 'wcag2aa', 'wcag21aa']).analyze())
+      .violations,
+  ).toEqual([])
+  expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true)
+  await page.screenshot({ path: testInfo.outputPath('kolibri-guide.png'), fullPage: true })
   expect(errors).toEqual([])
 })

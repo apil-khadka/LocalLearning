@@ -1,0 +1,283 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="theme-color" content="#163f3b" />
+    <link rel="icon" type="image/png" href="../assets/digital-himalaya-mark.png" />
+    <meta
+      name="description"
+      content="How Kolibri provides offline lessons, learning materials, quizzes, and teacher progress tools in the Digital Himalaya prototype."
+    />
+    <title>Kolibri learning platform - Digital Himalaya</title>
+    <link rel="stylesheet" href="../styles.css" />
+  </head>
+  <body>
+    <a class="skip" href="#main">Skip to content</a>
+    <header class="site-header wrap">
+      <a class="brand" href="../index.html" aria-label="Digital Himalaya home">
+        <img src="../assets/digital-himalaya-mark.png" width="46" height="46" alt="" />
+        <span>Digital <strong>Himalaya</strong></span>
+      </a>
+      <nav aria-label="Main">
+        <a href="../how-it-works/">How it works</a>
+        <a href="../index.html#preview">The portal</a>
+        <a href="../index.html#architecture">Architecture</a>
+        <a href="../kolibri/" aria-current="page">Kolibri</a>
+        <a href="../project/">Project status</a>
+        <a class="repo-link" href="https://github.com/apil-khadka/LocalLearning">
+          View on GitHub <span aria-hidden="true">↗</span>
+        </a>
+      </nav>
+    </header>
+    <main id="main">
+      <section class="page-hero wrap kolibri-hero">
+        <div>
+          <p class="section-kicker">Kolibri · the classroom learning platform</p>
+          <h1>Ready-made tools for lessons, practice, and progress.</h1>
+          <p class="lead">
+            Kolibri is an offline-first learning platform that can serve curated learning materials
+            over a school network. Digital Himalaya runs it as a separate service so we can build on
+            its learner, teacher, and content tools instead of recreating them.
+          </p>
+          <div class="actions">
+            <a class="button primary" href="#materials">Explore learning materials</a>
+            <a class="button secondary" href="../project/">See our current setup</a>
+          </div>
+        </div>
+        <aside class="kolibri-status-card" aria-labelledby="local-kolibri-title">
+          <p class="section-kicker">Our local prototype</p>
+          <h2 id="local-kolibri-title">Running, ready for content</h2>
+          <figure>
+            <img
+              src="../assets/screenshots/flow/kolibri-management.jpg"
+              alt="Kolibri's local channel manager showing that no channels are installed yet."
+              width="1440"
+              height="900"
+            />
+            <figcaption>Local development facility · Channels</figcaption>
+          </figure>
+          <p>
+            The facility is provisioned and reachable from the portal. No learning channels,
+            classes, or learner accounts have been imported yet.
+          </p>
+        </aside>
+      </section>
+
+      <section class="section wrap kolibri-materials" id="materials">
+        <div class="section-heading">
+          <div>
+            <p class="section-kicker">What learners can use</p>
+            <h2>More than a shelf of PDFs.</h2>
+          </div>
+          <p>
+            Kolibri organizes resources into channels. The exact subjects, languages, and formats
+            depend on the channel a school chooses to import.
+          </p>
+        </div>
+        <div class="kolibri-format-grid">
+          <article class="kolibri-format-card">
+            <span class="kolibri-format-label">Watch</span>
+            <h3>Videos</h3>
+            <p>Recorded explanations and demonstrations that students can replay at their pace.</p>
+          </article>
+          <article class="kolibri-format-card">
+            <span class="kolibri-format-label">Listen</span>
+            <h3>Audio</h3>
+            <p>Spoken lessons and other sound resources available inside an imported channel.</p>
+          </article>
+          <article class="kolibri-format-card">
+            <span class="kolibri-format-label">Read</span>
+            <h3>Documents and books</h3>
+            <p>PDF and ePub reading materials, organized into channel topics.</p>
+          </article>
+          <article class="kolibri-format-card">
+            <span class="kolibri-format-label">Practice</span>
+            <h3>Exercises</h3>
+            <p>
+              Interactive practice such as selecting an answer, entering a value, or writing a
+              formula.
+            </p>
+          </article>
+          <article class="kolibri-format-card">
+            <span class="kolibri-format-label">Explore</span>
+            <h3>Interactive apps</h3>
+            <p>Hands-on learning activities that run as part of a channel resource.</p>
+          </article>
+        </div>
+        <p class="kolibri-note">
+          <a href="https://learningequality.org/kolibri/about-kolibri/"
+            >Learning Equality describes</a
+          >
+          its wider Kolibri Library as spanning 173+ languages and topics such as STEM, public
+          health, internet safety, teacher professional development, coding, and life skills. That
+          describes the wider library, not the content currently installed in our prototype. Every
+          school still needs to review each channel for curriculum fit, language, licensing, and
+          storage needs.
+        </p>
+      </section>
+
+      <section class="kolibri-coach-band">
+        <div class="wrap kolibri-coach-layout">
+          <div>
+            <p class="section-kicker">For teachers and coaches</p>
+            <h2>Turn resources into a class plan.</h2>
+            <p>
+              Kolibri includes separate learner, coach, and facility-admin roles. Teachers can
+              organize classes and groups, assign lessons and quizzes, and review learner activity
+              and progress from the coach tools.
+            </p>
+          </div>
+          <ul class="kolibri-coach-list">
+            <li>
+              <strong>Classes and groups</strong><span>Organize learners and assign coaches.</span>
+            </li>
+            <li>
+              <strong>Lessons</strong><span>Give a class or group a curated set of resources.</span>
+            </li>
+            <li>
+              <strong>Quizzes</strong><span>Create assessments and review submitted answers.</span>
+            </li>
+            <li>
+              <strong>Progress reports</strong
+              ><span>See resource activity and lesson or quiz progress.</span>
+            </li>
+          </ul>
+        </div>
+      </section>
+
+      <section class="section wrap kolibri-workflow" aria-labelledby="kolibri-workflow-title">
+        <div class="section-heading">
+          <div>
+            <p class="section-kicker">Getting content ready</p>
+            <h2 id="kolibri-workflow-title">Choose carefully, then take it offline.</h2>
+          </div>
+          <p>
+            Channels can be imported from Kolibri Studio, another device on the local network, or
+            storage that already contains an exported channel.
+          </p>
+        </div>
+        <ol class="kolibri-steps">
+          <li>
+            <span>01</span>
+            <div>
+              <h3>Browse a channel</h3>
+              <p>
+                Find a public collection or prepare a school-specific channel in Kolibri Studio.
+              </p>
+            </div>
+          </li>
+          <li>
+            <span>02</span>
+            <div>
+              <h3>Review the selection</h3>
+              <p>
+                Check curriculum, language, rights, file sizes, and the topics learners will see.
+              </p>
+            </div>
+          </li>
+          <li>
+            <span>03</span>
+            <div>
+              <h3>Import a useful subset</h3>
+              <p>
+                Download selected resources once, or transfer an exported channel to the school
+                server.
+              </p>
+            </div>
+          </li>
+          <li>
+            <span>04</span>
+            <div>
+              <h3>Plan and test the class flow</h3>
+              <p>
+                Assign a lesson, try it with learner accounts, and verify it with the internet
+                disconnected.
+              </p>
+            </div>
+          </li>
+        </ol>
+        <p class="kolibri-caveat">
+          A folder of PDFs in Digital Himalaya does not automatically appear in Kolibri. Custom
+          files need to be prepared as a channel in Kolibri Studio before they can be imported as
+          Kolibri learning resources.
+        </p>
+      </section>
+
+      <section class="kolibri-boundary-band">
+        <div class="wrap kolibri-boundary-layout">
+          <div>
+            <p class="section-kicker">How the two products fit together</p>
+            <h2>One school server. Two focused tools.</h2>
+          </div>
+          <div>
+            <p>
+              <strong>Digital Himalaya</strong> currently provides the textbook catalog, its own
+              reader, and the optional tutor interface. <strong>Kolibri</strong> provides its own
+              content library, classes, lessons, quizzes, and coaching reports.
+            </p>
+            <p>
+              The portal reports Kolibri's availability and links to its learning interface. Learner
+              accounts and progress are managed inside Kolibri; the two products do not share
+              sign-in or automatically synchronize records.
+            </p>
+            <a class="text-link" href="../how-it-works/"
+              >See how the services connect <span aria-hidden="true">→</span></a
+            >
+          </div>
+        </div>
+      </section>
+
+      <section class="page-next wrap">
+        <div>
+          <p class="section-kicker">Next for this prototype</p>
+          <h2>Import a small, teacher-reviewed channel.</h2>
+          <p>
+            Then test classes, learner accounts, lessons, quizzes, and offline access end to end.
+          </p>
+        </div>
+        <a
+          class="button light"
+          href="https://learningequality.org/kolibri/about-kolibri/"
+          rel="noreferrer"
+          >Explore Kolibri from Learning Equality <span aria-hidden="true">↗</span></a
+        >
+      </section>
+
+      <section class="kolibri-sources wrap" aria-labelledby="kolibri-sources-title">
+        <h2 id="kolibri-sources-title">Official Kolibri guides</h2>
+        <ul>
+          <li>
+            <a href="https://kolibri.readthedocs.io/en/latest/learn.html"
+              >Learner materials and activities</a
+            >
+          </li>
+          <li>
+            <a href="https://kolibri.readthedocs.io/en/latest/manage/resources.html"
+              >Channels and importing resources</a
+            >
+          </li>
+          <li>
+            <a href="https://kolibri.readthedocs.io/en/latest/manage/user_roles.html"
+              >Learner, coach, and admin roles</a
+            >
+          </li>
+          <li>
+            <a href="https://kolibri.readthedocs.io/en/latest/coach/index.html"
+              >Lessons, quizzes, and progress reports</a
+            >
+          </li>
+        </ul>
+      </section>
+    </main>
+    <footer class="wrap">
+      <a class="brand" href="../index.html">
+        <img src="../assets/digital-himalaya-mark.png" width="36" height="36" alt="" />
+        <span>Digital <strong>Himalaya</strong></span>
+      </a>
+      <p>Built for local learning. Software licensed under Apache 2.0.</p>
+      <a href="../how-it-works/">How it works</a>
+      <a href="../project/">Project status</a>
+    </footer>
+  </body>
+</html>
