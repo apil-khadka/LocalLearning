@@ -46,9 +46,10 @@ export default function BookReader({ t }: { t: Copy }) {
   return (
     <section className="book-reader">
       <div className="reader-navigation">
-        <Link className="button secondary reader-back" to="/books">
+        <Link className="button secondary reader-back" to="/books" aria-label={t.backToBooks}>
           <ArrowLeft size={18} aria-hidden="true" />
-          {t.backToBooks}
+          <span className="reader-back-full">{t.backToBooks}</span>
+          <span className="reader-back-short">{t.booksShort}</span>
         </Link>
         {book && (
           <a
@@ -56,8 +57,10 @@ export default function BookReader({ t }: { t: Copy }) {
             href={`/api/textbooks/${book.id}/file`}
             target="_blank"
             rel="noreferrer"
+            aria-label={t.openOriginalFile}
+            title={t.openOriginalFile}
           >
-            {t.openOriginalFile}
+            <span className="reader-original-label">{t.openOriginalFile}</span>
             <ArrowSquareOut size={17} aria-hidden="true" />
           </a>
         )}

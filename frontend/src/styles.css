@@ -276,6 +276,7 @@ small,
   }
   .app-shell.is-sidebar-collapsed .sidebar-head {
     gap: 6px;
+    margin-bottom: 16px;
   }
   .app-shell.is-sidebar-collapsed .brand {
     gap: 0;
@@ -1506,6 +1507,9 @@ footer {
 .reader-back {
   min-height: 42px;
 }
+.reader-back-short {
+  display: none;
+}
 .reader-original-link {
   display: inline-flex;
   align-items: center;
@@ -1765,15 +1769,40 @@ footer {
   .reader-navigation {
     align-items: flex-start;
   }
+  .reader-back {
+    min-height: 40px;
+    padding: 6px 11px;
+    white-space: nowrap;
+  }
+  .reader-back-full,
+  .reader-original-label {
+    display: none;
+  }
+  .reader-back-short {
+    display: inline;
+  }
   .reader-original-link {
-    max-width: 46%;
-    min-height: 38px;
-    font-size: 0.78rem;
-    text-align: right;
+    display: grid;
+    place-items: center;
+    flex: 0 0 40px;
+    width: 40px;
+    height: 40px;
+    min-height: 40px;
+    border: 1px solid var(--line);
+    border-radius: 9px;
+    background: white;
   }
   .reader-heading {
-    grid-template-columns: 38px minmax(0, 1fr) auto;
-    gap: 9px;
+    grid-template-columns: 36px minmax(0, 1fr);
+  }
+  .reader-page-count {
+    display: none;
+  }
+  .reader-heading h1 {
+    font-size: clamp(1.15rem, 5vw, 1.45rem);
+  }
+  .reader-heading {
+    gap: 10px;
     padding: 14px 12px;
   }
   .reader-book-icon {
@@ -1796,9 +1825,6 @@ footer {
   }
 }
 @media (max-width: 380px) {
-  .reader-page-count {
-    display: none;
-  }
   .reader-document-frame {
     height: 66vh;
     min-height: 350px;

@@ -294,6 +294,12 @@ test('clicking a textbook opens its in-app reader and keeps text readable', asyn
     'target',
     '_blank',
   )
+  if ((page.viewportSize()?.width ?? 0) <= 640) {
+    await expect(page.locator('.reader-back-short')).toBeVisible()
+    await expect(page.locator('.reader-back-full')).not.toBeVisible()
+    await expect(page.locator('.reader-original-label')).not.toBeVisible()
+    await expect(page.locator('.reader-page-count')).not.toBeVisible()
+  }
   expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true)
 
   await page.getByRole('link', { name: 'Back to textbooks' }).click()
@@ -395,6 +401,7 @@ test('desktop sidebar collapses to an icon rail and remembers the choice', async
   await expect(toggle).toHaveAccessibleName('Expand sidebar')
   await expect(toggle).toHaveAttribute('aria-pressed', 'true')
   await expect(sidebar).toHaveCSS('width', '92px')
+  await expect(page.locator('.sidebar-head')).toHaveCSS('margin-bottom', '16px')
   await expect(page.locator('.workspace')).toHaveCSS('margin-left', '92px')
   await expect(sidebar.getByRole('link', { name: 'AI tutor' })).toHaveAttribute('title', 'AI tutor')
   await expect(page.getByRole('heading', { name: 'AI tutor' })).toBeVisible()
