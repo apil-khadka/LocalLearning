@@ -33,7 +33,6 @@
     <main id="main">
       <section class="page-hero wrap">
         <div>
-          <p class="section-kicker">How learning moves</p>
           <h1>From a school library to a question worth checking.</h1>
           <p class="lead">
             Books and installed lessons can stay on the school network. The tutor is optional. The
@@ -61,7 +60,6 @@
       <section class="journey-section section wrap" aria-labelledby="journey-title">
         <div class="section-heading">
           <div>
-            <p class="section-kicker">The learner journey</p>
             <h2 id="journey-title">A simple path, with each handoff visible.</h2>
           </div>
           <p>
@@ -73,8 +71,7 @@
           <li class="journey-step">
             <span class="journey-number" aria-hidden="true">1</span>
             <div>
-              <p class="journey-label">Staff prepares the material</p>
-              <h3>Import only content the school has reviewed.</h3>
+              <h3>Staff imports only school-reviewed material.</h3>
               <p>
                 An authorized staff member imports a PDF or text file. The API stores its catalog
                 details and page-aware text in the school's data volume. Copyright and curriculum
@@ -86,8 +83,7 @@
           <li class="journey-step">
             <span class="journey-number" aria-hidden="true">2</span>
             <div>
-              <p class="journey-label">Student joins school Wi-Fi</p>
-              <h3>Open the portal on a phone or computer.</h3>
+              <h3>Students open the portal over school Wi-Fi.</h3>
               <p>
                 The student browser connects to the local portal. The private prototype catalog has
                 216 CDC PDFs assigned across Kindergarten through Grade 12. Kolibri is reachable as
@@ -99,8 +95,7 @@
           <li class="journey-step">
             <span class="journey-number" aria-hidden="true">3</span>
             <div>
-              <p class="journey-label">Tutor finds relevant pages</p>
-              <h3>Ask for help when the school enables the service.</h3>
+              <h3>Students ask when the school enables the tutor.</h3>
               <p>
                 With local embeddings and Qdrant configured, the API can search approved textbook
                 passages. Chat can use local Ollama or a configured OpenAI-compatible provider. A
@@ -114,7 +109,6 @@
           <li class="journey-step">
             <span class="journey-number" aria-hidden="true">4</span>
             <div>
-              <p class="journey-label">Student and teacher check the answer</p>
               <h3>Sources are visible, and a no-match answer says so.</h3>
               <p>
                 Retrieved pages appear with the answer for review. If no passage matches, the tutor
@@ -131,7 +125,6 @@
         <div class="wrap">
           <div class="section-heading">
             <div>
-              <p class="section-kicker">Captured prototype flow</p>
               <h2 id="walkthrough-title">Scroll through the screens. Play the whole run.</h2>
             </div>
             <p>
@@ -199,7 +192,6 @@
                 </div>
               </div>
               <figcaption id="story-image-caption" aria-live="polite">
-                <span>Prototype screen</span>
                 <strong>
                   The current portal uses a compact top navigation and reports which local resources
                   are reachable.
@@ -208,15 +200,13 @@
             </figure>
             <ol class="story-scenes" aria-label="Scenes in the prototype walkthrough">
               <li class="story-scene is-active" data-story-step="0" aria-current="step">
-                <p class="journey-label">The local portal</p>
-                <h3>Start with the resources on the school server.</h3>
+                <h3>Start with resources on the school server.</h3>
                 <p>
                   The home screen shows the local connection and which optional services are
                   reachable or still unconfigured. Kolibri is now reachable from the portal.
                 </p>
               </li>
               <li class="story-scene" data-story-step="1">
-                <p class="journey-label">The local book catalog</p>
                 <h3>Browse 216 local K–12 titles.</h3>
                 <p>
                   Search by title, subject, or chapter, filter by grade and subject, paginate, and
@@ -224,7 +214,6 @@
                 </p>
               </li>
               <li class="story-scene" data-story-step="2">
-                <p class="journey-label">A dedicated book reader</p>
                 <h3>Open a title in its own reading screen.</h3>
                 <p>
                   Clicking a catalog entry opens its own route with document details and readable
@@ -233,7 +222,6 @@
                 </p>
               </li>
               <li class="story-scene" data-story-step="3">
-                <p class="journey-label">The optional tutor</p>
                 <h3>Choose a grade, subject, and chapter.</h3>
                 <p>
                   The interface is ready for questions, but AI remains disabled and the local book
@@ -241,7 +229,6 @@
                 </p>
               </li>
               <li class="story-scene" data-story-step="4">
-                <p class="journey-label">Separate classroom service</p>
                 <h3>Kolibri is provisioned; course import is next.</h3>
                 <p>
                   The local facility is configured and reachable from the portal. Kolibri keeps its
@@ -253,7 +240,6 @@
           </div>
           <div class="walkthrough-film">
             <div>
-              <p class="section-kicker">Full recording</p>
               <h3>Watch the updated local prototype flow</h3>
               <p>
                 Silent capture of the current portal, catalog, CC0 sample reader, tutor setup, and
@@ -277,7 +263,6 @@
 
       <section class="network-boundary section" aria-labelledby="boundary-title">
         <div class="wrap">
-          <p class="section-kicker">What works without the WAN</p>
           <h2 id="boundary-title">Local access depends on what was prepared.</h2>
           <div class="boundary-columns">
             <div>
@@ -306,7 +291,6 @@
 
       <section class="page-next wrap">
         <div>
-          <p class="section-kicker">Where the build stands</p>
           <h2>See what works today and what still needs proof.</h2>
           <p>The project status page separates software checks from school acceptance.</p>
         </div>

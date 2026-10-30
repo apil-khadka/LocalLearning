@@ -6,10 +6,10 @@ This record describes software checks, not acceptance of a school deployment.
 ## Current software and service state
 
 `make check`, the frontend Prettier check, and `make build` passed.
-`make test` passed with 58 backend tests and 21 browser cases; 2 opt-in live-service backend tests and 7 browser cases were skipped, including 6 production checks that require `DEPLOYMENT_URL` and 1 desktop-only mobile-navigation case.
+`make test` passed with 58 backend tests and 26 browser cases; 2 opt-in live-service backend tests and 6 production browser cases were skipped because they require `DEPLOYMENT_URL`.
 A full Playwright run with `DEPLOYMENT_URL` passed 27 tests against the rebuilt local containers, with 1 expected desktop-only mobile-navigation skip.
 A production-container run passed the portal boundary, tutor Markdown, app-shell cache, and PDF preview policy checks at desktop and Android-sized viewports.
-Browser coverage also checks that the desktop sidebar uses the one-word label, mobile navigation has exactly three links, and the full logo appears in the shared footer.
+Browser coverage checks the full-width sticky navbar at desktop, tablet, and phone sizes, keeps its three learner links in the navbar, and places the brand, connection state, and language toggle in the shared footer.
 The GitHub Actions backend, frontend, and container jobs passed for commit `da29f812ccbd1289427c5a60bfbd643f01789296` in [run 41062097349](https://github.com/apil-khadka/LocalLearning/actions/runs/41062097349).
 
 The OpenAI-compatible provider has mocked contract coverage, and one live non-identifying request to the requested `meta-models/muse-spark-open-1026` model returned HTTP 200.
@@ -37,7 +37,7 @@ Project NOMAD is not installed or integrated in the current test environment.
 | Check | Result | Boundary |
 | --- | --- | --- |
 | Backend tests and lint | 58 tests passed, 2 opt-in tests skipped | Live Ollama and Qdrant checks require explicit service configuration. |
-| Browser suite | 21 passed, 7 skipped | Tests use isolated APIs and test doubles; 6 production checks require `DEPLOYMENT_URL`, and 1 mobile-navigation test is desktop-only. |
+| Browser suite | 26 passed, 6 skipped | Tests use isolated APIs and test doubles; six production checks require `DEPLOYMENT_URL`. |
 | Website accessibility | No axe violations on the overview, learner-flow, and project-status pages | Automated WCAG A/AA checks run at desktop and Android-sized browser viewports; manual review is still required. |
 | Production portal checks | 6 desktop and Android-sized checks passed | Built containers render the student portal, formatted tutor answers, same-origin PDF preview policy, and no-cache app-shell responses. |
 | Static checks and build | `make check`, Prettier, and `make build` passed | Ruff, Python formatting, TypeScript, ESLint, frontend production build, and both Docker image builds. |

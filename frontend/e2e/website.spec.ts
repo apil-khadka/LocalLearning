@@ -187,7 +187,7 @@ test('new public pages describe the learner flow and current project state', asy
   await expect(page.getByRole('heading', { level: 1 })).toContainText('school pilot still ahead')
   await expect(page.locator('.status-row').first()).toContainText('216 CDC PDFs')
   await expect(page.locator('.status-row').first()).toContainText('Grade 12')
-  await expect(page.locator('.verification-list')).toContainText('24')
+  await expect(page.locator('.verification-list')).toContainText('26')
   await expect(
     page.getByRole('heading', { name: 'Import reviewed Kolibri courses and create school roles' }),
   ).toBeVisible()
@@ -207,7 +207,7 @@ test('new public pages describe the learner flow and current project state', asy
 
   await page.getByLabel('Main').getByRole('link', { name: 'Kolibri' }).click()
   await expect(page).toHaveURL(/\/kolibri\/$/)
-  await expect(page.getByRole('heading', { level: 1 })).toContainText('Ready-made tools')
+  await expect(page.getByRole('heading', { level: 1 })).toContainText('Kolibri brings lessons')
   for (const material of [
     'Videos',
     'Audio',
@@ -240,5 +240,60 @@ test('new public pages describe the learner flow and current project state', asy
   ).toEqual([])
   expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true)
   await page.screenshot({ path: testInfo.outputPath('kolibri-guide.png'), fullPage: true })
+  expect(errors).toEqual([])
+})
+
+test('public site navigation stays legible at tablet and phone widths', async ({ page }) => {
+  const errors: string[] = []
+  await serveSite(page, errors)
+
+  for (const width of [768, 390]) {
+    await page.setViewportSize({ width, height: 900 })
+
+    for (const route of ['/', '/how-it-works/', '/kolibri/', '/project/']) {
+      await page.goto(`https://digital-himalaya.test${route}`)
+      const nav = page.locator('header.site-header nav[aria-label="Main"]')
+      const linkStyles = await nav.getByRole('link').evaluateAll((links) =>
+        links.map((link) => ({
+          top: link.getBoundingClientRect().top,
+          whiteSpace: getComputedStyle(link).whiteSpace,
+        })),
+      )
+
+      expect(
+        linkStyles.every((link) => link.whiteSpace === 'nowrap'),
+        JSON.stringify(linkStyles),
+      ).toBe(true)
+      expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(
+        true,
+      )
+
+      if (width === 768) {
+        const tops = linkStyles.map((link) => link.top)
+        expect(Math.max(...tops) - Math.min(...tops)).toBeLessThan(2)
+      }
+
+      if (width === 390 && route === '/') {
+        const learnerRows = await page.locator('.learners .device-node').evaluateAll((nodes) =>
+          nodes.map((node) => {
+            const rect = node.getBoundingClientRect()
+            return { top: rect.top, bottom: rect.bottom }
+          }),
+        )
+        const wifiLabel = await page.locator('.network-link small').evaluate((node) => {
+          const rect = node.getBoundingClientRect()
+          return { top: rect.top, bottom: rect.bottom }
+        })
+        const serverTop = await page
+          .locator('.server-node')
+          .evaluate((node) => node.getBoundingClientRect().top)
+
+        expect(learnerRows[0].bottom).toBeLessThan(learnerRows[1].top)
+        expect(learnerRows[1].bottom).toBeLessThan(wifiLabel.top)
+        expect(wifiLabel.bottom).toBeLessThan(serverTop)
+      }
+    }
+  }
+
   expect(errors).toEqual([])
 })
