@@ -18,8 +18,9 @@ AI is disabled by default and remained disabled after the live request.
 The local `.env` is ignored by Git, and credentials are not included in the public repository.
 
 The optional Kolibri 0.19.5 Compose service was started locally with persistent storage and reported reachable from the API and student portal.
-The bootstrap now creates a formal `Digital Himalaya Dev School` facility and `devadmin` super-admin on a fresh volume after a local password is provided.
-The service is currently reachable, but first-run provisioning is pending because no password has been entered; no facility account, learner account, or course channel has been created yet.
+The local volume now contains a formal `Digital Himalaya Dev School` facility and a `devadmin` super-admin account.
+The generated password and access note are stored only under ignored `private-local/` files, and the bootstrap preserves the provisioned data when rerun.
+No learner accounts or course channels have been imported yet.
 The staff workspace includes an English/Nepali import and update checklist, and the [Kolibri operations guide](KOLIBRI_GUIDE.md) covers rights review, offline imports, channel updates, and post-update checks.
 
 No `QDRANT_URL` or embedding service is configured in the current local stack, so private books are stored in the library but are not indexed for tutor retrieval.
@@ -42,7 +43,7 @@ Project NOMAD is not installed or integrated in the current test environment.
 | Static checks and build | `make check`, Prettier, and `make build` passed | Ruff, Python formatting, TypeScript, ESLint, frontend production build, and both Docker image builds. |
 | Live hosted chat request | One request to the requested model returned HTTP 200 | The result was general, without textbook grounding; AI was disabled immediately afterward. |
 | Qdrant retrieval | Earlier protocol test passed against a disposable Qdrant v1.15.5 container | Deterministic embedding fixtures validate storage and filter isolation, not semantic relevance; current local Qdrant is unconfigured. |
-| Kolibri | API reports the optional service reachable; first-run provisioning waits for a local password | No facility, learner accounts, or course channels have been created; target Ubuntu hardware still needs verification. |
+| Kolibri | Formal local facility and `devadmin` account provisioned; API reports the service reachable | No learner accounts or course channels have been imported; target Ubuntu hardware still needs verification. |
 | Student and staff boundary | Student `/staff` returns 404; staff route returns 200 on loopback | Tests verify application listeners, not school router or firewall configuration. |
 | Private material exclusion | Source attachments, `.env`, dependencies, generated output, and all 216 downloaded CDC PDFs are ignored | Review staged files before each commit. |
 
