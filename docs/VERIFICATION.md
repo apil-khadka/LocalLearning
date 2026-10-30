@@ -7,7 +7,8 @@ This record describes software checks, not acceptance of a school deployment.
 
 `make check`, the frontend Prettier check, and `make build` passed.
 `make test` passed with 31 backend tests and 17 browser tests; 2 opt-in live-service backend tests and 7 deployment-specific browser cases were skipped.
-A separate production-container run passed all 4 desktop and Android-sized tutor Markdown and app-shell cache regression checks.
+A production-container run passed all 6 desktop and Android-sized portal, tutor Markdown, and app-shell cache checks.
+Browser coverage also checks that the desktop sidebar uses the one-word label, mobile navigation has exactly three links, and the full logo appears in the shared footer.
 The full Playwright suite with `DEPLOYMENT_URL` also passed earlier against the rebuilt local containers, with 21 passed and 1 expected desktop-only mobile-navigation skip.
 The GitHub Actions backend, frontend, and container jobs passed for commit `da29f812ccbd1289427c5a60bfbd643f01789296` in [run 41062097349](https://github.com/apil-khadka/LocalLearning/actions/runs/41062097349).
 
@@ -32,7 +33,7 @@ Project NOMAD is not installed or integrated in the current test environment.
 | Backend tests and lint | 31 tests passed, 2 opt-in tests skipped | Live Ollama and Qdrant checks require explicit service configuration. |
 | Browser suite | 17 passed, 7 skipped | Tests use isolated APIs and test doubles; deployment-only checks require `DEPLOYMENT_URL`. |
 | Website accessibility | No axe violations on the overview, learner-flow, and project-status pages | Automated WCAG A/AA checks run at desktop and Android-sized browser viewports; manual review is still required. |
-| Production tutor regressions | 4 desktop and Android-sized checks passed | Built containers render Markdown headings, bold text, lists, and no-cache app-shell responses. |
+| Production portal checks | 6 desktop and Android-sized checks passed | Built containers render the student portal, formatted tutor answers, and no-cache app-shell responses. |
 | Static checks and build | `make check`, Prettier, and `make build` passed | Ruff, Python formatting, TypeScript, ESLint, frontend production build, and both Docker image builds. |
 | Live hosted chat request | One request to the requested model returned HTTP 200 | The result was general, without textbook grounding; AI was disabled immediately afterward. |
 | Qdrant retrieval | Earlier protocol test passed against a disposable Qdrant v1.15.5 container | Deterministic embedding fixtures validate storage and filter isolation, not semantic relevance; current local Qdrant is unconfigured. |

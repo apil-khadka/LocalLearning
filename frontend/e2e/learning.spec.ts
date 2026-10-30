@@ -136,11 +136,18 @@ test('desktop sidebar collapses to an icon rail and remembers the choice', async
 
   if (width <= 640) {
     await expect(toggle).not.toBeVisible()
-    await expect(page.locator('.brand-label')).toHaveText('Digital Himalaya')
+    await expect(page.locator('.sidebar-head')).not.toBeVisible()
+    await expect(sidebar.getByRole('navigation').getByRole('link')).toHaveCount(3)
+    await expect(page.locator('.footer-brand')).toContainText('Digital Himalaya')
+    await expect(page.locator('.footer-brand img')).toBeVisible()
     await expect(sidebar.getByRole('link', { name: 'AI tutor' })).toBeVisible()
     return
   }
 
+  await expect(page.locator('.brand-label')).toHaveText('Himalaya')
+  await expect(page.locator('.footer-brand')).toContainText('Digital Himalaya')
+  await expect(page.locator('.sidebar .brand img')).toHaveCount(0)
+  await expect(page.locator('.footer-brand img')).toBeVisible()
   await expect(toggle).toHaveAccessibleName('Collapse sidebar')
   await expect(toggle).toHaveAttribute('aria-pressed', 'false')
   await expect(sidebar).toHaveCSS('width', width <= 850 ? '190px' : '226px')
@@ -169,6 +176,10 @@ test('desktop sidebar collapses to an icon rail and remembers the choice', async
 test('mobile navigation stays available while scrolling', async ({ page }) => {
   test.skip((page.viewportSize()?.width ?? 0) > 640, 'The desktop navigation uses a fixed sidebar.')
   await page.goto('/')
+  await expect(page.locator('.sidebar-head')).not.toBeVisible()
+  await expect(page.getByRole('navigation').getByRole('link')).toHaveCount(3)
+  await expect(page.locator('.footer-brand')).toContainText('Digital Himalaya')
+  await expect(page.locator('.footer-brand img')).toBeVisible()
   await page.evaluate(() => window.scrollTo({ top: 1000, behavior: 'instant' }))
   await expect
     .poll(() =>

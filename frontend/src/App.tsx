@@ -1,12 +1,5 @@
 import { useCallback, useEffect, useState } from 'react'
-import {
-  BookOpen,
-  ChatCircleDots,
-  House,
-  Mountains as MountainIcon,
-  SidebarSimple,
-  WifiHigh,
-} from '@phosphor-icons/react'
+import { BookOpen, ChatCircleDots, House, SidebarSimple, WifiHigh } from '@phosphor-icons/react'
 import * as ToggleGroup from '@radix-ui/react-toggle-group'
 import { Link, NavLink, Route, Routes } from 'react-router-dom'
 import { api, type Services } from './lib/api'
@@ -69,11 +62,13 @@ export default function App() {
       </a>
       <aside className="sidebar">
         <div className="sidebar-head">
-          <Link className="brand" to="/" aria-label={`Digital Himalaya - ${t.home}`}>
-            <img src="/brand/digital-himalaya-mark.png" width="44" height="44" alt="" />
-            <span className="brand-label">
-              Digital <strong>Himalaya</strong>
-            </span>
+          <Link
+            className="brand"
+            to="/"
+            aria-label={`Digital Himalaya - ${t.home}`}
+            title={sidebarCollapsed ? 'Digital Himalaya' : undefined}
+          >
+            <span className="brand-label">Himalaya</span>
           </Link>
           <button
             type="button"
@@ -117,10 +112,6 @@ export default function App() {
             <span className="nav-label">{t.books}</span>
           </NavLink>
         </nav>
-        <div className="sidebar-note">
-          <MountainIcon size={32} aria-hidden="true" />
-          <p>{t.localNote}</p>
-        </div>
       </aside>
       <div className="workspace">
         <header className="topbar">
@@ -170,9 +161,17 @@ export default function App() {
             />
           </Routes>
         </main>
-        <footer>
-          <span>{t.localNote}</span>
-          <span>{t.connectionNote}</span>
+        <footer className="app-footer">
+          <div className="footer-brand">
+            <img src="/brand/digital-himalaya-mark.png" width="44" height="44" alt="" />
+            <span>
+              Digital <strong>Himalaya</strong>
+            </span>
+          </div>
+          <div className="footer-details">
+            <span>{t.localNote}</span>
+            <span>{t.connectionNote}</span>
+          </div>
         </footer>
       </div>
     </div>

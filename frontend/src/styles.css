@@ -191,9 +191,6 @@ small,
   font-size: 1.1rem;
   min-width: 0;
 }
-.brand strong {
-  font-size: 1.4rem;
-}
 .brand-label {
   max-width: 110px;
   overflow: hidden;
@@ -202,17 +199,7 @@ small,
     max-width 220ms ease,
     opacity 120ms ease,
     visibility 0s linear 0s;
-}
-.brand img {
-  display: block;
-  flex: 0 0 auto;
-  padding: 3px;
-  border-radius: 10px;
-  background: #f4f7f4;
-  transition:
-    width 220ms ease,
-    height 220ms ease,
-    padding 220ms ease;
+  font-weight: 700;
 }
 .sidebar-toggle {
   min-width: 38px;
@@ -274,16 +261,6 @@ small,
     opacity 120ms ease,
     visibility 0s linear 0s;
 }
-.sidebar-note {
-  margin-top: auto;
-  padding: 32px 12px 0;
-  color: #c1d6e4;
-  font-size: 0.85rem;
-}
-.sidebar-note p {
-  margin-top: 9px;
-  max-width: 15ch;
-}
 .workspace {
   min-width: 0;
   width: calc(100% - var(--sidebar-width));
@@ -302,11 +279,6 @@ small,
   }
   .app-shell.is-sidebar-collapsed .brand {
     gap: 0;
-  }
-  .app-shell.is-sidebar-collapsed .brand img {
-    width: 32px;
-    height: 32px;
-    padding: 2px;
   }
   .app-shell.is-sidebar-collapsed .brand-label {
     max-width: 0;
@@ -369,46 +341,16 @@ small,
     transform: translate(0, -50%);
     transition-delay: 0s;
   }
-  .app-shell.is-sidebar-collapsed .sidebar-note {
-    display: flex;
-    align-items: center;
-    padding-right: 0;
-    padding-left: 0;
-  }
-  .app-shell.is-sidebar-collapsed .sidebar-note > svg {
-    flex-shrink: 0;
-  }
-  .app-shell.is-sidebar-collapsed .sidebar-note p {
-    max-width: 0;
-    max-height: 0;
-    margin: 0;
-    overflow: hidden;
-    opacity: 0;
-    visibility: hidden;
-    transition:
-      max-width 180ms ease,
-      max-height 180ms ease,
-      opacity 120ms ease,
-      margin 180ms ease,
-      visibility 0s linear 180ms;
-  }
-}
-.sidebar-note p {
-  transition:
-    max-height 180ms ease,
-    opacity 120ms ease,
-    margin 180ms ease;
 }
 @media (prefers-reduced-motion: reduce) {
   .sidebar,
   .workspace,
   .sidebar-toggle,
   .brand-label,
-  .brand img,
   .nav-label,
   .sidebar-nav a,
   .sidebar-nav a::after,
-  .sidebar-note p {
+  .footer-brand img {
     transition: none;
   }
 }
@@ -647,6 +589,29 @@ footer {
   border-top: 1px solid var(--line);
   color: var(--muted);
   font-size: 0.78rem;
+}
+.footer-brand {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex: 0 0 auto;
+  color: var(--ink);
+  font-size: 0.9rem;
+  font-weight: 600;
+}
+.footer-brand img {
+  display: block;
+  flex: 0 0 auto;
+  border-radius: 12px;
+  background: #f4f7f4;
+}
+.footer-brand strong {
+  font-size: 1rem;
+}
+.footer-details {
+  display: grid;
+  gap: 4px;
+  text-align: right;
 }
 .page-heading {
   margin: 0 0 32px;
@@ -1021,34 +986,11 @@ footer {
     top: 0;
     width: 100%;
     height: auto;
-    padding: 18px 20px 0;
+    padding: 0 12px;
     transition: none;
   }
   .sidebar-head {
-    justify-content: flex-start;
-    margin-bottom: 18px;
-  }
-  .brand {
-    padding: 0;
-    font-size: 0.9rem;
-  }
-  .brand strong {
-    font-size: 1.15rem;
-  }
-  .brand br {
     display: none;
-  }
-  .brand span {
-    display: flex;
-    gap: 5px;
-  }
-  .brand-label {
-    max-width: none;
-    overflow: visible;
-  }
-  .brand svg {
-    width: 30px;
-    height: 30px;
   }
   .sidebar-toggle {
     display: none;
@@ -1056,12 +998,12 @@ footer {
   .sidebar-nav {
     display: flex;
     gap: 6px;
-    padding-bottom: 12px;
+    padding: 8px 0 10px;
   }
   .sidebar-nav a {
     flex: 1;
     justify-content: center;
-    padding: 10px 5px;
+    padding: 12px 5px;
     gap: 7px;
     font-size: 0.8rem;
   }
@@ -1073,9 +1015,6 @@ footer {
     max-width: none;
     opacity: 1;
     visibility: visible;
-  }
-  .sidebar-note {
-    display: none;
   }
   .workspace {
     width: 100%;
@@ -1149,10 +1088,13 @@ footer {
     padding: 20px;
     gap: 12px;
   }
-  footer {
+  .app-footer {
     display: grid;
-    gap: 6px;
+    gap: 12px;
     margin: 0 20px;
+  }
+  .footer-details {
+    text-align: left;
   }
   .filter-row {
     gap: 12px;
