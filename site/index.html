@@ -1,0 +1,285 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="theme-color" content="#143a54" />
+    <meta
+      name="description"
+      content="Digital Himalaya is building an offline-first school learning platform in Nepal. Explore the working foundation, network architecture, and plan for a carefully tested local deployment."
+    />
+    <title>Digital Himalaya - Learning within reach</title>
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <a class="skip" href="#main">Skip to content</a>
+    <header class="site-header wrap">
+      <a class="brand" href="#main" aria-label="Digital Himalaya home"
+        ><svg viewBox="0 0 46 38" width="42" height="35" fill="none" aria-hidden="true">
+          <path
+            d="M2 34 18 5l10 17 6-10 11 22H2Z"
+            fill="#dcebf4"
+            stroke="currentColor"
+            stroke-width="2.5"
+            stroke-linejoin="round"
+          />
+          <path
+            d="m12 16 6-11 7 12-7-3-6 2Z"
+            fill="white"
+            stroke="currentColor"
+            stroke-width="2"
+            stroke-linejoin="round"
+          /></svg
+        ><span>Digital <strong>Himalaya</strong></span></a
+      >
+      <nav aria-label="Main">
+        <a href="#approach">Our approach</a><a href="#architecture">Architecture</a
+        ><a href="#roadmap">The plan</a
+        ><a class="repo-link" href="https://github.com/apil-khadka/LocalLearning"
+          >View on GitHub <span aria-hidden="true">↗</span></a
+        >
+      </nav>
+    </header>
+    <main id="main">
+      <section class="hero wrap">
+        <div class="hero-copy">
+          <p class="project-status"><span></span>Open-source project / software foundation</p>
+          <h1>Learning shouldn’t<br />depend on a signal.</h1>
+          <p class="lead">
+            A school library, lessons, and a carefully supervised AI tutor. Hosted at school.
+            Reached over Wi-Fi. Built for places where the internet cannot be taken for granted.
+          </p>
+          <div class="actions">
+            <a class="button primary" href="#roadmap">Explore the build plan</a
+            ><a
+              class="button secondary"
+              href="https://github.com/apil-khadka/LocalLearning#run-locally"
+              >Run the project</a
+            >
+          </div>
+          <p class="honesty">
+            Under development. School deployment and real-model educational review are still ahead.
+          </p>
+        </div>
+        <div class="landscape" aria-hidden="true">
+          <svg viewBox="0 0 520 460" fill="none">
+            <circle cx="380" cy="92" r="42" fill="#e8bf65" />
+            <path d="M0 460 205 70l116 193 66-120 133 317H0Z" fill="#c4dbe8" />
+            <path d="m205 70-57 106 55-26 30 35 22-31Z" fill="#f7fbff" />
+            <path d="m387 143-35 65 35-16 26 24 15-24Z" fill="#f7fbff" />
+            <path d="M0 460 100 248l116 212Zm112 0 193-236 215 236Z" fill="#8fb6c8" />
+            <path d="m305 224-46 56 42-16 32 24 15-17Z" fill="#e3eff5" />
+            <path d="M0 460v-82c95-12 160 23 227 60 103-106 183-122 293-57v79H0Z" fill="#537f96" />
+            <path d="M0 460v-26c132-30 244 29 359-10 58-20 107-13 161-5v41H0Z" fill="#315c75" />
+            <path
+              d="M210 460c36-46 65-65 86-68 17-3 21 5 4 17-18 13-20 22-10 30l27 21"
+              fill="#cadce3"
+            />
+            <path d="M378 385v-41l30-22 30 22v41Z" fill="#fcfcfd" />
+            <path
+              d="m371 345 37-29 37 29"
+              stroke="#204b64"
+              stroke-width="7"
+              stroke-linejoin="round"
+            />
+            <path d="M402 385v-24h13v24" fill="#204b64" />
+            <path d="M384 352h9v9h-9Zm39 0h9v9h-9Z" fill="#8fb6c8" />
+          </svg>
+          <div class="landscape-caption">
+            <span class="small-signal" aria-hidden="true">◉</span>
+            <div>
+              <strong>One local network.</strong><span>A whole school of possibilities.</span>
+            </div>
+          </div>
+        </div>
+      </section>
+      <section class="approach section wrap" id="approach">
+        <div class="section-intro">
+          <p class="section-kicker">The approach</p>
+          <h2>Put the resources<br />where the learners are.</h2>
+          <p>
+            The school server does the work. A phone, laptop, or classroom display opens the same
+            local website. After provisioning, core learning should stay inside the school network.
+          </p>
+        </div>
+        <div class="resource-overview">
+          <article>
+            <span class="resource-mark blue" aria-hidden="true">Aa</span>
+            <div>
+              <h3>A library that stays nearby</h3>
+              <p>
+                Approved textbooks and notes, organized by grade and subject, with local file
+                access.
+              </p>
+            </div>
+          </article>
+          <article>
+            <span class="resource-mark green" aria-hidden="true">?</span>
+            <div>
+              <h3>A tutor with sources to check</h3>
+              <p>
+                Local model answers with retrieved page references. Optional, teacher supervised,
+                and off by default.
+              </p>
+            </div>
+          </article>
+          <article>
+            <span class="resource-mark purple" aria-hidden="true">W</span>
+            <div>
+              <h3>Reference and lessons</h3>
+              <p>
+                Connect verified Kiwix and Kolibri collections. No resource is called ready just
+                because a link exists.
+              </p>
+            </div>
+          </article>
+        </div>
+      </section>
+      <section class="architecture section" id="architecture">
+        <div class="wrap">
+          <div class="section-heading">
+            <div>
+              <p class="section-kicker">Inside the school network</p>
+              <h2>A clear path.<br />A protected boundary.</h2>
+            </div>
+            <p>
+              Student access, staff administration, and model services have different jobs. The
+              design keeps those boundaries explicit.
+            </p>
+          </div>
+          <div class="route-picker" role="group" aria-label="Explore a network path">
+            <button aria-pressed="true" data-route="student">Student learning</button
+            ><button aria-pressed="false" data-route="tutor">A tutor question</button
+            ><button aria-pressed="false" data-route="staff">Staff administration</button>
+          </div>
+          <div class="flow" id="network-flow" aria-live="polite"></div>
+          <p class="network-caption" id="network-caption"></p>
+          <div class="network-links">
+            <a href="assets/school-network.svg" target="_blank" rel="noreferrer"
+              >Open the full network drawing <span aria-hidden="true">↗</span></a
+            ><a href="https://github.com/apil-khadka/LocalLearning/blob/main/docs/NETWORK.md"
+              >Addressing and firewall policy</a
+            >
+          </div>
+          <p class="small-note">
+            Proposed topology: management VLAN 10, student VLAN 20, services VLAN 30. Actual
+            hardware configuration and school-network validation are pending.
+          </p>
+        </div>
+      </section>
+      <section class="section wrap" id="roadmap">
+        <div class="section-heading">
+          <div>
+            <p class="section-kicker">The build plan</p>
+            <h2>Progress with evidence.<br />Deployment with care.</h2>
+          </div>
+          <p>
+            A working interface is the beginning. Real sources, safe access, teacher review, and
+            recovery tests are the gates that follow.
+          </p>
+        </div>
+        <ol class="roadmap">
+          <li>
+            <span class="milestone done">Foundation built</span>
+            <div>
+              <h3>The portal and service contracts</h3>
+              <p>
+                React + FastAPI, English/Nepali interface, protected chapter import, page-aware
+                retrieval, containers, and automated workflow tests.
+              </p>
+            </div>
+          </li>
+          <li>
+            <span class="milestone next">Next integration gate</span>
+            <div>
+              <h3>Real curriculum, real local inference</h3>
+              <p>
+                Connect Ollama and Qdrant on target hardware. Import an approved chapter. Check
+                cited answers, no-match cases, and Nepali quality.
+              </p>
+            </div>
+          </li>
+          <li>
+            <span class="milestone">Deployment gate</span>
+            <div>
+              <h3>Prove the school network</h3>
+              <p>
+                Test phones with WAN and cellular off. Verify staff isolation, downloaded
+                articles/video, library capacity, and model latency separately.
+              </p>
+            </div>
+          </li>
+          <li>
+            <span class="milestone">Pilot gate</span>
+            <div>
+              <h3>Put teachers and continuity first</h3>
+              <p>
+                Review educational safety, train operators, test backups and UPS recovery, and keep
+                AI disabled if its review does not pass.
+              </p>
+            </div>
+          </li>
+        </ol>
+      </section>
+      <section class="evidence section wrap" id="evidence">
+        <div>
+          <p class="section-kicker">What the code has proved</p>
+          <h2>Software checks,<br />with their limits visible.</h2>
+          <p>
+            Automated tests exercise the application and its failure states. They do not establish
+            educational quality or replace a physical offline demonstration.
+          </p>
+        </div>
+        <div class="evidence-list">
+          <p>
+            <span class="evidence-dot"></span><strong>API and ingestion workflows</strong
+            ><span
+              >Authorization, files, page boundaries, filters, outages, and bounded
+              concurrency.</span
+            >
+          </p>
+          <p>
+            <span class="evidence-dot"></span><strong>Real vector database integration</strong
+            ><span>Qdrant ingestion, stable retry, retrieval, and grade isolation.</span>
+          </p>
+          <p>
+            <span class="evidence-dot"></span><strong>Desktop and mobile browser flows</strong
+            ><span
+              >Staff import to textbook to tutor, language switching, and useful failure
+              states.</span
+            >
+          </p>
+          <p class="pending">
+            <span class="evidence-dot"></span
+            ><strong>Field and real-model acceptance pending</strong
+            ><span
+              >School hardware, teacher/fluent Nepali review, WAN-off testing, and power
+              recovery.</span
+            >
+          </p>
+        </div>
+      </section>
+      <section class="getting-started wrap">
+        <div>
+          <h2>Build it in the open.<br />Keep school data private.</h2>
+          <p>
+            The public repository contains code, reproducible setup, and implementation
+            documentation. School records, credentials, and original internal planning materials
+            stay out of Git.
+          </p>
+        </div>
+        <a class="button light" href="https://github.com/apil-khadka/LocalLearning"
+          >Explore the repository <span aria-hidden="true">↗</span></a
+        >
+      </section>
+    </main>
+    <footer class="wrap">
+      <a class="brand" href="#main">Digital <strong>Himalaya</strong></a>
+      <p>Built for local learning. Software licensed under Apache 2.0.</p>
+      <a href="https://github.com/apil-khadka/LocalLearning/blob/main/docs/DEMO_SCRIPT.md"
+        >Acceptance checklist</a
+      >
+    </footer>
+    <script src="site.js"></script>
+  </body>
+</html>

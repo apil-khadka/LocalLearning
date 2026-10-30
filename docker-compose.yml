@@ -1,0 +1,38 @@
+name: digital-himalaya
+services:
+  api:
+    image: digital-himalaya-api:0.1.0
+    build:
+      context: .
+      dockerfile: backend/Dockerfile
+    env_file: .env
+    environment:
+      DATA_DIR: /data
+    volumes:
+      - content-data:/data
+    extra_hosts:
+      - host.docker.internal:host-gateway
+    restart: unless-stopped
+    init: true
+    cap_drop: [ALL]
+    security_opt: [no-new-privileges:true]
+    healthcheck:
+      test: [CMD, .venv/bin/python, -c, "import urllib.request; urllib.request.urlopen('http://127.0.0.1:8000/api/health')"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+  portal:
+    image: digital-himalaya-portal:0.1.0
+    build:
+      context: .
+      dockerfile: frontend/Dockerfile
+    ports:
+      - "${PORTAL_BIND:-127.0.0.1}:${PORTAL_PORT:-8090}:8080"
+      - "127.0.0.1:${STAFF_PORT:-8091}:8081"
+    depends_on:
+      api:
+        condition: service_healthy
+    restart: unless-stopped
+    security_opt: [no-new-privileges:true]
+volumes:
+  content-data:

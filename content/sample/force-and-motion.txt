@@ -1,0 +1,16 @@
+Force and motion - original demonstration note
+Grade 8 / Science / Force and Motion
+
+This is a short demonstration note, not an official curriculum textbook.
+
+A force is a push or a pull. The resultant force on an object is the combined effect of all forces acting on it. If those forces balance, the object does not accelerate.
+
+Newton's second law relates resultant force, mass and acceleration: F = m × a. Force is measured in newtons (N), mass in kilograms (kg), and acceleration in metres per second squared (m/s²).
+
+Suppose a cart has a mass of 4 kg. A resultant horizontal force of 8 N acts on the cart. Its acceleration is a = F / m = 8 / 4 = 2 m/s². If the mass doubles while the same resultant force acts, acceleration becomes 1 m/s². This calculation treats the stated force as the resultant force after friction and any other forces have been combined.
+
+A loaded cart needs more resultant force than an empty cart to reach the same acceleration. This is because the loaded cart has more mass.
+
+Check your understanding: What resultant force is needed to accelerate a 3 kg cart at 2 m/s²? Explain your reasoning using the relationship between force, mass and acceleration.
+
+Attribution: Digital Himalaya demonstration content. Dedicated to the public domain under CC0 1.0. See content/sample/LICENSE.

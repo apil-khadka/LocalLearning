@@ -47,7 +47,7 @@ class LocalServices:
             or any(
                 not isinstance(v, list)
                 or len(v) != len(vectors[0])
-                or not all(isinstance(n, (int, float)) and math.isfinite(n) for n in v)
+                or not all(isinstance(n, int | float) and math.isfinite(n) for n in v)
                 or not any(v)
                 for v in vectors
             )

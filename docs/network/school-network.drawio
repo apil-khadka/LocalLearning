@@ -1,0 +1,71 @@
+<?xml version='1.0' encoding='utf-8'?>
+<mxfile host="app.diagrams.net" type="device">
+  <diagram id="school-network" name="School network">
+    <mxGraphModel dx="1160" dy="900" grid="1" gridSize="10" page="1" pageWidth="1160" pageHeight="900">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+        <mxCell id="wan" value="Internet / update connection&#10;Optional, disconnected for acceptance" style="rounded=1;whiteSpace=wrap;html=0;fillColor=#edf2f7;strokeColor=#9aafbf;fontColor=#18374c;fontSize=14;align=left;spacingLeft=14;" vertex="1" parent="1">
+          <mxGeometry as="geometry" x="430" y="15" width="300" height="65" />
+        </mxCell>
+        <mxCell id="router" value="VLAN-aware router / firewall&#10;Default deny between zones; local DHCP/DNS" style="rounded=1;whiteSpace=wrap;html=0;fillColor=#e7eefb;strokeColor=#9aafbf;fontColor=#18374c;fontSize=14;align=left;spacingLeft=14;" vertex="1" parent="1">
+          <mxGeometry as="geometry" x="400" y="130" width="360" height="90" />
+        </mxCell>
+        <mxCell id="staff" value="Staff / management - VLAN 10&#10;10.42.10.0/24 | gateway .1&#10;Staff Wi-Fi + wired management&#10;SSH to server; no public admin entry" style="rounded=1;whiteSpace=wrap;html=0;fillColor=#e4f2ed;strokeColor=#9aafbf;fontColor=#18374c;fontSize=14;align=left;spacingLeft=14;" vertex="1" parent="1">
+          <mxGeometry as="geometry" x="35" y="300" width="330" height="135" />
+        </mxCell>
+        <mxCell id="students" value="Students - VLAN 20&#10;10.42.20.0/24 | gateway .1&#10;School learning Wi-Fi, client isolation&#10;Portal and approved learning services only" style="rounded=1;whiteSpace=wrap;html=0;fillColor=#e9f1ff;strokeColor=#9aafbf;fontColor=#18374c;fontSize=14;align=left;spacingLeft=14;" vertex="1" parent="1">
+          <mxGeometry as="geometry" x="415" y="300" width="330" height="135" />
+        </mxCell>
+        <mxCell id="server" value="Learning server - VLAN 30&#10;10.42.30.0/24 | gateway .1&#10;Server reserved at 10.42.30.10&#10;Ethernet to managed switch, protected by UPS" style="rounded=1;whiteSpace=wrap;html=0;fillColor=#f4edfb;strokeColor=#9aafbf;fontColor=#18374c;fontSize=14;align=left;spacingLeft=14;" vertex="1" parent="1">
+          <mxGeometry as="geometry" x="795" y="300" width="330" height="135" />
+        </mxCell>
+        <mxCell id="portal" value="Student portal :8090&#10;Nginx serves local React assets + /api&#10;Student listener denies /api/admin and /staff" style="rounded=1;whiteSpace=wrap;html=0;fillColor=#e9f1ff;strokeColor=#9aafbf;fontColor=#18374c;fontSize=14;align=left;spacingLeft=14;" vertex="1" parent="1">
+          <mxGeometry as="geometry" x="40" y="535" width="325" height="100" />
+        </mxCell>
+        <mxCell id="admin" value="Staff portal 127.0.0.1:8091&#10;SSH tunnel from management network&#10;Separate listener + staff Bearer token" style="rounded=1;whiteSpace=wrap;html=0;fillColor=#e4f2ed;strokeColor=#9aafbf;fontColor=#18374c;fontSize=14;align=left;spacingLeft=14;" vertex="1" parent="1">
+          <mxGeometry as="geometry" x="40" y="680" width="325" height="100" />
+        </mxCell>
+        <mxCell id="api" value="FastAPI - private Docker network&#10;Catalog + protected document ingestion&#10;Page-aware RAG + bounded model requests&#10;No published API port; no chat storage" style="rounded=1;whiteSpace=wrap;html=0;fillColor=#edf2f7;strokeColor=#9aafbf;fontColor=#18374c;fontSize=14;align=left;spacingLeft=14;" vertex="1" parent="1">
+          <mxGeometry as="geometry" x="430" y="555" width="310" height="120" />
+        </mxCell>
+        <mxCell id="deps" value="Existing local AI services&#10;Ollama and Qdrant, dedicated dh_ index&#10;Server/backend access only&#10;Never expose management/model ports to pupils" style="rounded=1;whiteSpace=wrap;html=0;fillColor=#f4edfb;strokeColor=#9aafbf;fontColor=#18374c;fontSize=14;align=left;spacingLeft=14;" vertex="1" parent="1">
+          <mxGeometry as="geometry" x="800" y="530" width="320" height="115" />
+        </mxCell>
+        <mxCell id="content" value="Kiwix / Kolibri&#10;Only verified student-safe web endpoints&#10;NOMAD admin remains management-only" style="rounded=1;whiteSpace=wrap;html=0;fillColor=#fff4db;strokeColor=#9aafbf;fontColor=#18374c;fontSize=14;align=left;spacingLeft=14;" vertex="1" parent="1">
+          <mxGeometry as="geometry" x="800" y="700" width="320" height="100" />
+        </mxCell>
+        <mxCell id="edge-0" style="edgeStyle=orthogonalEdgeStyle;rounded=0;endArrow=block;strokeColor=#71859a;" edge="1" parent="1" source="wan" target="router">
+          <mxGeometry as="geometry" relative="1" />
+        </mxCell>
+        <mxCell id="edge-1" style="edgeStyle=orthogonalEdgeStyle;rounded=0;endArrow=block;strokeColor=#71859a;" edge="1" parent="1" source="router" target="staff">
+          <mxGeometry as="geometry" relative="1" />
+        </mxCell>
+        <mxCell id="edge-2" style="edgeStyle=orthogonalEdgeStyle;rounded=0;endArrow=block;strokeColor=#71859a;" edge="1" parent="1" source="router" target="students">
+          <mxGeometry as="geometry" relative="1" />
+        </mxCell>
+        <mxCell id="edge-3" style="edgeStyle=orthogonalEdgeStyle;rounded=0;endArrow=block;strokeColor=#71859a;" edge="1" parent="1" source="router" target="server">
+          <mxGeometry as="geometry" relative="1" />
+        </mxCell>
+        <mxCell id="edge-4" style="edgeStyle=orthogonalEdgeStyle;rounded=0;endArrow=block;strokeColor=#71859a;" edge="1" parent="1" source="students" target="portal">
+          <mxGeometry as="geometry" relative="1" />
+        </mxCell>
+        <mxCell id="edge-5" style="edgeStyle=orthogonalEdgeStyle;rounded=0;endArrow=block;strokeColor=#71859a;" edge="1" parent="1" source="staff" target="admin">
+          <mxGeometry as="geometry" relative="1" />
+        </mxCell>
+        <mxCell id="edge-6" style="edgeStyle=orthogonalEdgeStyle;rounded=0;endArrow=block;strokeColor=#71859a;" edge="1" parent="1" source="portal" target="api">
+          <mxGeometry as="geometry" relative="1" />
+        </mxCell>
+        <mxCell id="edge-7" style="edgeStyle=orthogonalEdgeStyle;rounded=0;endArrow=block;strokeColor=#71859a;" edge="1" parent="1" source="admin" target="api">
+          <mxGeometry as="geometry" relative="1" />
+        </mxCell>
+        <mxCell id="edge-8" style="edgeStyle=orthogonalEdgeStyle;rounded=0;endArrow=block;strokeColor=#71859a;" edge="1" parent="1" source="api" target="deps">
+          <mxGeometry as="geometry" relative="1" />
+        </mxCell>
+        <mxCell id="edge-9" style="edgeStyle=orthogonalEdgeStyle;rounded=0;endArrow=block;strokeColor=#71859a;" edge="1" parent="1" source="server" target="content">
+          <mxGeometry as="geometry" relative="1" />
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>

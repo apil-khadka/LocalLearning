@@ -6,6 +6,7 @@ import re
 import time
 from contextlib import asynccontextmanager
 from pathlib import Path
+from typing import Annotated
 from uuid import uuid4
 
 import httpx
@@ -21,6 +22,12 @@ from app.store import Store
 from app.tutor import answer_question, embedding_identity
 
 logger = logging.getLogger("digital_himalaya")
+if not logger.handlers:
+    handler = logging.StreamHandler()
+    handler.setFormatter(logging.Formatter("%(asctime)s %(levelname)s %(message)s"))
+    logger.addHandler(handler)
+logger.setLevel(logging.INFO)
+logger.propagate = False
 
 
 class RequestBoundary:
@@ -105,6 +112,7 @@ def create_app(settings: Settings | None = None, client: httpx.AsyncClient | Non
         redoc_url=None,
         openapi_url=None,
     )
+    app.add_middleware(RequestBoundary, settings=settings)
 
     @app.middleware("http")
     async def request_log(request, call_next):
@@ -127,8 +135,6 @@ def create_app(settings: Settings | None = None, client: httpx.AsyncClient | Non
             (time.monotonic() - started) * 1000,
         )
         return response
-
-    app.add_middleware(RequestBoundary, settings=settings)
 
     @app.exception_handler(DependencyUnavailable)
     async def dependency_error(request, exc):
@@ -253,7 +259,7 @@ def create_app(settings: Settings | None = None, client: httpx.AsyncClient | Non
 
     @app.post("/api/admin/documents", status_code=201)
     async def import_document(
-        file: UploadFile = File(...),
+        file: Annotated[UploadFile, File()],
         title: str = Form(...),
         grade: int = Form(...),
         subject: str = Form(...),
