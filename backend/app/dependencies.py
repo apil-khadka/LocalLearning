@@ -1,6 +1,7 @@
 import math
 
 import httpx
+from openai import AsyncOpenAI, OpenAIError
 
 from app.config import Settings
 
@@ -12,6 +13,16 @@ class DependencyUnavailable(Exception):
 class LocalServices:
     def __init__(self, settings: Settings, client: httpx.AsyncClient):
         self.settings, self.client = settings, client
+        self.openai_client = None
+        api_key = settings.chat_api_key.get_secret_value()
+        if settings.chat_provider == "openai-compatible" and settings.chat_api_base_url and api_key:
+            self.openai_client = AsyncOpenAI(
+                api_key=api_key,
+                base_url=settings.chat_api_base_url,
+                timeout=settings.chat_timeout_seconds,
+                max_retries=0,
+                http_client=client,
+            )
 
     async def request(self, method: str, url: str, **kwargs):
         if not url.startswith(("http://", "https://")):
@@ -56,6 +67,23 @@ class LocalServices:
         return vectors
 
     async def chat(self, messages: list[dict]) -> str:
+        if self.settings.chat_provider == "openai-compatible":
+            if not self.openai_client:
+                raise DependencyUnavailable("The AI provider is not configured.")
+            try:
+                response = await self.openai_client.chat.completions.create(
+                    model=self.settings.chat_model,
+                    messages=messages,
+                    temperature=0.3,
+                    max_tokens=600,
+                )
+                answer = response.choices[0].message.content
+                if not isinstance(answer, str) or not answer.strip():
+                    raise ValueError("empty reply")
+                return answer
+            except (OpenAIError, IndexError, TypeError, ValueError) as exc:
+                raise DependencyUnavailable("The AI provider could not return an answer.") from exc
+
         data = await self.request(
             "POST",
             self.settings.ollama_base_url + "/api/chat",

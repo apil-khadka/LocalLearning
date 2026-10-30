@@ -5,9 +5,10 @@ The application runs independently of the software that manages the school's off
 
 ## Architecture decision
 
-Use React/TypeScript/Vite for static browser assets, FastAPI for the application API, SQLite/filesystem for the document catalog, Ollama for local inference and embeddings, and a dedicated Qdrant collection for retrieval.
-Use approved local Kiwix and Kolibri destinations for reference articles and courses.
-Reuse NOMAD-managed services where available through documented service interfaces.
+Use React/TypeScript/Vite for static browser assets, FastAPI for the application API, SQLite/filesystem for the document catalog, a switchable Ollama/OpenAI-compatible chat provider, Ollama for local embeddings, and a dedicated Qdrant collection for retrieval.
+Use Kiwix for offline reference articles and Kolibri for classroom courses, learner progress, and assessments.
+The repository provides an optional pinned Kolibri Compose profile and otherwise connects to a verified existing Kolibri service.
+Reuse NOMAD-managed services where available through documented service interfaces instead of installing duplicate services.
 NOMAD is an optional provisioning dependency, not part of the student authentication boundary.
 
 Do not run Open WebUI as a second student-facing chat application in the first release.
@@ -27,7 +28,7 @@ Choose actual model and hardware combinations through measurement, not the names
 
 ## Initial implementation boundaries
 
-The software foundation includes the integration code and test doubles needed to develop without a local model.
+The software foundation includes the integration code and test doubles needed to develop without a local model or API key.
 It does not include a model, vector server, downloaded encyclopedia, video channel, official textbook, school account system, or management VLAN configuration.
 Import is synchronous and bounded to one document at a time in one API process.
 AI requests beyond the configured concurrency limit receive a retry response instead of an unbounded queue.
@@ -41,16 +42,17 @@ Changing embedding model weights, prefixes or dimensions requires an intentional
 
 ## Next priorities
 
-1. Connect one real Ollama instance and Qdrant on target Ubuntu hardware; run the opt-in live-model test.
-2. Import a permitted searchable Grade 8 chapter and prepare in-scope, no-match, Nepali and prompt-injection evaluation questions.
-3. Review the proposed network on actual router/AP hardware and test the firewall from student devices.
-4. Add content withdrawal, bounded background ingestion with recovery, and catalog/index migration before expanding collections.
-5. Measure 12 simultaneous library clients separately from three AI requests; keep AI off if review fails.
-6. Run the complete [offline acceptance script](DEMO_SCRIPT.md), restore drill and operator training before deployment.
+1. Run the OpenAI-compatible chat path against the configured endpoint with non-identifying test prompts, or switch to local Ollama.
+2. Connect a real Ollama embedding service and Qdrant on target Ubuntu hardware; run the opt-in live-service test.
+3. Import a permitted searchable Grade 8 chapter and prepare in-scope, no-match, Nepali and prompt-injection evaluation questions.
+4. Review the proposed network on actual router/AP hardware and test the firewall from student devices.
+5. Add content withdrawal, bounded background ingestion with recovery, and catalog/index migration before expanding collections.
+6. Measure 12 simultaneous library clients separately from three AI requests; keep AI off if review fails.
+7. Run the complete [offline acceptance script](DEMO_SCRIPT.md), restore drill and operator training before deployment.
 
 ## Public website
 
 GitHub Pages serves the static project overview from `site/`.
 It presents the architecture, implementation plan and current evidence without exposing planning attachments or school information.
-It does not run the school API or provide an online AI service.
+It does not run the school API or proxy AI requests.
 The school application is deployed separately on the LAN.

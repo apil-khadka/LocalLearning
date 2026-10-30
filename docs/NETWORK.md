@@ -26,6 +26,7 @@ Do not assume UPS equipment can power a classroom all day.
 
 DHCP and any local DNS must work without WAN.
 Use `http://10.42.30.10:8090` first; configure an appropriate school-controlled DNS name later if supported.
+The optional Kolibri service uses `http://10.42.30.10:8092` and its packaged-content port `8093` by default when `KOLIBRI_BIND` is set to the server address.
 Do not rely on public DNS or cross-VLAN multicast hostname discovery.
 Keep router/AP time locally available where supported and record clock behavior after power loss.
 
@@ -39,17 +40,22 @@ Do not expose router administration, SSH, Docker, NOMAD, Ollama or Qdrant throug
 | --- | --- | --- | --- |
 | Student clients | Student gateway | DHCP and local DNS; local NTP if configured | Basic offline network service |
 | Student clients | `10.42.30.10` | TCP 8090 | Student portal and public application API |
-| Student clients | Verified local content hosts | Only actual Kiwix/Kolibri web ports | Approved reference and lesson access |
+| Student clients | Verified local content hosts | Kiwix web port; Kolibri host ports 8092 and 8093 by default | Approved reference, course, lesson, and packaged-content access |
+| Staff management | Kolibri service host | Kolibri host ports 8092 and 8093 by default | Coach/admin access using Kolibri accounts |
 | Staff management | Router/AP management | Required management protocol only | Authorized network operation |
 | Staff management | Learning server | TCP 22 | SSH and staff portal tunneling |
 | Portal container | API container | TCP 8000 on private Docker network | Same-origin app requests |
 | API process/container | Verified model/vector hosts | Only configured Ollama/Qdrant service ports | Embeddings, inference and retrieval |
+| API process/container | Configured OpenAI-compatible chat provider | DNS plus outbound TCP 443 only when hosted chat is enabled | Optional hosted inference; learner prompts and retrieved excerpts leave the school network |
 | Trusted operator, during provisioning | Approved update destinations | Explicit temporary WAN access | Package, image, model and content downloads |
 
 Do not copy hypothetical content ports into rules.
+If host ports are changed, update the firewall rule to match the Compose mapping.
 The public/probe URL distinction exists because the container may use a different network path from a phone.
 A green server-side probe is not a student-path test.
 Disable WAN forwarding for the offline acceptance session.
+When a hosted chat provider is selected, AI chat will be unavailable without WAN access; the local library remains available.
+Student devices never connect directly to the hosted provider.
 Block student-to-student traffic and all other inter-zone access, including direct access to server management services.
 Check Docker-published ports on the host as well as router ACLs; a host firewall alone may not control every Docker forwarding path.
 

@@ -35,7 +35,8 @@ test('public website explains its limits, diagrams switch, and all local assets 
   await expect(page.getByRole('heading', { level: 1 })).toContainText('Learning shouldn’t')
   await expect(page.getByText('Field and real-model acceptance pending')).toBeVisible()
   await page.getByRole('button', { name: 'A tutor question' }).click()
-  await expect(page.locator('#network-flow')).toContainText('Local AI services')
+  await expect(page.locator('#network-flow')).toContainText('Selected chat provider')
+  await expect(page.locator('#network-caption')).toContainText('hosted provider receives')
   await expect(page.getByRole('button', { name: 'A tutor question' })).toHaveAttribute(
     'aria-pressed',
     'true',

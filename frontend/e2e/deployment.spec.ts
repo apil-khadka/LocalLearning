@@ -23,6 +23,12 @@ test('production bundle runs locally, with separate student and staff boundaries
   await page.goto(base)
   await expect(page.getByText('School server connected', { exact: true })).toBeVisible()
   await expect(page.getByText('Teacher review required', { exact: true })).toBeVisible()
+  if (process.env.KOLIBRI_PUBLIC_URL) {
+    await expect(page.getByRole('link', { name: /Kolibri courses/ })).toHaveAttribute(
+      'href',
+      process.env.KOLIBRI_PUBLIC_URL,
+    )
+  }
   expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true)
   expect(
     (await new AxeBuilder({ page }).withTags(['wcag2a', 'wcag2aa', 'wcag21aa']).analyze())

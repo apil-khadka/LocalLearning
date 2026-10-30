@@ -15,8 +15,11 @@ def create_e2e_app():
         _env_file=None,
         data_dir=Path(tempfile.mkdtemp(prefix="dh-e2e-")),
         ai_enabled=True,
+        chat_provider="ollama",
         admin_token=TOKEN,
         ollama_base_url="http://ollama.test",
         qdrant_url="http://qdrant.test",
+        kolibri_public_url="http://kolibri.test:8080",
+        kolibri_probe_url="http://kolibri.test:8080",
     )
     return create_app(settings, httpx.AsyncClient(transport=httpx.MockTransport(FakeLocalStack())))

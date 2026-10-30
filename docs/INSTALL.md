@@ -10,10 +10,29 @@ Use the [README](../README.md) for local development commands.
 2. Configure the [network boundary](NETWORK.md) before exposing services to students.
 3. If using NOMAD, follow its [official repository instructions](https://github.com/Crosstalk-Solutions/project-nomad) and inspect the installer before running it.
 4. Verify the actual installed Ollama/Qdrant addresses and versions; do not install duplicates automatically.
-5. Download the chosen local language model and embedding model, verify their licenses and run a direct local request.
-6. Download one approved Kiwix article collection, one Kolibri channel with its actual media, and one permitted searchable chapter.
-7. Copy `.env.example` to `.env`; set real local service addresses, a random `ADMIN_TOKEN`, and verified student resource URLs.
-8. Run `docker compose build` and `docker compose up -d --wait` from the repository root.
+5. Choose either local Ollama chat or an OpenAI-compatible chat endpoint, then verify the selected provider with a direct request.
+6. Download the local embedding model only if textbook retrieval is needed, verify its license and run a direct local request.
+7. Download one approved Kiwix article collection, import one reviewed Kolibri channel with its actual media, and select one permitted searchable chapter.
+8. Copy `.env.example` to `.env`; set real service addresses, a random `ADMIN_TOKEN`, and verified student resource URLs.
+9. Run `docker compose build` and `docker compose up -d --wait` from the repository root.
+
+## Kolibri classroom service
+
+The optional `education` Compose profile runs the official Kolibri 0.19.5 container with a persistent `kolibri-data` volume.
+The image listens on ports 8080 and 8081 internally; this project publishes them as host ports 8092 and 8093 by default.
+To use the embedded service locally, set `KOLIBRI_PUBLIC_URL=http://127.0.0.1:8092` and `KOLIBRI_PROBE_URL=http://kolibri:8080` in `.env`, then run `make education-up`.
+Finish Kolibri's own first-run facility setup, create the appropriate coach and learner accounts, and import only reviewed channels using its interface.
+Kolibri channels must be imported from Kolibri Studio, another Kolibri device, or a prepared Kolibri storage drive; this application does not scrape or load course content into Kolibri.
+For a school deployment, change `KOLIBRI_BIND` to the reserved server LAN address and set `KOLIBRI_PUBLIC_URL` to the address reachable by student devices only after firewall review.
+Keep `KOLIBRI_PROBE_URL=http://kolibri:8080` when using the bundled service; for an existing NOMAD-managed Kolibri service, set both URLs to verified addresses and leave the `education` profile stopped.
+Run `make education-down` to stop the bundled Kolibri container while retaining its data volume.
+
+## Project NOMAD compatibility
+
+The current application is not installed, managed or updated by Project NOMAD.
+The two Docker Compose projects can run side by side, but integration requires an operator to verify and enter service URLs manually.
+No NOMAD service discovery, management API or installer integration is implemented.
+Do not duplicate or change existing NOMAD-managed Ollama, Qdrant, Kiwix or Kolibri services as part of this application's setup.
 
 Model defaults are candidates, not a promise of acceptable Nepali or classroom performance.
 The repository does not download models or third-party learning collections automatically.
@@ -33,9 +52,15 @@ Keep each file under 10 MiB and each PDF under 100 pages by default; import chap
 The staff interface reports import failures, while scanned/missing text pages are flagged for OCR.
 Text files have one logical page.
 
-After successful real-service checks and teacher review, set `AI_ENABLED=true` and run `docker compose up -d --force-recreate api`.
+For local chat, set `CHAT_PROVIDER=ollama` and configure `OLLAMA_BASE_URL` and `OLLAMA_MODEL`.
+For an OpenAI-compatible chat API, set `CHAT_PROVIDER=openai-compatible`, `CHAT_API_BASE_URL`, `CHAT_API_KEY`, and `CHAT_MODEL` in the ignored `.env` file.
+For Baseten's selected model, the defaults are `https://inference.baseten.co/v1` and `meta-models/muse-spark-open-1026`.
+After successful provider checks and teacher review, set `AI_ENABLED=true` and run `docker compose up -d --force-recreate api`.
+With the hosted provider enabled, questions, conversation history, and retrieved textbook excerpts leave the school network for that provider.
+Use only test prompts or approved data until provider retention and privacy settings have been reviewed.
 The flag is an operational gate, not proof of safety or a substitute for age controls and supervision.
-There are no student identity or age-verification features in this foundation.
+The Digital Himalaya API does not link to Kolibri identities or provide student age verification.
+Kolibri's own roles and progress remain separate from the tutor and staff token.
 Restrict use to the approved supervised cohort until those controls exist.
 
 Set `PORTAL_BIND` to the actual server LAN address only after firewall checks pass, then recreate the portal container.
@@ -51,7 +76,15 @@ mkdir -p backups
 docker save digital-himalaya-api:0.1.0 digital-himalaya-portal:0.1.0 -o backups/application-images.tar
 ```
 
-Load on the target with `docker load -i backups/application-images.tar` and start with `docker compose up -d --no-build`.
+When using the optional Kolibri profile, also pull its pinned image while online and include it in the transfer archive:
+
+```sh
+docker compose --profile education pull kolibri
+docker save digital-himalaya-api:0.1.0 digital-himalaya-portal:0.1.0 ghcr.io/learningequality/kolibri:0.19.5 -o backups/application-images.tar
+```
+
+Load on the target with `docker load -i backups/application-images.tar`.
+Start the base application with `docker compose up -d --no-build` or include Kolibri with `docker compose --profile education up -d --no-build` after preparing its URLs in `.env`.
 Model weights, Qdrant storage, Kiwix ZIMs and Kolibri channels are separate artifacts and must be transferred/provisioned using their service workflows.
 Building an ARM image on a Mac does not create an x86 image for an Ubuntu mini PC.
 Build for the target architecture before disconnecting internet and verify startup there.
@@ -59,6 +92,7 @@ Build for the target architecture before disconnecting internet and verify start
 ## Backup and restore
 
 Back up the application catalog/files and Qdrant index as a coordinated set while imports and chat are stopped.
+When Kolibri is enabled, back up its `kolibri-data` volume separately using a stopped-volume or Kolibri-supported export procedure so learner records, facility configuration, and imported channels stay together.
 Keep `.env` and school/network configuration in separate encrypted private backups.
 Never put backups in the public repository.
 

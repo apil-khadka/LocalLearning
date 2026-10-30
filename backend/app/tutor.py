@@ -23,51 +23,56 @@ async def answer_question(
     store: Store,
 ) -> ChatResponse:
     settings = services.settings
-    vector = (await services.embed([settings.embed_query_prefix + request.message]))[0]
-    collections = await services.qdrant("GET", "/collections")
-    try:
-        has_collection = settings.qdrant_collection in {
-            item["name"] for item in collections["result"]["collections"]
-        }
-    except (KeyError, TypeError) as exc:
-        raise DependencyUnavailable("The vector service returned invalid data.") from exc
     passages = []
-    if has_collection:
-        filters = [
-            {"key": "grade", "match": {"value": request.grade}},
-            {"key": "subject_key", "match": {"value": request.subject.casefold()}},
-            {"key": "embedding_identity", "match": {"value": embedding_identity(services)}},
-        ]
-        if request.chapter:
-            filters.append({"key": "chapter_key", "match": {"value": request.chapter.casefold()}})
-        result = await services.qdrant(
-            "POST",
-            services.collection_path + "/points/query",
-            json={
-                "query": vector,
-                "filter": {"must": filters},
-                "limit": settings.retrieval_top_k,
-                "score_threshold": settings.retrieval_threshold,
-                "with_payload": True,
-            },
-        )
+    if settings.ollama_base_url and settings.qdrant_url:
+        vector = (await services.embed([settings.embed_query_prefix + request.message]))[0]
+        collections = await services.qdrant("GET", "/collections")
         try:
-            for hit in result["result"]["points"]:
-                item = hit["payload"]
-                doc = store.get(item["document_id"])
-                # Also enforce the catalog boundary if stale/external vector data exists.
-                if (
-                    doc
-                    and doc["status"] == "ready"
-                    and item["grade"] == request.grade
-                    and item["subject_key"] == request.subject.casefold()
-                    and (not request.chapter or item["chapter_key"] == request.chapter.casefold())
-                    and doc["embedding_identity"] == embedding_identity(services)
-                    and hit["score"] >= settings.retrieval_threshold
-                ):
-                    passages.append(item)
+            has_collection = settings.qdrant_collection in {
+                item["name"] for item in collections["result"]["collections"]
+            }
         except (KeyError, TypeError) as exc:
-            raise DependencyUnavailable("The curriculum index needs staff attention.") from exc
+            raise DependencyUnavailable("The vector service returned invalid data.") from exc
+        if has_collection:
+            filters = [
+                {"key": "grade", "match": {"value": request.grade}},
+                {"key": "subject_key", "match": {"value": request.subject.casefold()}},
+                {"key": "embedding_identity", "match": {"value": embedding_identity(services)}},
+            ]
+            if request.chapter:
+                filters.append(
+                    {"key": "chapter_key", "match": {"value": request.chapter.casefold()}}
+                )
+            result = await services.qdrant(
+                "POST",
+                services.collection_path + "/points/query",
+                json={
+                    "query": vector,
+                    "filter": {"must": filters},
+                    "limit": settings.retrieval_top_k,
+                    "score_threshold": settings.retrieval_threshold,
+                    "with_payload": True,
+                },
+            )
+            try:
+                for hit in result["result"]["points"]:
+                    item = hit["payload"]
+                    doc = store.get(item["document_id"])
+                    # Also enforce the catalog boundary if stale/external vector data exists.
+                    if (
+                        doc
+                        and doc["status"] == "ready"
+                        and item["grade"] == request.grade
+                        and item["subject_key"] == request.subject.casefold()
+                        and (
+                            not request.chapter or item["chapter_key"] == request.chapter.casefold()
+                        )
+                        and doc["embedding_identity"] == embedding_identity(services)
+                        and hit["score"] >= settings.retrieval_threshold
+                    ):
+                        passages.append(item)
+            except (KeyError, TypeError) as exc:
+                raise DependencyUnavailable("The curriculum index needs staff attention.") from exc
     language = "Nepali" if request.language == "ne" else "English"
     instruction = (
         "You are Digital Himalaya Tutor, a patient school learning assistant in Nepal. "
@@ -107,5 +112,9 @@ async def answer_question(
         answer=answer,
         grounding="textbook" if passages else "general",
         sources=[Source(**{key: p[key] for key in Source.model_fields}) for p in passages],
-        model=settings.ollama_model,
+        model=(
+            settings.chat_model
+            if settings.chat_provider == "openai-compatible"
+            else settings.ollama_model
+        ),
     )

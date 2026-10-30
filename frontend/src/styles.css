@@ -389,6 +389,12 @@ a.resource-card:hover {
 .status-disabled > span {
   background: #886016;
 }
+.status-configured {
+  color: #886016;
+}
+.status-configured > span {
+  background: #886016;
+}
 .network-note {
   margin-top: 30px;
   display: flex;

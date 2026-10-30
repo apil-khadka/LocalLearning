@@ -145,9 +145,16 @@ def create_app(settings: Settings | None = None, client: httpx.AsyncClient | Non
         return {"status": "ok", "version": "0.1.0", "ai_enabled": settings.ai_enabled}
 
     async def dependency_status():
-        async def ollama():
+        async def local_models():
             if not settings.ollama_base_url:
-                return {"chat_model": "unconfigured", "embeddings": "unconfigured"}
+                chat_status = (
+                    "configured"
+                    if settings.chat_provider == "openai-compatible"
+                    and settings.chat_api_base_url
+                    and settings.chat_api_key.get_secret_value()
+                    else "unconfigured"
+                )
+                return {"chat_model": chat_status, "embeddings": "unconfigured"}
             try:
                 names = await services.models()
 
@@ -157,11 +164,32 @@ def create_app(settings: Settings | None = None, client: httpx.AsyncClient | Non
                     )
 
                 return {
-                    "chat_model": present(settings.ollama_model),
+                    "chat_model": (
+                        present(settings.ollama_model)
+                        if settings.chat_provider == "ollama"
+                        else (
+                            "configured"
+                            if settings.chat_api_base_url
+                            and settings.chat_api_key.get_secret_value()
+                            else "unconfigured"
+                        )
+                    ),
                     "embeddings": present(settings.embed_model),
                 }
             except DependencyUnavailable:
-                return {"chat_model": "unavailable", "embeddings": "unavailable"}
+                return {
+                    "chat_model": (
+                        "unavailable"
+                        if settings.chat_provider == "ollama"
+                        else (
+                            "configured"
+                            if settings.chat_api_base_url
+                            and settings.chat_api_key.get_secret_value()
+                            else "unconfigured"
+                        )
+                    ),
+                    "embeddings": "unavailable",
+                }
 
         async def qdrant():
             if not settings.qdrant_url:
@@ -175,16 +203,26 @@ def create_app(settings: Settings | None = None, client: httpx.AsyncClient | Non
                 return "unavailable"
 
         models, vectors, kiwix, kolibri = await asyncio.gather(
-            ollama(),
+            local_models(),
             qdrant(),
             services.probe_web(settings.kiwix_public_url, settings.kiwix_probe_url),
             services.probe_web(settings.kolibri_public_url, settings.kolibri_probe_url),
         )
         ai_status = "disabled"
         if settings.ai_enabled:
-            ai_status = (
-                "ready" if all(s == "ready" for s in [*models.values(), vectors]) else "unavailable"
-            )
+            chat_status = models["chat_model"]
+            if chat_status not in {"ready", "configured"}:
+                ai_status = chat_status
+            elif (
+                settings.ollama_base_url
+                and settings.qdrant_url
+                and (models["embeddings"] != "ready" or vectors != "ready")
+            ):
+                ai_status = "unavailable"
+            elif settings.chat_provider == "openai-compatible":
+                ai_status = "configured"
+            else:
+                ai_status = "ready"
         return {
             "tutor": {"status": ai_status},
             "kiwix": kiwix,

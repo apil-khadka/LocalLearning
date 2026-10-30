@@ -24,6 +24,8 @@ class FakeLocalStack:
     def __call__(self, request):
         path = request.url.path
         self.calls.append((request.method, path))
+        if request.url.host == "kolibri.test":
+            return httpx.Response(200, text="Kolibri test service")
         if self.outage and self.outage in str(request.url):
             raise httpx.ConnectError("test failure", request=request)
         body = json.loads(request.content) if request.content else {}
@@ -78,6 +80,7 @@ def settings(tmp_path):
         _env_file=None,
         data_dir=tmp_path,
         ai_enabled=True,
+        chat_provider="ollama",
         ollama_base_url="http://ollama.test",
         qdrant_url="http://qdrant.test",
         admin_token=TOKEN,

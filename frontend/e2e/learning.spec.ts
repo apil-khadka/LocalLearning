@@ -10,7 +10,11 @@ test('home has truthful services, works in Nepali, and has no horizontal overflo
   await page.goto('/')
   await expect(page.getByText('School server connected', { exact: true })).toBeVisible()
   await expect(page.getByRole('heading', { name: 'Offline Wikipedia' })).toBeVisible()
-  await expect(page.getByText('Not configured', { exact: true })).toHaveCount(2)
+  await expect(page.getByText('Not configured', { exact: true })).toHaveCount(1)
+  await expect(page.getByRole('link', { name: /Kolibri courses/ })).toHaveAttribute(
+    'href',
+    'http://kolibri.test:8080',
+  )
   await expect(page.getByRole('link', { name: /Staff/ })).toHaveCount(0)
   await expect(page.getByRole('link', { name: /Offline Wikipedia/ })).toHaveCount(0)
   expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true)

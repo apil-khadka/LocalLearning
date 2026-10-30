@@ -1,5 +1,6 @@
 import re
 from pathlib import Path
+from typing import Literal
 from urllib.parse import urlsplit
 
 from pydantic import Field, SecretStr, field_validator
@@ -11,6 +12,10 @@ class Settings(BaseSettings):
 
     data_dir: Path = Path("../data")
     ai_enabled: bool = False
+    chat_provider: Literal["openai-compatible", "ollama"] = "openai-compatible"
+    chat_api_base_url: str = "https://inference.baseten.co/v1"
+    chat_api_key: SecretStr = SecretStr("")
+    chat_model: str = "meta-models/muse-spark-open-1026"
     ollama_base_url: str = ""
     ollama_model: str = "qwen3:4b-instruct"
     embed_model: str = "embeddinggemma"
@@ -25,6 +30,7 @@ class Settings(BaseSettings):
     kolibri_public_url: str = ""
     kolibri_probe_url: str = ""
     model_timeout_seconds: float = Field(120, ge=1, le=600)
+    chat_timeout_seconds: float = Field(60, ge=1, le=600)
     dependency_timeout_seconds: float = Field(3, ge=0.1, le=30)
     max_upload_bytes: int = Field(10 * 1024 * 1024, ge=1024, le=50 * 1024 * 1024)
     max_pdf_pages: int = Field(100, ge=1, le=500)
@@ -34,6 +40,7 @@ class Settings(BaseSettings):
 
     @field_validator(
         "ollama_base_url",
+        "chat_api_base_url",
         "qdrant_url",
         "kiwix_public_url",
         "kolibri_public_url",

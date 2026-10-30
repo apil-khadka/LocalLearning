@@ -26,13 +26,13 @@
         <mxCell id="admin" value="Staff portal 127.0.0.1:8091&#10;SSH tunnel from management network&#10;Separate listener + staff Bearer token" style="rounded=1;whiteSpace=wrap;html=0;fillColor=#e4f2ed;strokeColor=#9aafbf;fontColor=#18374c;fontSize=14;align=left;spacingLeft=14;" vertex="1" parent="1">
           <mxGeometry as="geometry" x="40" y="680" width="325" height="100" />
         </mxCell>
-        <mxCell id="api" value="FastAPI - private Docker network&#10;Catalog + protected document ingestion&#10;Page-aware RAG + bounded model requests&#10;No published API port; no chat storage" style="rounded=1;whiteSpace=wrap;html=0;fillColor=#edf2f7;strokeColor=#9aafbf;fontColor=#18374c;fontSize=14;align=left;spacingLeft=14;" vertex="1" parent="1">
+        <mxCell id="api" value="FastAPI - private Docker network&#10;Catalog + protected document ingestion&#10;Page-aware RAG + bounded requests&#10;Optional API-only HTTPS; no chat storage" style="rounded=1;whiteSpace=wrap;html=0;fillColor=#edf2f7;strokeColor=#9aafbf;fontColor=#18374c;fontSize=14;align=left;spacingLeft=14;" vertex="1" parent="1">
           <mxGeometry as="geometry" x="430" y="555" width="310" height="120" />
         </mxCell>
-        <mxCell id="deps" value="Existing local AI services&#10;Ollama and Qdrant, dedicated dh_ index&#10;Server/backend access only&#10;Never expose management/model ports to pupils" style="rounded=1;whiteSpace=wrap;html=0;fillColor=#f4edfb;strokeColor=#9aafbf;fontColor=#18374c;fontSize=14;align=left;spacingLeft=14;" vertex="1" parent="1">
+        <mxCell id="deps" value="Local retrieval + optional hosted chat&#10;Ollama embeddings and Qdrant index&#10;API-only outbound HTTPS for hosted chat&#10;Never expose management/model ports to pupils" style="rounded=1;whiteSpace=wrap;html=0;fillColor=#f4edfb;strokeColor=#9aafbf;fontColor=#18374c;fontSize=14;align=left;spacingLeft=14;" vertex="1" parent="1">
           <mxGeometry as="geometry" x="800" y="530" width="320" height="115" />
         </mxCell>
-        <mxCell id="content" value="Kiwix / Kolibri&#10;Only verified student-safe web endpoints&#10;NOMAD admin remains management-only" style="rounded=1;whiteSpace=wrap;html=0;fillColor=#fff4db;strokeColor=#9aafbf;fontColor=#18374c;fontSize=14;align=left;spacingLeft=14;" vertex="1" parent="1">
+        <mxCell id="content" value="Kiwix / Kolibri&#10;Only verified student-safe web endpoints&#10;Kolibri defaults: TCP 8092 + 8093&#10;NOMAD admin remains management-only" style="rounded=1;whiteSpace=wrap;html=0;fillColor=#fff4db;strokeColor=#9aafbf;fontColor=#18374c;fontSize=14;align=left;spacingLeft=14;" vertex="1" parent="1">
           <mxGeometry as="geometry" x="800" y="700" width="320" height="100" />
         </mxCell>
         <mxCell id="edge-0" style="edgeStyle=orthogonalEdgeStyle;rounded=0;endArrow=block;strokeColor=#71859a;" edge="1" parent="1" source="wan" target="router">
@@ -64,6 +64,14 @@
         </mxCell>
         <mxCell id="edge-9" style="edgeStyle=orthogonalEdgeStyle;rounded=0;endArrow=block;strokeColor=#71859a;" edge="1" parent="1" source="server" target="content">
           <mxGeometry as="geometry" relative="1" />
+        </mxCell>
+        <mxCell id="edge-api-hosted-chat" value="Optional HTTPS egress" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;endArrow=block;strokeColor=#b46c25;dashed=1;fontColor=#8a4f17;fontSize=12;" edge="1" parent="1" source="api" target="wan">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="775" y="615" />
+              <mxPoint x="775" y="48" />
+            </Array>
+          </mxGeometry>
         </mxCell>
       </root>
     </mxGraphModel>

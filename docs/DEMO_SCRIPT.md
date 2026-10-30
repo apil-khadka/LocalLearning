@@ -10,10 +10,11 @@ Publish only approved non-identifying evidence.
 | Check | Passing evidence |
 | --- | --- |
 | Provisioned resources | Chosen chat and embedding models present; approved searchable chapter; downloaded Kiwix article and complete Kolibri video |
-| No internet | WAN physically disconnected; phone cellular off; assets and API work on school Wi-Fi |
-| Real inference | A new question returns actual local model output through the portal; no test fixture server is running |
+| No internet | WAN physically disconnected; phone cellular off; assets and API work on school Wi-Fi; hosted chat reports unavailable unless local Ollama is selected |
+| Real inference | A new question returns output from the configured chat provider through the portal; no test fixture server is running |
 | Grounding | Answer source chip opens the correct document/PDF page and the passage is relevant |
 | No-match handling | Wrong grade/chapter and unrelated questions show no false retrieved citations |
+| Kolibri classroom roles | A learner opens an assigned course; a coach can assign reviewed material; role boundaries and progress behave as configured |
 | Language | Teacher/fluent reviewer checks English and Nepali answers, mathematical meaning and readability |
 | Staff boundary | Student cannot access staff API/port, NOMAD, router administration, SSH, Ollama or Qdrant |
 | Staff operation | Authorized staff tunnel, token sign-in and permitted import work; wrong token fails |

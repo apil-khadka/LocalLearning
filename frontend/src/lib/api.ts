@@ -1,6 +1,7 @@
 export type ResourceStatus =
   | 'ready'
   | 'reachable'
+  | 'configured'
   | 'disabled'
   | 'unavailable'
   | 'unconfigured'

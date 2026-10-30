@@ -13,11 +13,11 @@ const routes = {
     nodes: [
       ['A learner’s question', 'Grade, subject, chapter and chosen language'],
       ['Private application API', 'Validate input and retrieve relevant passages'],
-      ['Local AI services', 'Ollama inference and a dedicated Qdrant index'],
+      ['Selected chat provider', 'Local Ollama or a configurable OpenAI-compatible API'],
       ['Answer and source chips', 'Retrieved pages to check with a teacher'],
     ],
     caption:
-      'The browser never talks directly to the model or vector database. If a dependency fails, the portal reports it. If no passage matches, there are no textbook source chips.',
+      'Local Ollama keeps chat on the school network. A hosted provider receives the question, recent conversation, and retrieved passages. If no passage matches, there are no textbook source chips.',
   },
   staff: {
     nodes: [

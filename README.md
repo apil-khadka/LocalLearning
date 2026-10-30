@@ -1,6 +1,6 @@
 # Digital Himalaya
 
-An offline-first learning portal for school networks in Nepal, with local books, Wikipedia, video lessons, and an optional textbook-grounded AI tutor.
+An offline-first learning portal for school networks in Nepal, with local books, Wikipedia, Kolibri courses, and an optional textbook-grounded AI tutor.
 
 **Status: working software foundation, not a field-validated school deployment.**
 AI starts disabled.
@@ -11,16 +11,24 @@ Model inference, curriculum quality, Nepali language quality, school Wi-Fi capac
 ## What is here
 
 - A responsive React/TypeScript portal with English and Nepali interface text.
-- A FastAPI API with Ollama chat/embedding adapters and a dedicated Qdrant curriculum collection.
+- A FastAPI API with switchable Ollama or OpenAI-compatible chat and local Ollama embeddings.
 - Protected PDF/text ingestion, page-aware chunks, real retrieval metadata, and safe no-match responses.
 - A persistent local textbook catalog, file delivery, and staff diagnostics.
 - Separate student and staff reverse-proxy listeners, container packaging, and automated checks.
+- An optional Kolibri 0.19.5 classroom service with persistent storage and a student portal link.
 - A static project website for GitHub Pages, independent of the school application.
 
 There are no scripted AI answers in the application.
 Unconfigured or unavailable services are reported honestly.
-No student accounts, chat database, analytics, CDN assets, or cloud model API are required.
+The Digital Himalaya portal does not require student accounts or store chat history or analytics.
+When enabled, Kolibri manages separate classroom accounts and learning progress in its own data volume.
+The default AI chat endpoint is disabled until an operator adds a key and sets `AI_ENABLED=true`.
+When the OpenAI-compatible provider is selected, learner questions, conversation history and retrieved excerpts are sent to that configured provider.
+Keep `CHAT_PROVIDER=ollama` to process chat on a reachable local Ollama service instead.
 The source planning attachments are private local material and are excluded from both Git and Docker builds.
+The first prototype book sample can be fetched locally with `make books-pilot`.
+It is a text-only Wikijunior biology book with revision-level attribution, saved under ignored `content/private/` and excluded from public builds.
+It is integration test content, not a Nepal-approved curriculum source.
 
 ## Run locally
 
@@ -66,12 +74,31 @@ Use a verified container network address or `host.docker.internal` with a proper
 Do not duplicate or modify existing NOMAD services.
 Provision models and content while online, then disconnect WAN for acceptance.
 
+To test the requested hosted model, fill in these local-only values in `.env` and then enable AI:
+
+```dotenv
+AI_ENABLED=true
+CHAT_PROVIDER=openai-compatible
+CHAT_API_BASE_URL=https://inference.baseten.co/v1
+CHAT_API_KEY=your-private-key
+CHAT_MODEL=meta-models/muse-spark-open-1026
+```
+
+The key is never committed.
+To switch chat to local Ollama, use `CHAT_PROVIDER=ollama` and set `OLLAMA_BASE_URL` and `OLLAMA_MODEL`.
+To switch to another OpenAI-compatible service, change `CHAT_API_BASE_URL`, `CHAT_API_KEY`, and `CHAT_MODEL`.
+RAG still uses the separate local Ollama embedding model and Qdrant settings; with both unset, chat works as a clearly labeled general explanation without textbook citations.
+
 Set a random staff token of at least 32 characters in `.env` using a password manager or a local generator.
 For example, `python3 -c 'import secrets; print(secrets.token_urlsafe(48))'` generates a value to copy into `ADMIN_TOKEN`.
 Keep it out of Git, logs and frontend build variables.
 In development, open `/staff`, sign in, and import `content/sample/force-and-motion.txt` with grade `8`, subject `Science`, chapter `Force and Motion`, license `CC0-1.0`, and source `Original demonstration note`.
-Import requires a working local embedding model and Qdrant.
-After teacher review, set `AI_ENABLED=true` and restart the API to test real questions.
+Textbook import and retrieval require a working local embedding model and Qdrant.
+General chat can be tested without either retrieval service.
+After teacher review, enable AI and restart the API to test real questions.
+
+The OLE Nepal and Nepal CDC catalog links are documented in [the book-source review](docs/research/book-sources.md).
+The current E-Pustakalaya terms do not allow copying content to a separate host without written permission, and the CDC catalog entries reviewed did not state reuse terms.
 
 Configure `KIWIX_PUBLIC_URL` and `KOLIBRI_PUBLIC_URL` only after opening downloaded content from a student device.
 Optional `*_PROBE_URL` values provide a server-reachable equivalent when the public address differs.
@@ -86,6 +113,13 @@ docker compose up -d --wait
 ```
 
 The student portal is `http://127.0.0.1:8090` and staff sign-in is `http://127.0.0.1:8091/staff`.
+Kolibri is an optional Compose profile so the base application does not pull or start the education service unless requested.
+Set `KOLIBRI_PUBLIC_URL=http://127.0.0.1:8092` and `KOLIBRI_PROBE_URL=http://kolibri:8080` in `.env`, then run `make education-up` to start it alongside the portal.
+Kolibri keeps its database, user records, and imported content in a separate persistent `kolibri-data` volume.
+Complete Kolibri's first-run facility setup and import approved channels in its own interface; this project does not download course content or provision accounts.
+For a school LAN, set `KOLIBRI_BIND` to the server's reserved LAN IP and `KOLIBRI_PUBLIC_URL` to the student-reachable address after reviewing firewall rules.
+Keep the education profile off when an existing NOMAD or Kolibri deployment already provides the service, and configure its verified URLs instead.
+Run `make education-down` to stop only the Kolibri container without deleting its stored data.
 After the [network policy](docs/NETWORK.md) is installed, set `PORTAL_BIND` to the school server's LAN address, recreate the portal container, and open `http://SERVER_LAN_IP:8090` on a phone connected to school Wi-Fi.
 The staff port stays bound to loopback.
 Stop with `docker compose down`; content remains in the named volume.
