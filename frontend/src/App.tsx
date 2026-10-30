@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useState } from 'react'
-import { BookOpen, ChatCircleDots, House, SidebarSimple, WifiHigh } from '@phosphor-icons/react'
+import { BookOpen, ChatCircleDots, House, WifiHigh } from '@phosphor-icons/react'
 import * as ToggleGroup from '@radix-ui/react-toggle-group'
 import { Link, NavLink, Route, Routes } from 'react-router-dom'
 import { api, type Services } from './lib/api'
@@ -10,19 +10,8 @@ import Books from './pages/Books'
 import BookReader from './pages/BookReader'
 import Staff from './pages/Staff'
 
-const SIDEBAR_PREFERENCE_KEY = 'digital-himalaya-sidebar-collapsed'
-
-function readSidebarPreference() {
-  try {
-    return window.localStorage.getItem(SIDEBAR_PREFERENCE_KEY) === 'true'
-  } catch {
-    return false
-  }
-}
-
 export default function App() {
   const [language, setLanguage] = useState<Language>('en')
-  const [sidebarCollapsed, setSidebarCollapsed] = useState(readSidebarPreference)
   const [services, setServices] = useState<Services | null>(null)
   const [connection, setConnection] = useState<'checking' | 'connected' | 'disconnected'>(
     'checking',
@@ -47,95 +36,55 @@ export default function App() {
   useEffect(() => {
     document.documentElement.lang = language
   }, [language])
-  const toggleSidebar = () => {
-    const nextCollapsed = !sidebarCollapsed
-    setSidebarCollapsed(nextCollapsed)
-    try {
-      window.localStorage.setItem(SIDEBAR_PREFERENCE_KEY, String(nextCollapsed))
-    } catch {
-      // The sidebar remains usable for this page when storage is unavailable.
-    }
-  }
   return (
-    <div className={`app-shell${sidebarCollapsed ? ' is-sidebar-collapsed' : ''}`}>
+    <div className="app-shell">
       <a className="skip-link" href="#main">
         {t.resources}
       </a>
-      <aside className="sidebar">
-        <div className="sidebar-head">
-          <Link
-            className="brand"
-            to="/"
-            aria-label={`Digital Himalaya - ${t.home}`}
-            title={sidebarCollapsed ? 'Digital Himalaya' : undefined}
-          >
-            <span className="brand-label">Himalaya</span>
-          </Link>
-          <button
-            type="button"
-            className="sidebar-toggle"
-            aria-label={sidebarCollapsed ? t.expandSidebar : t.collapseSidebar}
-            aria-controls="primary-navigation"
-            aria-pressed={sidebarCollapsed}
-            title={sidebarCollapsed ? t.expandSidebar : t.collapseSidebar}
-            onClick={toggleSidebar}
-          >
-            <SidebarSimple size={21} weight="bold" aria-hidden="true" />
-          </button>
-        </div>
-        <nav id="primary-navigation" className="sidebar-nav" aria-label={t.resources}>
-          <NavLink
-            to="/"
-            end
-            aria-label={t.home}
-            title={sidebarCollapsed ? t.home : undefined}
-            data-tooltip={sidebarCollapsed ? t.home : undefined}
-          >
-            <House size={23} aria-hidden="true" />
-            <span className="nav-label">{t.home}</span>
-          </NavLink>
-          <NavLink
-            to="/tutor"
-            aria-label={t.tutor}
-            title={sidebarCollapsed ? t.tutor : undefined}
-            data-tooltip={sidebarCollapsed ? t.tutor : undefined}
-          >
-            <ChatCircleDots size={23} aria-hidden="true" />
-            <span className="nav-label">{t.tutor}</span>
-          </NavLink>
-          <NavLink
-            to="/books"
-            aria-label={t.books}
-            title={sidebarCollapsed ? t.books : undefined}
-            data-tooltip={sidebarCollapsed ? t.books : undefined}
-          >
-            <BookOpen size={23} aria-hidden="true" />
-            <span className="nav-label">{t.books}</span>
-          </NavLink>
-        </nav>
-      </aside>
       <div className="workspace">
         <header className="topbar">
-          <span className={`connection ${connection}`}>
-            <WifiHigh size={19} aria-hidden="true" />
-            {t[connection]}
-          </span>
-          <ToggleGroup.Root
-            type="single"
-            value={language}
-            onValueChange={(value) => {
-              if (value === 'en' || value === 'ne') setLanguage(value)
-            }}
-            aria-label="Language / भाषा"
-            className="language-toggle"
-          >
-            <ToggleGroup.Item value="en" lang="en">
-              English
-            </ToggleGroup.Item>
-            <ToggleGroup.Item value="ne" lang="ne">
-              नेपाली
-            </ToggleGroup.Item>
-          </ToggleGroup.Root>
+          <Link className="topbar-brand" to="/" aria-label={`Digital Himalaya - ${t.home}`}>
+            Himalaya
+          </Link>
+          <nav id="primary-navigation" className="primary-navigation" aria-label={t.mainNavigation}>
+            <NavLink to="/" end aria-label={t.home}>
+              <House size={21} aria-hidden="true" />
+              <span className="nav-label-full">{t.home}</span>
+              <span className="nav-label-short">{t.homeShort}</span>
+            </NavLink>
+            <NavLink to="/tutor" aria-label={t.tutor}>
+              <ChatCircleDots size={21} aria-hidden="true" />
+              <span className="nav-label-full">{t.tutor}</span>
+              <span className="nav-label-short">{t.tutorShort}</span>
+            </NavLink>
+            <NavLink to="/books" aria-label={t.books}>
+              <BookOpen size={21} aria-hidden="true" />
+              <span className="nav-label-full">{t.books}</span>
+              <span className="nav-label-short">{t.booksShort}</span>
+            </NavLink>
+          </nav>
+          <div className="topbar-tools">
+            <span className={`connection ${connection}`} aria-label={t[connection]}>
+              <WifiHigh size={19} aria-hidden="true" />
+              <span className="connection-label">{t[connection]}</span>
+            </span>
+            <ToggleGroup.Root
+              type="single"
+              value={language}
+              onValueChange={(value) => {
+                if (value === 'en' || value === 'ne') setLanguage(value)
+              }}
+              aria-label="Language / भाषा"
+              className="language-toggle"
+            >
+              <ToggleGroup.Item value="en" lang="en">
+                English
+              </ToggleGroup.Item>
+              <ToggleGroup.Item value="ne" lang="ne">
+                नेपाली
+              </ToggleGroup.Item>
+            </ToggleGroup.Root>
+          </div>
         </header>
         {connection === 'disconnected' && (
           <div className="connection-error" role="alert">

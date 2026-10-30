@@ -373,71 +373,37 @@ test('keyboard navigation reaches the learning content', async ({ page }) => {
   await expect(page.locator('#main')).toBeInViewport()
 })
 
-test('desktop sidebar collapses to an icon rail and remembers the choice', async ({ page }) => {
-  await page.goto('/tutor')
-  const sidebar = page.locator('.sidebar')
-  const shell = page.locator('.app-shell')
-  const toggle = page.locator('.sidebar-toggle')
-  const width = page.viewportSize()?.width ?? 0
+test('primary navigation is a full-width sticky navbar at desktop, tablet, and phone sizes', async ({
+  page,
+}) => {
+  for (const width of [1280, 663, 390]) {
+    await page.setViewportSize({ width, height: 857 })
+    await page.goto('/')
 
-  if (width <= 640) {
-    await expect(toggle).not.toBeVisible()
-    await expect(page.locator('.sidebar-head')).not.toBeVisible()
-    await expect(sidebar.getByRole('navigation').getByRole('link')).toHaveCount(3)
+    const navbar = page.locator('.topbar')
+    const navigation = page.getByRole('navigation', { name: 'Main navigation' })
+    await expect(page.locator('.sidebar')).toHaveCount(0)
+    await expect(navbar).toHaveCSS('position', 'sticky')
+    await expect(navbar).toHaveCSS('width', `${width}px`)
+    await expect(navigation.getByRole('link')).toHaveCount(3)
+    await expect(navigation.getByRole('link', { name: 'Learning home' })).toBeVisible()
+    await expect(navigation.getByRole('link', { name: 'AI tutor' })).toBeVisible()
+    await expect(navigation.getByRole('link', { name: 'My textbooks' })).toBeVisible()
     await expect(page.locator('.footer-brand')).toContainText('Digital Himalaya')
-    await expect(page.locator('.footer-brand img')).toBeVisible()
-    await expect(sidebar.getByRole('link', { name: 'AI tutor' })).toBeVisible()
-    return
-  }
-
-  await expect(page.locator('.brand-label')).toHaveText('Himalaya')
-  await expect(page.locator('.footer-brand')).toContainText('Digital Himalaya')
-  await expect(page.locator('.sidebar .brand img')).toHaveCount(0)
-  await expect(page.locator('.footer-brand img')).toBeVisible()
-  await expect(toggle).toHaveAccessibleName('Collapse sidebar')
-  await expect(toggle).toHaveAttribute('aria-pressed', 'false')
-  await expect(sidebar).toHaveCSS('width', width <= 850 ? '190px' : '226px')
-  await toggle.click()
-  await expect(toggle).toHaveAccessibleName('Expand sidebar')
-  await expect(toggle).toHaveAttribute('aria-pressed', 'true')
-  await expect(sidebar).toHaveCSS('width', '92px')
-  await expect(page.locator('.sidebar-head')).toHaveCSS('margin-bottom', '16px')
-  await expect(sidebar.getByRole('navigation')).toHaveCSS('row-gap', '4px')
-  await expect(sidebar.getByRole('link', { name: 'AI tutor' })).toHaveCSS('min-height', '44px')
-  await expect(page.locator('.workspace')).toHaveCSS('margin-left', '92px')
-  await expect(sidebar.getByRole('link', { name: 'AI tutor' })).toHaveAttribute('title', 'AI tutor')
-  await expect(page.getByRole('heading', { name: 'AI tutor' })).toBeVisible()
-
-  await page.reload()
-  await expect(shell).toHaveClass(/is-sidebar-collapsed/)
-  await expect(toggle).toHaveAccessibleName('Expand sidebar')
-  await toggle.click()
-  await expect(toggle).toHaveAccessibleName('Collapse sidebar')
-  await expect(sidebar).toHaveCSS('width', width <= 850 ? '190px' : '226px')
-
-  if (width > 850) {
-    await page.setViewportSize({ width: 800, height: 900 })
-    await expect(sidebar).toHaveCSS('width', '190px')
     expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true)
-  }
-})
 
-test('mobile navigation stays available while scrolling', async ({ page }) => {
-  test.skip((page.viewportSize()?.width ?? 0) > 640, 'The desktop navigation uses a fixed sidebar.')
-  await page.goto('/')
-  await expect(page.locator('.sidebar-head')).not.toBeVisible()
-  await expect(page.getByRole('navigation').getByRole('link')).toHaveCount(3)
-  await expect(page.locator('.footer-brand')).toContainText('Digital Himalaya')
-  await expect(page.locator('.footer-brand img')).toBeVisible()
-  await page.evaluate(() => window.scrollTo({ top: 1000, behavior: 'instant' }))
-  await expect
-    .poll(() =>
-      page.locator('.sidebar').evaluate((nav) => Math.round(nav.getBoundingClientRect().top)),
-    )
-    .toBe(0)
-  await page
-    .getByRole('navigation')
-    .getByRole('link', { name: 'My textbooks', exact: true })
-    .click()
-  await expect(page.getByRole('heading', { name: 'My textbooks' })).toBeVisible()
+    if (width === 390) {
+      await expect(navigation.locator('.nav-label-short')).toHaveCount(3)
+      await expect(navigation.locator('.nav-label-short').first()).toBeVisible()
+      await expect(navigation.locator('.nav-label-full').first()).toBeHidden()
+    }
+
+    await page.evaluate(() => window.scrollTo({ top: 1000, behavior: 'instant' }))
+    await expect
+      .poll(() => navbar.evaluate((node) => Math.round(node.getBoundingClientRect().top)))
+      .toBe(0)
+
+    await navigation.getByRole('link', { name: 'My textbooks' }).click()
+    await expect(page.getByRole('heading', { name: 'My textbooks' })).toBeVisible()
+  }
 })

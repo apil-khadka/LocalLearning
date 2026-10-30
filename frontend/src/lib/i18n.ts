@@ -2,9 +2,10 @@ export type Language = 'en' | 'ne'
 export const copy = {
   en: {
     home: 'Learning home',
-    collapseSidebar: 'Collapse sidebar',
-    expandSidebar: 'Expand sidebar',
+    mainNavigation: 'Main navigation',
+    homeShort: 'Home',
     tutor: 'AI tutor',
+    tutorShort: 'Tutor',
     books: 'My textbooks',
     wikipedia: 'Offline Wikipedia',
     videos: 'Kolibri courses',
@@ -146,9 +147,10 @@ export const copy = {
   },
   ne: {
     home: 'सिकाइ गृह',
-    collapseSidebar: 'साइडबार खुम्च्याउनुहोस्',
-    expandSidebar: 'साइडबार फैलाउनुहोस्',
+    mainNavigation: 'मुख्य नेभिगेसन',
+    homeShort: 'गृह',
     tutor: 'एआई शिक्षक',
+    tutorShort: 'शिक्षक',
     books: 'मेरा पाठ्यपुस्तक',
     wikipedia: 'अफलाइन विकिपिडिया',
     videos: 'कोलिब्री पाठ्यक्रम',
