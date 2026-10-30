@@ -59,6 +59,23 @@ test('public website explains its limits, diagrams switch, and all local assets 
   await page.getByRole('button', { name: 'Staff administration' }).click()
   await expect(page.locator('#network-flow')).toContainText('SSH tunnel')
   expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true)
+  await page.evaluate(() => window.scrollTo({ top: 900, behavior: 'instant' }))
+  await expect
+    .poll(() =>
+      page.locator('.site-header').evaluate((header) => header.getBoundingClientRect().top),
+    )
+    .toBe(0)
+  await page.getByRole('link', { name: 'The portal' }).click()
+  await expect
+    .poll(() =>
+      page.locator('#preview').evaluate((section) => {
+        const header = document.querySelector('.site-header')
+        return header
+          ? section.getBoundingClientRect().top - header.getBoundingClientRect().bottom
+          : -1
+      }),
+    )
+    .toBeGreaterThanOrEqual(0)
   const missingAnchors = await page
     .locator('a[href^="#"]')
     .evaluateAll((links) =>

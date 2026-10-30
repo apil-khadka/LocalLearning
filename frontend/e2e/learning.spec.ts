@@ -109,3 +109,19 @@ test('keyboard navigation reaches the learning content', async ({ page }) => {
   await page.keyboard.press('Enter')
   await expect(page.locator('#main')).toBeInViewport()
 })
+
+test('mobile navigation stays available while scrolling', async ({ page }) => {
+  test.skip((page.viewportSize()?.width ?? 0) > 640, 'The desktop navigation uses a fixed sidebar.')
+  await page.goto('/')
+  await page.evaluate(() => window.scrollTo({ top: 1000, behavior: 'instant' }))
+  await expect
+    .poll(() =>
+      page.locator('.sidebar').evaluate((nav) => Math.round(nav.getBoundingClientRect().top)),
+    )
+    .toBe(0)
+  await page
+    .getByRole('navigation')
+    .getByRole('link', { name: 'My textbooks', exact: true })
+    .click()
+  await expect(page.getByRole('heading', { name: 'My textbooks' })).toBeVisible()
+})
