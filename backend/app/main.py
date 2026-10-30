@@ -16,8 +16,14 @@ from pydantic import ValidationError
 
 from app.config import Settings
 from app.dependencies import DependencyUnavailable, LocalServices
-from app.documents import InvalidDocument, chunks_for, document_id, extract_pages
-from app.schemas import ChatRequest, ChatResponse, DocumentInput
+from app.documents import (
+    InvalidDocument,
+    chunks_for,
+    document_id,
+    extract_file_pages,
+    extract_pages,
+)
+from app.schemas import ChatRequest, ChatResponse, DocumentInput, IndexBookRequest
 from app.store import Store
 from app.tutor import answer_question, embedding_identity
 
@@ -146,15 +152,23 @@ def create_app(settings: Settings | None = None, client: httpx.AsyncClient | Non
 
     async def dependency_status():
         async def local_models():
+            chat_status = (
+                "configured"
+                if settings.chat_provider == "openai-compatible"
+                and settings.chat_api_base_url
+                and settings.chat_api_key.get_secret_value()
+                else "unconfigured"
+            )
+            embed_status = "configured" if services.embeddings_configured else "unconfigured"
+            needs_ollama = settings.chat_provider == "ollama" or settings.embed_provider == "ollama"
+            if not needs_ollama:
+                return {"chat_model": chat_status, "embeddings": embed_status}
             if not settings.ollama_base_url:
-                chat_status = (
-                    "configured"
-                    if settings.chat_provider == "openai-compatible"
-                    and settings.chat_api_base_url
-                    and settings.chat_api_key.get_secret_value()
-                    else "unconfigured"
-                )
-                return {"chat_model": chat_status, "embeddings": "unconfigured"}
+                if settings.chat_provider == "ollama":
+                    chat_status = "unconfigured"
+                if settings.embed_provider == "ollama":
+                    embed_status = "unconfigured"
+                return {"chat_model": chat_status, "embeddings": embed_status}
             try:
                 names = await services.models()
 
@@ -163,33 +177,16 @@ def create_app(settings: Settings | None = None, client: httpx.AsyncClient | Non
                         "ready" if name in names or name + ":latest" in names else "missing_model"
                     )
 
-                return {
-                    "chat_model": (
-                        present(settings.ollama_model)
-                        if settings.chat_provider == "ollama"
-                        else (
-                            "configured"
-                            if settings.chat_api_base_url
-                            and settings.chat_api_key.get_secret_value()
-                            else "unconfigured"
-                        )
-                    ),
-                    "embeddings": present(settings.embed_model),
-                }
+                if settings.chat_provider == "ollama":
+                    chat_status = present(settings.ollama_model)
+                if settings.embed_provider == "ollama":
+                    embed_status = present(settings.embed_model)
             except DependencyUnavailable:
-                return {
-                    "chat_model": (
-                        "unavailable"
-                        if settings.chat_provider == "ollama"
-                        else (
-                            "configured"
-                            if settings.chat_api_base_url
-                            and settings.chat_api_key.get_secret_value()
-                            else "unconfigured"
-                        )
-                    ),
-                    "embeddings": "unavailable",
-                }
+                if settings.chat_provider == "ollama":
+                    chat_status = "unavailable"
+                if settings.embed_provider == "ollama":
+                    embed_status = "unavailable"
+            return {"chat_model": chat_status, "embeddings": embed_status}
 
         async def qdrant():
             if not settings.qdrant_url:
@@ -213,10 +210,8 @@ def create_app(settings: Settings | None = None, client: httpx.AsyncClient | Non
             chat_status = models["chat_model"]
             if chat_status not in {"ready", "configured"}:
                 ai_status = chat_status
-            elif (
-                settings.ollama_base_url
-                and settings.qdrant_url
-                and (models["embeddings"] != "ready" or vectors != "ready")
+            elif settings.qdrant_url and (
+                models["embeddings"] not in {"ready", "configured"} or vectors != "ready"
             ):
                 ai_status = "unavailable"
             elif settings.chat_provider == "openai-compatible":
@@ -237,10 +232,20 @@ def create_app(settings: Settings | None = None, client: httpx.AsyncClient | Non
 
     @app.get("/api/textbooks")
     async def textbooks(
-        grade: int | None = Query(None, ge=1, le=12),
+        grade: int | None = Query(None, ge=0, le=12),
         subject: str | None = Query(None, max_length=120),
     ):
         return [store.public(doc) for doc in store.list(grade=grade, subject=subject)]
+
+    @app.get("/api/textbooks/catalog")
+    async def textbook_catalog(
+        grade: int | None = Query(None, ge=0, le=12),
+        subject: str | None = Query(None, max_length=120),
+        q: str | None = Query(None, max_length=120),
+        limit: int = Query(24, ge=1, le=48),
+        offset: int = Query(0, ge=0, le=100_000),
+    ):
+        return store.catalog(grade=grade, subject=subject, query=q, limit=limit, offset=offset)
 
     def get_document(identity: str):
         if not re.fullmatch(r"[a-f0-9]{32}", identity):
@@ -266,7 +271,7 @@ def create_app(settings: Settings | None = None, client: httpx.AsyncClient | Non
             media_type=media,
             filename=doc["filename"],
             content_disposition_type="inline",
-            headers={"Content-Security-Policy": "sandbox; default-src 'none'"},
+            headers={"Content-Security-Policy": "default-src 'none'; frame-ancestors 'self'"},
         )
 
     @app.post("/api/tutor/chat", response_model=ChatResponse)
@@ -294,6 +299,89 @@ def create_app(settings: Settings | None = None, client: httpx.AsyncClient | Non
             "services": await dependency_status(),
             "documents": [store.public(doc) for doc in store.list(all_states=True)],
         }
+
+    @app.post("/api/admin/index-book")
+    async def index_book(request: IndexBookRequest):
+        if not settings.qdrant_url:
+            raise HTTPException(503, "Configure Qdrant before indexing textbook vectors.")
+        if not services.embeddings_configured:
+            raise HTTPException(503, "Configure an embedding provider before indexing textbooks.")
+        if ingestion_lock.locked():
+            raise HTTPException(409, "Another document is being indexed. Try again shortly.")
+        async with ingestion_lock:
+            document = store.get(request.document_id)
+            if not document or document.get("status") != "ready":
+                raise HTTPException(404, "Textbook not found.")
+            current_identity = embedding_identity(services)
+            if (
+                document.get("index_status") == "indexed"
+                and document.get("embedding_identity") == current_identity
+            ):
+                return store.public(document)
+            path = (store.directory / document.get("storage_name", "")).resolve()
+            if path.parent != store.directory or not path.is_file():
+                raise HTTPException(
+                    404,
+                    "Textbook file is unavailable. Reimport it before indexing.",
+                )
+            document["index_status"] = "indexing"
+            document.pop("index_error", None)
+            store.put(document)
+            try:
+                pages, missing = await asyncio.to_thread(
+                    extract_file_pages,
+                    path,
+                    settings.max_index_pdf_pages,
+                )
+                document["ocr_required_pages"] = missing
+                chunks = chunks_for(
+                    pages,
+                    document["id"],
+                    DocumentInput.model_validate(document),
+                )
+                prefix = settings.embed_document_prefix.replace("{title}", document["title"])
+                # One book per request and four chunks per provider call bound local resource use.
+                for start in range(0, len(chunks), 4):
+                    batch = chunks[start : start + 4]
+                    vectors = await services.embed([prefix + chunk["text"] for chunk in batch])
+                    if start == 0:
+                        await services.ensure_collection(len(vectors[0]))
+                    await services.qdrant(
+                        "PUT",
+                        services.collection_path + "/points?wait=true",
+                        json={
+                            "points": [
+                                {
+                                    "id": chunk["chunk_id"],
+                                    "vector": vector,
+                                    "payload": {**chunk, "embedding_identity": current_identity},
+                                }
+                                for chunk, vector in zip(batch, vectors, strict=True)
+                            ]
+                        },
+                        timeout=settings.model_timeout_seconds,
+                    )
+                document["chunks"] = len(chunks)
+                document["embedding_identity"] = current_identity
+                document["index_status"] = "indexed"
+            except InvalidDocument as exc:
+                document["index_status"] = "needs_ocr" if "OCR required" in str(exc) else "failed"
+                store.put(document)
+                raise HTTPException(422, str(exc)) from exc
+            except DependencyUnavailable:
+                document["index_status"] = "failed"
+                store.put(document)
+                raise
+            except Exception as exc:
+                document["index_status"] = "failed"
+                store.put(document)
+                logger.error("textbook_index_failed document_id=%s", document["id"])
+                raise HTTPException(
+                    503,
+                    "Textbook indexing did not complete. Retry when services are ready.",
+                ) from exc
+            store.put(document)
+            return store.public(document)
 
     @app.post("/api/admin/documents", status_code=201)
     async def import_document(
@@ -364,6 +452,7 @@ def create_app(settings: Settings | None = None, client: httpx.AsyncClient | Non
                 "chunks": len(chunks),
                 "ocr_required_pages": missing,
                 "embedding_identity": embedding_identity(services),
+                "index_status": "indexing",
             }
             store.put(document)
             try:
@@ -397,10 +486,12 @@ def create_app(settings: Settings | None = None, client: httpx.AsyncClient | Non
                 temporary.write_bytes(content)
                 temporary.replace(target)
                 document["status"] = "ready"
+                document["index_status"] = "indexed"
                 store.put(document)
             except BaseException:
                 # A failed/aborted import is invisible to students; same-file retry is idempotent.
                 document["status"] = "failed"
+                document["index_status"] = "failed"
                 store.put(document)
                 with contextlib.suppress(FileNotFoundError):
                     (store.directory / (identity + ".pending")).unlink()

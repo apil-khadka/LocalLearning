@@ -19,6 +19,9 @@ class Settings(BaseSettings):
     chat_reasoning_effort: Literal["", "low", "medium", "high", "xhigh"] = ""
     ollama_base_url: str = ""
     ollama_model: str = "qwen3:4b-instruct"
+    embed_provider: Literal["ollama", "openai-compatible"] = "ollama"
+    embed_api_base_url: str = ""
+    embed_api_key: SecretStr = SecretStr("")
     embed_model: str = "embeddinggemma"
     embed_query_prefix: str = "task: search result | query: "
     embed_document_prefix: str = "title: {title} | text: "
@@ -35,6 +38,7 @@ class Settings(BaseSettings):
     dependency_timeout_seconds: float = Field(3, ge=0.1, le=30)
     max_upload_bytes: int = Field(10 * 1024 * 1024, ge=1024, le=50 * 1024 * 1024)
     max_pdf_pages: int = Field(100, ge=1, le=500)
+    max_index_pdf_pages: int = Field(1000, ge=1, le=2000)
     max_chat_concurrency: int = Field(1, ge=1, le=8)
     retrieval_threshold: float = Field(0.65, ge=0, le=1)
     retrieval_top_k: int = Field(4, ge=1, le=8)
@@ -42,6 +46,7 @@ class Settings(BaseSettings):
     @field_validator(
         "ollama_base_url",
         "chat_api_base_url",
+        "embed_api_base_url",
         "qdrant_url",
         "kiwix_public_url",
         "kolibri_public_url",

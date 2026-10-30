@@ -287,6 +287,9 @@ def test_pdf_import_preserves_real_page_citation(client, staff):
     served = client.get(f"/api/textbooks/{doc['id']}/file")
     assert served.content.startswith(b"%PDF-")
     assert served.headers["content-type"] == "application/pdf"
+    assert served.headers["content-security-policy"] == (
+        "default-src 'none'; frame-ancestors 'self'"
+    )
 
 
 def test_logs_do_not_capture_question_or_credentials(client, staff):

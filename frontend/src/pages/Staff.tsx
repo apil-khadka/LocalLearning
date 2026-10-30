@@ -12,6 +12,8 @@ export default function Staff({ t, refresh }: { t: Copy; refresh: () => void }) 
   const [error, setError] = useState<unknown>(null)
   const [busy, setBusy] = useState(false)
   const [success, setSuccess] = useState(false)
+  const [indexCandidateId, setIndexCandidateId] = useState('')
+  const [indexSuccess, setIndexSuccess] = useState(false)
   async function login(event: FormEvent) {
     event.preventDefault()
     setBusy(true)
@@ -57,6 +59,34 @@ export default function Staff({ t, refresh }: { t: Copy; refresh: () => void }) 
       setBusy(false)
     }
   }
+  async function indexBook() {
+    if (!indexCandidateId) return
+    setBusy(true)
+    setError(null)
+    setIndexSuccess(false)
+    try {
+      await api<Book>('/admin/index-book', {
+        method: 'POST',
+        headers: { Authorization: `Bearer ${token}`, 'Content-Type': 'application/json' },
+        body: JSON.stringify({ document_id: indexCandidateId }),
+        signal: AbortSignal.timeout(600_000),
+      })
+      setIndexSuccess(true)
+      const next = await api<IndexStatus>('/admin/index-status', {
+        headers: { Authorization: `Bearer ${token}` },
+      })
+      setStatus(next)
+      refresh()
+      const candidate = next.documents.find(
+        (document) => document.index_status !== 'indexed' && document.index_status !== 'indexing',
+      )
+      setIndexCandidateId(candidate?.id ?? '')
+    } catch (e) {
+      setError(e)
+    } finally {
+      setBusy(false)
+    }
+  }
   return (
     <>
       <header className="page-heading">
@@ -91,6 +121,7 @@ export default function Staff({ t, refresh }: { t: Copy; refresh: () => void }) 
               setStatus(null)
               setError(null)
               setSuccess(false)
+              setIndexSuccess(false)
             }}
           >
             {t.logout}
@@ -152,7 +183,7 @@ export default function Staff({ t, refresh }: { t: Copy; refresh: () => void }) 
                   <input name="title" required maxLength={120} />
                 </Field>
                 <Field label={t.grade}>
-                  <input name="grade" type="number" min={1} max={12} defaultValue={8} required />
+                  <input name="grade" type="number" min={0} max={12} defaultValue={8} required />
                 </Field>
                 <Field label={t.subject}>
                   <input name="subject" defaultValue="Science" required maxLength={120} />
@@ -177,12 +208,58 @@ export default function Staff({ t, refresh }: { t: Copy; refresh: () => void }) 
             </fieldset>
             {success && <p role="status">{t.imported}</p>}
           </form>
+          <section className="panel index-library">
+            <h2>{t.indexBooksTitle}</h2>
+            <p>{t.indexBooksIntro}</p>
+            <div className="index-library-controls">
+              <Field label={t.indexBookChoice}>
+                <select
+                  value={indexCandidateId}
+                  disabled={busy}
+                  onChange={(event) => {
+                    setIndexCandidateId(event.target.value)
+                    setIndexSuccess(false)
+                  }}
+                >
+                  <option value="">{t.chooseUnindexedBook}</option>
+                  {status?.documents
+                    .filter(
+                      (document) =>
+                        !(
+                          document.index_status === 'indexed' ||
+                          (!document.index_status && (document.chunks ?? 0) > 0)
+                        ) &&
+                        document.index_status !== 'indexing' &&
+                        document.index_status !== 'needs_ocr',
+                    )
+                    .map((document) => (
+                      <option value={document.id} key={document.id}>
+                        {document.grade === null
+                          ? t.allGrades
+                          : `${t.grade} ${document.grade || 'K'}`}{' '}
+                        · {document.subject} · {document.title}
+                      </option>
+                    ))}
+                </select>
+              </Field>
+              <button
+                className="primary"
+                disabled={busy || !indexCandidateId}
+                onClick={indexBook}
+                type="button"
+              >
+                {busy ? t.indexingBook : t.indexOneBook}
+              </button>
+            </div>
+            {indexSuccess && <p role="status">{t.bookIndexed}</p>}
+          </section>
           <section className="panel">
             <h2>{t.catalog}</h2>
             {!status?.documents.length && <p>{t.noStaffDocs}</p>}
             {status?.documents.map((doc) => (
               <p key={doc.id}>
                 {doc.title} / {doc.status}
+                {` / ${t.indexStatusLabel}: ${t[(doc.index_status ?? ((doc.chunks ?? 0) > 0 ? 'indexed' : 'notIndexed')) as keyof Copy]}`}
                 {doc.ocr_required_pages.length > 0 &&
                   ` / ${t.ocr}: ${doc.ocr_required_pages.join(', ')}`}
               </p>

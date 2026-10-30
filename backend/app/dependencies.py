@@ -14,12 +14,26 @@ class LocalServices:
     def __init__(self, settings: Settings, client: httpx.AsyncClient):
         self.settings, self.client = settings, client
         self.openai_client = None
+        self.embed_client = None
         api_key = settings.chat_api_key.get_secret_value()
         if settings.chat_provider == "openai-compatible" and settings.chat_api_base_url and api_key:
             self.openai_client = AsyncOpenAI(
                 api_key=api_key,
                 base_url=settings.chat_api_base_url,
                 timeout=settings.chat_timeout_seconds,
+                max_retries=0,
+                http_client=client,
+            )
+        embed_api_key = settings.embed_api_key.get_secret_value()
+        if (
+            settings.embed_provider == "openai-compatible"
+            and settings.embed_api_base_url
+            and embed_api_key
+        ):
+            self.embed_client = AsyncOpenAI(
+                api_key=embed_api_key,
+                base_url=settings.embed_api_base_url,
+                timeout=settings.model_timeout_seconds,
                 max_retries=0,
                 http_client=client,
             )
@@ -42,6 +56,19 @@ class LocalServices:
             raise DependencyUnavailable("The model service returned invalid data.") from exc
 
     async def embed(self, texts: list[str]) -> list[list[float]]:
+        if self.settings.embed_provider == "openai-compatible":
+            if not self.embed_client:
+                raise DependencyUnavailable("The embedding service is not configured.")
+            try:
+                response = await self.embed_client.embeddings.create(
+                    model=self.settings.embed_model,
+                    input=texts,
+                )
+                vectors = [item.embedding for item in sorted(response.data, key=lambda x: x.index)]
+            except (OpenAIError, AttributeError, TypeError, ValueError) as exc:
+                raise DependencyUnavailable("The embedding service is unavailable.") from exc
+            return self._validate_vectors(vectors, len(texts))
+
         data = await self.request(
             "POST",
             self.settings.ollama_base_url + "/api/embed",
@@ -49,9 +76,13 @@ class LocalServices:
             timeout=self.settings.model_timeout_seconds,
         )
         vectors = data.get("embeddings") if isinstance(data, dict) else None
+        return self._validate_vectors(vectors, len(texts))
+
+    @staticmethod
+    def _validate_vectors(vectors, expected_count: int) -> list[list[float]]:
         if (
             not isinstance(vectors, list)
-            or len(vectors) != len(texts)
+            or len(vectors) != expected_count
             or not vectors
             or not isinstance(vectors[0], list)
             or not vectors[0]
@@ -65,6 +96,12 @@ class LocalServices:
         ):
             raise DependencyUnavailable("The embedding service returned invalid vectors.")
         return vectors
+
+    @property
+    def embeddings_configured(self) -> bool:
+        if self.settings.embed_provider == "openai-compatible":
+            return self.embed_client is not None
+        return bool(self.settings.ollama_base_url)
 
     async def chat(self, messages: list[dict]) -> str:
         if self.settings.chat_provider == "openai-compatible":

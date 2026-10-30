@@ -11,9 +11,10 @@ Model inference, curriculum quality, Nepali language quality, school Wi-Fi capac
 ## What is here
 
 - A responsive React/TypeScript portal with English and Nepali interface text.
-- A FastAPI API with switchable Ollama or OpenAI-compatible chat and local Ollama embeddings.
+- A FastAPI API with switchable chat and separate Ollama or OpenAI-compatible embedding providers.
 - Protected PDF/text ingestion, page-aware chunks, real retrieval metadata, and safe no-match responses.
-- A persistent local textbook catalog, file delivery, and staff diagnostics.
+- A searchable, paginated textbook catalog with filters, multi-select, inline PDF preview, and staff diagnostics.
+- Staff-triggered vector indexing for saved books, processed one title at a time with small embedding batches.
 - Separate student and staff reverse-proxy listeners, container packaging, and automated checks.
 - An optional Kolibri 0.19.5 classroom service with persistent storage and a student portal link.
 - A static project website for GitHub Pages, independent of the school application.
@@ -29,6 +30,11 @@ The source planning attachments are private local material and are excluded from
 Prototype book samples can be fetched locally with `make books-pilot` and `make books-more`.
 They are text-only Wikibooks books or selected chapters with revision-level attribution, saved under ignored `content/private/` and excluded from public builds.
 They are integration-test fixtures, not Nepal-approved curriculum sources.
+The current private local environment also contains 216 CDC PDFs covering Kindergarten through Grade 12 and one cross-grade reference.
+Run `make books-cdc-k12` to refresh them and `COMPOSE_FILE=docker-compose.yml:internal/compose-network.yml make books-import-k12` to put them in the local Books library without AI indexing.
+The PDF files and generated manifest are ignored by Git; see [content setup](content/README.md) and the [CDC source inventory](docs/research/additional-book-sources.md).
+The My Textbooks page searches titles, subjects, chapters, and sources through the API, and provides grade/subject filters, pagination, selection, and an in-page PDF preview.
+The CDC books remain visible in the catalog but are not vector-indexed automatically.
 
 ## Run locally
 
@@ -65,6 +71,7 @@ Edit the ignored `.env` file with **verified addresses reachable from the API pr
 OLLAMA_BASE_URL=http://LOCAL_MODEL_HOST:11434
 QDRANT_URL=http://LOCAL_VECTOR_HOST:6333
 OLLAMA_MODEL=qwen3:4b-instruct
+EMBED_PROVIDER=ollama
 EMBED_MODEL=embeddinggemma
 ```
 
@@ -73,6 +80,8 @@ For containers, `localhost` means that container, not the Ubuntu host.
 Use a verified container network address or `host.docker.internal` with a properly restricted host service.
 Do not duplicate or modify existing NOMAD services.
 Provision models and content while online, then disconnect WAN for acceptance.
+To use a different OpenAI-compatible embedding service, configure `EMBED_PROVIDER=openai-compatible`, `EMBED_API_BASE_URL`, `EMBED_API_KEY`, and that provider's embedding model in `EMBED_MODEL`.
+Chat and embedding configuration are independent; the configured chat model is not assumed to provide embeddings.
 
 To test the requested hosted model, fill in these local-only values in `.env` and then enable AI:
 
@@ -89,13 +98,17 @@ The key is never committed.
 To switch chat to local Ollama, use `CHAT_PROVIDER=ollama` and set `OLLAMA_BASE_URL` and `OLLAMA_MODEL`.
 To switch to another OpenAI-compatible service, change `CHAT_API_BASE_URL`, `CHAT_API_KEY`, and `CHAT_MODEL`.
 Clear `CHAT_REASONING_EFFORT` if the new service does not support Muse-style reasoning controls.
-RAG still uses the separate local Ollama embedding model and Qdrant settings; with both unset, chat works as a clearly labeled general explanation without textbook citations.
+Textbook retrieval uses the separately configured embedding provider and Qdrant collection.
+With either one unavailable, chat can still return a clearly labeled general explanation without textbook citations.
 
 Set a random staff token of at least 32 characters in `.env` using a password manager or a local generator.
 For example, `python3 -c 'import secrets; print(secrets.token_urlsafe(48))'` generates a value to copy into `ADMIN_TOKEN`.
 Keep it out of Git, logs and frontend build variables.
 In development, open `/staff`, sign in, and import `content/sample/force-and-motion.txt` with grade `8`, subject `Science`, chapter `Force and Motion`, license `CC0-1.0`, and source `Original demonstration note`.
-Textbook import and retrieval require a working local embedding model and Qdrant.
+For books already in the catalog, use **Prepare books for tutor search** in Staff and index one searchable title at a time.
+Each action embeds up to four passages per provider call and can be retried safely using stable vector IDs.
+Scanned books without selectable text need OCR before they can be indexed.
+Vector indexing requires an embedding provider and Qdrant, while tutor chat remains separately gated by `AI_ENABLED`.
 General chat can be tested without either retrieval service.
 After teacher review, enable AI and restart the API to test real questions.
 

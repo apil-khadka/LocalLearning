@@ -108,7 +108,7 @@ test('new public pages describe the learner flow and current project state', asy
 
   await page.goto('https://digital-himalaya.test/how-it-works/')
   await expect(page.getByRole('heading', { level: 1 })).toContainText('school library')
-  await expect(page.locator('.story-frame')).toHaveCount(4)
+  await expect(page.locator('.story-frame')).toHaveCount(5)
   await expect
     .poll(() =>
       page
@@ -135,7 +135,7 @@ test('new public pages describe the learner flow and current project state', asy
   }, videoAsset)
   expect(videoFetch).toEqual({ status: 200, type: 'video/mp4', size: expect.any(Number) })
   expect(videoFetch.size).toBeGreaterThan(100_000)
-  for (const index of [0, 1, 2, 3]) {
+  for (const index of [0, 1, 2, 3, 4]) {
     const scene = page.locator(`[data-story-step="${index}"]`)
     await scene.evaluate((element) =>
       element.scrollIntoView({ block: 'center', behavior: 'instant' }),

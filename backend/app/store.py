@@ -50,9 +50,56 @@ class Store:
         return [
             doc
             for doc in items
-            if (grade is None or doc["grade"] == grade)
+            if (
+                grade is None
+                or doc.get("grade") is None
+                or doc.get("grade") == grade
+                or grade in doc.get("grades", [])
+            )
             and (subject is None or doc["subject"].casefold() == subject.strip().casefold())
         ]
+
+    def catalog(
+        self,
+        *,
+        grade: int | None = None,
+        subject: str | None = None,
+        query: str | None = None,
+        limit: int = 24,
+        offset: int = 0,
+    ) -> dict:
+        """Return one human-sorted catalog page and its available subject filters."""
+        items = self.list(grade=grade)
+        subjects = sorted({doc["subject"] for doc in items}, key=str.casefold)
+        if subject and subject.strip():
+            wanted = subject.strip().casefold()
+            items = [doc for doc in items if doc["subject"].casefold() == wanted]
+        if query and query.strip():
+            terms = query.strip().casefold()
+            items = [
+                doc
+                for doc in items
+                if terms
+                in " ".join(
+                    str(doc.get(key, "")) for key in ("title", "subject", "chapter", "source")
+                ).casefold()
+            ]
+        items.sort(
+            key=lambda doc: (
+                doc.get("grade") is None,
+                doc.get("grade") if doc.get("grade") is not None else 99,
+                doc["subject"].casefold(),
+                doc["title"].casefold(),
+            )
+        )
+        total = len(items)
+        return {
+            "items": [self.public(doc) for doc in items[offset : offset + limit]],
+            "total": total,
+            "limit": limit,
+            "offset": offset,
+            "subjects": subjects,
+        }
 
     @staticmethod
     def public(document: dict) -> dict:

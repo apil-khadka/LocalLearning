@@ -3,7 +3,7 @@
 Students open a static portal and call `/api` on that same origin.
 Only the API talks to chat, embedding, and vector services.
 Chat can use local Ollama or a configurable OpenAI-compatible endpoint.
-Textbook embeddings remain in Ollama, and retrieval remains in the dedicated Qdrant collection.
+Embeddings independently use Ollama or a configurable OpenAI-compatible endpoint, and retrieval uses the dedicated Qdrant collection.
 Staff use a different reverse-proxy listener through a local or SSH-forwarded connection.
 
 ```mermaid
@@ -14,7 +14,7 @@ flowchart LR
     StaffPortal --> API
     API --> Catalog[SQLite catalog and local files]
     API --> Chat[Ollama or OpenAI-compatible chat provider]
-    API --> Ollama[Ollama embeddings]
+    API --> Embedder[Ollama or OpenAI-compatible embeddings]
     API --> Qdrant[Dedicated dh_ Qdrant collection]
     Student --> Kiwix[Approved local Kiwix endpoint]
     Student --> Kolibri[Optional Kolibri service]
@@ -58,17 +58,27 @@ Recovery tooling and garbage collection are follow-up work.
 | GET | `/api/health` | Application liveness; not a claim of model readiness |
 | GET | `/api/services` | Local model/vector reachability and chat-provider configuration state |
 | GET | `/api/textbooks` | Ready documents filtered by optional grade/subject |
+| GET | `/api/textbooks/catalog` | Searchable catalog page with total count and grade-specific subject options |
 | GET | `/api/textbooks/{id}` | Safe document metadata |
 | GET | `/api/textbooks/{id}/file` | Catalog-resolved PDF or text; no raw path input |
 | POST | `/api/tutor/chat` | Optional local embeddings, filtered retrieval, configured chat answer and source metadata |
 | GET | `/api/admin/index-status` | Authenticated service checks and all import states |
 | POST | `/api/admin/documents` | Authenticated bounded PDF/text import |
+| POST | `/api/admin/index-book` | Authenticated one-book indexing from an existing catalog file |
+
+The `/api/textbooks/{id}/file` response is inline and uses a same-origin-only frame policy so the browser PDF viewer can render the catalog preview.
+The Nginx file route replaces the app-wide `frame-ancestors 'none'` policy only for this validated PDF path.
 
 Ollama receives `/api/embed` requests and, in local-chat mode, `/api/chat` requests.
 OpenAI-compatible mode uses the configured `CHAT_API_BASE_URL`, `CHAT_API_KEY`, and `CHAT_MODEL` through the OpenAI Python SDK.
+When `EMBED_PROVIDER=openai-compatible`, the separate `EMBED_API_BASE_URL`, `EMBED_API_KEY`, and `EMBED_MODEL` configure an OpenAI-compatible embeddings endpoint.
+The embedding model is independent from the chat model because not every chat endpoint provides embeddings.
 The default provider URL is Baseten's OpenAI-compatible endpoint, and the default model is `meta-models/muse-spark-open-1026`.
 External provider status is reported as configured without sending health-check requests.
 Qdrant receives collection management, stable point upserts and filtered `/points/query` requests.
+Staff can index existing books one per request, with at most four text chunks in each embedding call.
+Stable chunk IDs make retries idempotent, and per-book state records books that are not indexed, indexing, indexed, failed, or waiting for OCR.
+The process never starts an automatic backfill across the full catalog.
 Embedding dimensions come from returned vectors, and existing collection dimensions are checked before writing.
 Student answers have `grounding: textbook` when passages were retrieved or `general` when no suitable passages were retrieved.
 Failures use HTTP 503; no canned answer is substituted.

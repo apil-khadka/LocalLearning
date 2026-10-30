@@ -5,7 +5,7 @@ The application runs independently of the software that manages the school's off
 
 ## Architecture decision
 
-Use React/TypeScript/Vite for static browser assets, FastAPI for the application API, SQLite/filesystem for the document catalog, a switchable Ollama/OpenAI-compatible chat provider, Ollama for local embeddings, and a dedicated Qdrant collection for retrieval.
+Use React/TypeScript/Vite for static browser assets, FastAPI for the application API, SQLite/filesystem for the document catalog, switchable Ollama/OpenAI-compatible chat and embedding providers, and a dedicated Qdrant collection for retrieval.
 Use Kiwix for offline reference articles and Kolibri for classroom courses, learner progress, and assessments.
 The repository provides an optional pinned Kolibri Compose profile and otherwise connects to a verified existing Kolibri service.
 Reuse NOMAD-managed services where available through documented service interfaces instead of installing duplicate services.
@@ -28,8 +28,11 @@ Choose actual model and hardware combinations through measurement, not the names
 
 ## Initial implementation boundaries
 
-The software foundation includes the integration code and test doubles needed to develop without a local model or API key.
-It does not include a model, vector server, downloaded encyclopedia, video channel, official textbook, school account system, or management VLAN configuration.
+The public repository includes integration code and test doubles, but it does not bundle a model, vector server, downloaded encyclopedia, video channel, school content, or school account system.
+The current private prototype environment has a local CDC collection of 216 PDFs covering Kindergarten through Grade 12 and one cross-grade reference, stored outside Git and not indexed for AI retrieval.
+The textbook UI supports API-side search and pagination, grade/subject filters, multi-select, inline PDF preview, and visible indexing states.
+Staff can index one saved book per action in small batches after an embedding provider and Qdrant are configured.
+It does not include a management VLAN configuration.
 Import is synchronous and bounded to one document at a time in one API process.
 AI requests beyond the configured concurrency limit receive a retry response instead of an unbounded queue.
 Changing API worker count requires shared admission control and ingestion coordination first.
@@ -42,9 +45,9 @@ Changing embedding model weights, prefixes or dimensions requires an intentional
 
 ## Next priorities
 
-1. Run the OpenAI-compatible chat path against the configured endpoint with non-identifying test prompts, or switch to local Ollama.
-2. Connect a real Ollama embedding service and Qdrant on target Ubuntu hardware; run the opt-in live-service test.
-3. Import a permitted searchable Grade 8 chapter and prepare in-scope, no-match, Nepali and prompt-injection evaluation questions.
+1. Configure a real embedding service and Qdrant on target Ubuntu hardware; index one teacher-reviewed searchable textbook and run the opt-in live-service test.
+2. Select a teacher-reviewed searchable chapter from the private CDC collection, index it, and prepare in-scope, no-match, Nepali, and prompt-injection evaluation questions.
+3. Complete Kolibri first-run setup, import one reviewed course channel, and verify learner and teacher workflows in Kolibri rather than rebuilding LMS features here.
 4. Review the proposed network on actual router/AP hardware and test the firewall from student devices.
 5. Add content withdrawal, bounded background ingestion with recovery, and catalog/index migration before expanding collections.
 6. Measure 12 simultaneous library clients separately from three AI requests; keep AI off if review fails.

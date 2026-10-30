@@ -71,7 +71,10 @@
               <h3>Student portal and textbook catalog</h3>
               <p>
                 Responsive English and Nepali UI, protected staff import, page-aware document text,
-                and local file access.
+                and local file access. The private prototype catalog now contains 216 CDC PDFs
+                across Kindergarten through Grade 12, plus a cross-grade reference; book files stay
+                out of the public repository. The browser now adds server-side search, grade and
+                subject filters, pagination, multi-select, and an inline PDF preview.
               </p>
             </div>
           </article>
@@ -80,8 +83,10 @@
             <div>
               <h3>Switchable tutor providers</h3>
               <p>
-                Chat supports local Ollama or an OpenAI-compatible endpoint. A live request with the
-                requested Muse Spark model succeeded in the prototype. AI remains off by default.
+                Chat supports local Ollama or an OpenAI-compatible endpoint, and embeddings can be
+                configured independently for Ollama or an OpenAI-compatible endpoint. Staff can
+                index one saved book at a time; the private catalog is not indexed yet. AI remains
+                off by default.
               </p>
             </div>
           </article>
@@ -131,15 +136,15 @@
             </p>
           </div>
           <ul class="verification-list">
-            <li><strong>28</strong><span>backend tests passed</span></li>
-            <li><strong>17</strong><span>browser tests passed</span></li>
-            <li><strong>4</strong><span>production tutor checks passed</span></li>
+            <li><strong>58</strong><span>backend tests passed</span></li>
+            <li><strong>27</strong><span>browser tests passed</span></li>
+            <li><strong>6</strong><span>production checks passed</span></li>
           </ul>
         </div>
         <div class="wrap verification-note">
-          Two opt-in backend checks and seven deployment-only browser checks were skipped in the
-          default local test command. The full E2E suite with the local deployment passed 21 checks
-          and skipped one desktop-only mobile-navigation case.
+          Two opt-in backend checks and seven browser cases were skipped in the default local test
+          command. The full E2E suite with the local deployment passed 27 checks and skipped one
+          mobile-navigation case outside the desktop viewport.
           <a href="https://github.com/apil-khadka/LocalLearning/actions/workflows/ci.yml">
             View GitHub Checks <span aria-hidden="true">↗</span>
           </a>
@@ -163,8 +168,9 @@
             <div>
               <h3>Connect local embeddings and Qdrant</h3>
               <p>
-                Set verified service addresses, load approved chapters, and measure retrieval
-                quality with teachers. The current Qdrant URL is blank.
+                Configure an embedding service and Qdrant, index a teacher-reviewed searchable
+                chapter, and measure retrieval quality with teachers. The current Qdrant URL is
+                blank.
               </p>
             </div>
           </article>

@@ -1,4 +1,4 @@
-.PHONY: setup check test build books-pilot books-more education-up education-down
+.PHONY: setup check test build books-pilot books-more books-cdc-k12 books-import-k12 education-up education-down
 setup:
 	uv sync --project backend --locked
 	npm ci --prefix frontend
@@ -16,6 +16,10 @@ books-pilot:
 	python scripts/fetch_wikijunior_biology.py
 books-more:
 	python scripts/fetch_wikibooks_books.py $(BOOKS)
+books-cdc-k12:
+	python scripts/fetch_cdc_k12_books.py
+books-import-k12:
+	docker compose exec api .venv/bin/python -m app.library_import --manifest /private-cdc-books/catalog.json --data-dir /data
 education-up:
 	docker compose --profile education up -d --wait
 education-down:

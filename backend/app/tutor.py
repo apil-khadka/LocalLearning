@@ -10,6 +10,8 @@ def embedding_identity(services: LocalServices) -> str:
     return json.dumps(
         [
             settings.embed_model,
+            settings.embed_provider,
+            settings.embed_api_base_url,
             settings.embed_query_prefix,
             settings.embed_document_prefix,
             settings.qdrant_collection,
@@ -24,7 +26,7 @@ async def answer_question(
 ) -> ChatResponse:
     settings = services.settings
     passages = []
-    if settings.ollama_base_url and settings.qdrant_url:
+    if services.embeddings_configured and settings.qdrant_url:
         vector = (await services.embed([settings.embed_query_prefix + request.message]))[0]
         collections = await services.qdrant("GET", "/collections")
         try:

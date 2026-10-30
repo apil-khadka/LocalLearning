@@ -42,6 +42,13 @@ test('production bundle runs locally, with separate student and staff boundaries
   expect((await request.get(base + '/api/admin/index-status')).status()).toBe(403)
   expect((await request.get(base + '/staff')).status()).toBe(404)
   expect((await request.get(base + '/staff/')).status()).toBe(404)
+  const previewPolicy = await request.get(
+    `${base}/api/textbooks/00000000000000000000000000000000/file`,
+  )
+  expect(previewPolicy.status()).toBe(404)
+  expect(previewPolicy.headers()['content-security-policy']).toBe(
+    "default-src 'none'; frame-ancestors 'self'",
+  )
   expect(externalRequests).toEqual([])
   expect(errors).toEqual([])
 })

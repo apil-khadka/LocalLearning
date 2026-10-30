@@ -36,8 +36,12 @@ class ChatResponse(BaseModel):
 
 class DocumentInput(BaseModel):
     title: ShortText
-    grade: int = Field(ge=1, le=12)
+    grade: int | None = Field(None, ge=0, le=12)
     subject: ShortText
     chapter: ShortText
     license: ShortText
     source: Annotated[str, StringConstraints(strip_whitespace=True, min_length=1, max_length=500)]
+
+
+class IndexBookRequest(BaseModel):
+    document_id: str = Field(pattern=r"^[a-f0-9]{32}$")

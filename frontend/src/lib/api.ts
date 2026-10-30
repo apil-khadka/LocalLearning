@@ -16,14 +16,23 @@ export type Services = {
 export type Book = {
   id: string
   title: string
-  grade: number
+  grade: number | null
   subject: string
   chapter: string
   license: string
   source: string
   pages: number
   status: string
+  chunks?: number
+  index_status?: 'not_indexed' | 'indexing' | 'indexed' | 'failed' | 'needs_ocr'
   ocr_required_pages: number[]
+}
+export type TextbookCatalog = {
+  items: Book[]
+  total: number
+  limit: number
+  offset: number
+  subjects: string[]
 }
 export type Reply = {
   answer: string

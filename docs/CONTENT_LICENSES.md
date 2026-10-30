@@ -19,7 +19,9 @@ Review and retain the license and attribution for every Kolibri channel and reso
 
 The initial book-source review is in [book-sources.md](research/book-sources.md).
 That review found different terms at E-Pustakalaya per item, no reuse terms on the CDC catalog entries reviewed, and a CC BY 4.0 Open Textbook Library candidate.
-Downloaded pilot files belong under the ignored `content/private/` directory and must not enter the public repository.
+For the local CDC prototype collection, the project owner confirmed permission to use the copied materials.
+Those PDFs stay under the ignored `content/private/` directory and must not enter this public repository.
+The private manifest retains the official CDC source page, direct file URL, retrieval time, and SHA-256 for each downloaded item.
 Locally fetched text-only Wikibooks prototypes include Wikijunior:Biology and selected chapters from Wikijunior:Human Body, Wikijunior:Solar System, and Geometry for Elementary School under CC BY-SA 4.0; revision-level attribution manifests are kept beside the content in ignored storage.
 They are prototype fixtures, not curriculum approvals or public content bundles.
 The Solar System text comes from current Wikibooks pages, not the historical PDF copy.
