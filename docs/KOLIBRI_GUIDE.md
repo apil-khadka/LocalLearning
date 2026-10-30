@@ -8,12 +8,14 @@ The two systems do not share sign-in, user records, or course progress.
 
 ## Before using Kolibri
 
-1. Start the embedded service with `make education-up`, or confirm the existing Kolibri service is running.
-2. Set `KOLIBRI_PUBLIC_URL` to the URL a staff browser and student browser can reach.
-3. Set `KOLIBRI_PROBE_URL` to the address the API container can reach.
-4. Recreate the API after changing either value with `docker compose up -d --force-recreate api`.
-5. Open the protected staff workspace and use the Kolibri status and **Open Kolibri** link.
-6. Complete Kolibri's own first-run device and facility setup before assigning content.
+1. Set `KOLIBRI_PUBLIC_URL` to the URL a staff browser and student browser can reach.
+2. Set `KOLIBRI_PROBE_URL` to the address the API container can reach.
+3. Recreate the API after changing either value with `docker compose up -d --force-recreate api`.
+4. For local development, create `private-local/kolibri-admin-password` with a unique password of at least 16 characters, restrict it to the current user with `chmod 600`, and run `make education-up`.
+5. On an empty volume, the make target creates a formal `Digital Himalaya Dev School` facility and the `devadmin` super-admin account before returning.
+6. The bootstrap checks for an existing facility first and leaves provisioned Kolibri data unchanged on later starts.
+7. Open the protected staff workspace and use the Kolibri status and **Open Kolibri** link.
+8. For an actual school deployment, complete the facility setup for that school and create its accounts in Kolibri; do not reuse the local dev account.
 
 The default embedded service uses port 8092 for Kolibri's web interface and port 8093 for its content transfer interface.
 Both ports bind to loopback by default.
@@ -28,7 +30,9 @@ Keep the initial super-admin credentials in the school's private credential stor
 Give device content-management permission only to staff who are responsible for selecting and updating channels.
 Use coach accounts to manage classes, lessons, quizzes, and learner progress.
 Create learner accounts or groups using the school's normal student privacy process.
-Never place Kolibri credentials in `.env`, this repository, or the Digital Himalaya staff token field.
+Never place Kolibri credentials in `.env`, tracked files, or the Digital Himalaya staff token field.
+For this local prototype, the dev password and its access note live only in the git-ignored `private-local/` directory.
+Do not reuse the dev account or its password in a school deployment.
 
 ## Review content rights before import
 

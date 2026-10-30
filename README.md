@@ -130,9 +130,12 @@ docker compose up -d --wait
 
 The student portal is `http://127.0.0.1:8090` and staff sign-in is `http://127.0.0.1:8091/staff`.
 Kolibri is an optional Compose profile so the base application does not pull or start the education service unless requested.
-Set `KOLIBRI_PUBLIC_URL=http://127.0.0.1:8092` and `KOLIBRI_PROBE_URL=http://kolibri:8080` in `.env`, then run `make education-up` to start it alongside the portal.
+Set `KOLIBRI_PUBLIC_URL=http://127.0.0.1:8092` and `KOLIBRI_PROBE_URL=http://kolibri:8080` in `.env`, then run `make education-up` to start and connect it alongside the portal.
 Kolibri keeps its database, user records, and imported content in a separate persistent `kolibri-data` volume.
-Complete Kolibri's first-run facility setup and import approved channels in its own interface; this project does not download course content or provision accounts.
+On a fresh local volume, `make education-up` provisions a formal `Digital Himalaya Dev School` facility and a `devadmin` super-admin account from the password in the ignored `private-local/kolibri-admin-password` file.
+The bootstrap skips any volume that already contains a facility, so it does not reset existing Kolibri accounts or content.
+Import approved channels in Kolibri's own interface; this project does not download course content or provision learner accounts.
+The local dev password and access note belong only in the ignored `private-local/` directory and must not be committed or reused for a school deployment.
 Use the [Kolibri operations guide](docs/KOLIBRI_GUIDE.md) for role setup, rights review, offline channel imports, update review, verification, and backup steps.
 For a school LAN, set `KOLIBRI_BIND` to the server's reserved LAN IP and `KOLIBRI_PUBLIC_URL` to the student-reachable address after reviewing firewall rules.
 Keep the education profile off when an existing NOMAD or Kolibri deployment already provides the service, and configure its verified URLs instead.

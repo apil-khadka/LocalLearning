@@ -20,8 +20,11 @@ Use the [README](../README.md) for local development commands.
 
 The optional `education` Compose profile runs the official Kolibri 0.19.5 container with a persistent `kolibri-data` volume.
 The image listens on ports 8080 and 8081 internally; this project publishes them as host ports 8092 and 8093 by default.
-To use the embedded service locally, set `KOLIBRI_PUBLIC_URL=http://127.0.0.1:8092` and `KOLIBRI_PROBE_URL=http://kolibri:8080` in `.env`, then run `make education-up`.
-Finish Kolibri's own first-run facility setup, create the appropriate coach and learner accounts, and import only reviewed channels using its interface.
+To use the embedded service locally, set `KOLIBRI_PUBLIC_URL=http://127.0.0.1:8092` and `KOLIBRI_PROBE_URL=http://kolibri:8080` in `.env`, create the ignored `private-local/kolibri-admin-password` file with a strong password of at least 16 characters, and run `make education-up`.
+On a fresh volume, the target provisions a formal `Digital Himalaya Dev School` facility and `devadmin` super-admin account, then leaves Kolibri running for browser access at `http://127.0.0.1:8092`.
+It skips provisioning when a facility already exists, preserving its accounts and content.
+Create coach and learner accounts and import reviewed channels using Kolibri's interface.
+The private local access note is `private-local/KOLIBRI_DEV_ACCESS.md`; both it and the password file are git-ignored.
 Follow the [Kolibri operations guide](KOLIBRI_GUIDE.md) for a complete content-selection, import, update, verification, and backup procedure.
 Kolibri channels must be imported from Kolibri Studio, another Kolibri device, or a prepared Kolibri storage drive; this application does not scrape or load course content into Kolibri.
 For a school deployment, change `KOLIBRI_BIND` to the reserved server LAN address and set `KOLIBRI_PUBLIC_URL` to the address reachable by student devices only after firewall review.

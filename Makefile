@@ -21,6 +21,7 @@ books-cdc-k12:
 books-import-k12:
 	docker compose exec api .venv/bin/python -m app.library_import --manifest /private-cdc-books/catalog.json --data-dir /data
 education-up:
-	docker compose --profile education up -d --wait
+	docker compose --profile education up -d kolibri
+	python3 scripts/bootstrap_kolibri.py
 education-down:
 	docker compose --profile education stop kolibri
