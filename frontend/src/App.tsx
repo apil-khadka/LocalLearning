@@ -43,9 +43,6 @@ export default function App() {
       </a>
       <div className="workspace">
         <header className="topbar">
-          <Link className="topbar-brand" to="/" aria-label={`Digital Himalaya - ${t.home}`}>
-            Himalaya
-          </Link>
           <nav id="primary-navigation" className="primary-navigation" aria-label={t.mainNavigation}>
             <NavLink to="/" end aria-label={t.home}>
               <House size={21} aria-hidden="true" />
@@ -63,28 +60,6 @@ export default function App() {
               <span className="nav-label-short">{t.booksShort}</span>
             </NavLink>
           </nav>
-          <div className="topbar-tools">
-            <span className={`connection ${connection}`} aria-label={t[connection]}>
-              <WifiHigh size={19} aria-hidden="true" />
-              <span className="connection-label">{t[connection]}</span>
-            </span>
-            <ToggleGroup.Root
-              type="single"
-              value={language}
-              onValueChange={(value) => {
-                if (value === 'en' || value === 'ne') setLanguage(value)
-              }}
-              aria-label="Language / भाषा"
-              className="language-toggle"
-            >
-              <ToggleGroup.Item value="en" lang="en">
-                English
-              </ToggleGroup.Item>
-              <ToggleGroup.Item value="ne" lang="ne">
-                नेपाली
-              </ToggleGroup.Item>
-            </ToggleGroup.Root>
-          </div>
         </header>
         {connection === 'disconnected' && (
           <div className="connection-error" role="alert">
@@ -113,11 +88,31 @@ export default function App() {
           </Routes>
         </main>
         <footer className="app-footer">
-          <div className="footer-brand">
-            <img src="/brand/digital-himalaya-mark.png" width="44" height="44" alt="" />
-            <span>
-              Digital <strong>Himalaya</strong>
+          <div className="footer-meta">
+            <Link className="footer-brand" to="/" aria-label={`Digital Himalaya - ${t.home}`}>
+              <img src="/brand/digital-himalaya-mark.png" width="44" height="44" alt="" />
+              <span>Himalaya</span>
+            </Link>
+            <span className={`connection ${connection}`} aria-label={t[connection]}>
+              <WifiHigh size={19} aria-hidden="true" />
+              <span className="connection-label">{t[connection]}</span>
             </span>
+            <ToggleGroup.Root
+              type="single"
+              value={language}
+              onValueChange={(value) => {
+                if (value === 'en' || value === 'ne') setLanguage(value)
+              }}
+              aria-label="Language / भाषा"
+              className="language-toggle"
+            >
+              <ToggleGroup.Item value="en" lang="en">
+                English
+              </ToggleGroup.Item>
+              <ToggleGroup.Item value="ne" lang="ne">
+                नेपाली
+              </ToggleGroup.Item>
+            </ToggleGroup.Root>
           </div>
           <div className="footer-details">
             <span>{t.localNote}</span>

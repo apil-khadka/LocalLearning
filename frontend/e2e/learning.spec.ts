@@ -385,11 +385,14 @@ test('primary navigation is a full-width sticky navbar at desktop, tablet, and p
     await expect(page.locator('.sidebar')).toHaveCount(0)
     await expect(navbar).toHaveCSS('position', 'sticky')
     await expect(navbar).toHaveCSS('width', `${width}px`)
+    await expect(navbar.locator('.connection, .language-toggle, .topbar-brand')).toHaveCount(0)
     await expect(navigation.getByRole('link')).toHaveCount(3)
     await expect(navigation.getByRole('link', { name: 'Learning home' })).toBeVisible()
     await expect(navigation.getByRole('link', { name: 'AI tutor' })).toBeVisible()
     await expect(navigation.getByRole('link', { name: 'My textbooks' })).toBeVisible()
-    await expect(page.locator('.footer-brand')).toContainText('Digital Himalaya')
+    await expect(page.locator('.footer-brand')).toContainText('Himalaya')
+    await expect(page.locator('.footer-meta .connection')).toBeVisible()
+    await expect(page.locator('.footer-meta .language-toggle')).toBeVisible()
     expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true)
 
     if (width === 390) {
