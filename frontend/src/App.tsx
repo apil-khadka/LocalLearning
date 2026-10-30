@@ -48,11 +48,9 @@ export default function App() {
       </a>
       <aside className="sidebar">
         <Link className="brand" to="/">
-          <MountainIcon weight="duotone" size={37} aria-hidden="true" />
+          <img src="/brand/digital-himalaya-mark.png" width="44" height="44" alt="" />
           <span>
-            Digital
-            <br />
-            <strong>Himalaya</strong>
+            Digital <strong>Himalaya</strong>
           </span>
         </Link>
         <nav aria-label={t.resources}>

@@ -3,7 +3,8 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <meta name="theme-color" content="#143a54" />
+    <meta name="theme-color" content="#163f3b" />
+    <link rel="icon" type="image/png" href="assets/digital-himalaya-mark.png" />
     <meta
       name="description"
       content="Digital Himalaya is building an offline-first school learning platform in Nepal. Explore the working foundation, network architecture, and plan for a carefully tested local deployment."
@@ -15,26 +16,13 @@
     <a class="skip" href="#main">Skip to content</a>
     <header class="site-header wrap">
       <a class="brand" href="#main" aria-label="Digital Himalaya home"
-        ><svg viewBox="0 0 46 38" width="42" height="35" fill="none" aria-hidden="true">
-          <path
-            d="M2 34 18 5l10 17 6-10 11 22H2Z"
-            fill="#dcebf4"
-            stroke="currentColor"
-            stroke-width="2.5"
-            stroke-linejoin="round"
-          />
-          <path
-            d="m12 16 6-11 7 12-7-3-6 2Z"
-            fill="white"
-            stroke="currentColor"
-            stroke-width="2"
-            stroke-linejoin="round"
-          /></svg
-        ><span>Digital <strong>Himalaya</strong></span></a
+        ><img src="assets/digital-himalaya-mark.png" width="46" height="46" alt="" /><span
+          >Digital <strong>Himalaya</strong></span
+        ></a
       >
       <nav aria-label="Main">
-        <a href="#approach">Our approach</a><a href="#architecture">Architecture</a
-        ><a href="#roadmap">The plan</a
+        <a href="#approach">The idea</a><a href="#preview">The portal</a
+        ><a href="#architecture">Architecture</a><a href="#roadmap">The plan</a
         ><a class="repo-link" href="https://github.com/apil-khadka/LocalLearning"
           >View on GitHub <span aria-hidden="true">↗</span></a
         >
@@ -61,37 +49,41 @@
             Under development. School deployment and real-model educational review are still ahead.
           </p>
         </div>
-        <div class="landscape" aria-hidden="true">
-          <svg viewBox="0 0 520 460" fill="none">
-            <circle cx="380" cy="92" r="42" fill="#e8bf65" />
-            <path d="M0 460 205 70l116 193 66-120 133 317H0Z" fill="#c4dbe8" />
-            <path d="m205 70-57 106 55-26 30 35 22-31Z" fill="#f7fbff" />
-            <path d="m387 143-35 65 35-16 26 24 15-24Z" fill="#f7fbff" />
-            <path d="M0 460 100 248l116 212Zm112 0 193-236 215 236Z" fill="#8fb6c8" />
-            <path d="m305 224-46 56 42-16 32 24 15-17Z" fill="#e3eff5" />
-            <path d="M0 460v-82c95-12 160 23 227 60 103-106 183-122 293-57v79H0Z" fill="#537f96" />
-            <path d="M0 460v-26c132-30 244 29 359-10 58-20 107-13 161-5v41H0Z" fill="#315c75" />
-            <path
-              d="M210 460c36-46 65-65 86-68 17-3 21 5 4 17-18 13-20 22-10 30l27 21"
-              fill="#cadce3"
-            />
-            <path d="M378 385v-41l30-22 30 22v41Z" fill="#fcfcfd" />
-            <path
-              d="m371 345 37-29 37 29"
-              stroke="#204b64"
-              stroke-width="7"
-              stroke-linejoin="round"
-            />
-            <path d="M402 385v-24h13v24" fill="#204b64" />
-            <path d="M384 352h9v9h-9Zm39 0h9v9h-9Z" fill="#8fb6c8" />
-          </svg>
-          <div class="landscape-caption">
-            <span class="small-signal" aria-hidden="true">◉</span>
-            <div>
-              <strong>One local network.</strong><span>A whole school of possibilities.</span>
+        <figure
+          class="network-visual"
+          aria-label="A school Wi-Fi network connects learners to a local server with books, Kolibri lessons, and an optional tutor"
+        >
+          <div class="network-visual-top">
+            <span>Learning, hosted at school</span>
+            <span class="local-indicator"><i></i> Local-first design</span>
+          </div>
+          <div class="network-map" aria-hidden="true">
+            <div class="learners">
+              <div class="device-node">
+                <span class="device-glyph phone-glyph"></span
+                ><span><strong>Student</strong><small>Phone or laptop</small></span>
+              </div>
+              <div class="device-node">
+                <span class="device-glyph screen-glyph"></span
+                ><span><strong>Teacher</strong><small>Classroom screen</small></span>
+              </div>
+            </div>
+            <div class="network-link"><span></span><small>School Wi-Fi</small></div>
+            <div class="server-node">
+              <span class="server-glyph"><i></i><i></i><i></i></span>
+              <strong>School server</strong>
+              <small>Digital Himalaya</small>
             </div>
           </div>
-        </div>
+          <div class="network-offerings">
+            <span><b>Books</b><small>Local library</small></span>
+            <span><b>Lessons</b><small>Kolibri</small></span>
+            <span><b>Tutor</b><small>Optional AI</small></span>
+          </div>
+          <figcaption>
+            Core resources stay on the school network. Hosted AI is a separate, optional path.
+          </figcaption>
+        </figure>
       </section>
       <section class="approach section wrap" id="approach">
         <div class="section-intro">
@@ -135,6 +127,45 @@
               </p>
             </div>
           </article>
+        </div>
+      </section>
+      <section class="showcase section" id="preview">
+        <div class="wrap">
+          <div class="showcase-heading">
+            <div>
+              <p class="section-kicker">A working prototype</p>
+              <h2>The learning portal,<br />on the devices students use.</h2>
+            </div>
+            <p>
+              These are real captures of the running learner app. The interface is ready for review;
+              course content, teacher setup, and school field testing are still in progress.
+            </p>
+          </div>
+          <div class="screenshot-gallery">
+            <figure class="screenshot-desktop">
+              <div class="browser-bar">
+                <span></span><span></span><span></span><small>school learning portal</small>
+              </div>
+              <img
+                src="assets/screenshots/portal-desktop.png"
+                alt="Digital Himalaya learner home page on a desktop browser, showing the local library, tutor, offline Wikipedia, and Kolibri links."
+                width="1440"
+                height="900"
+                loading="lazy"
+              />
+              <figcaption>Student portal · desktop</figcaption>
+            </figure>
+            <figure class="screenshot-mobile">
+              <img
+                src="assets/screenshots/portal-mobile.png"
+                alt="Digital Himalaya learner home page on a mobile phone, with resources arranged for a narrow screen."
+                width="390"
+                height="844"
+                loading="lazy"
+              />
+              <figcaption>Same local portal · mobile</figcaption>
+            </figure>
+          </div>
         </div>
       </section>
       <section class="architecture section" id="architecture">
@@ -276,7 +307,11 @@
       </section>
     </main>
     <footer class="wrap">
-      <a class="brand" href="#main">Digital <strong>Himalaya</strong></a>
+      <a class="brand" href="#main"
+        ><img src="assets/digital-himalaya-mark.png" width="36" height="36" alt="" /><span
+          >Digital <strong>Himalaya</strong></span
+        ></a
+      >
       <p>Built for local learning. Software licensed under Apache 2.0.</p>
       <a href="https://github.com/apil-khadka/LocalLearning/blob/main/docs/DEMO_SCRIPT.md"
         >Acceptance checklist</a

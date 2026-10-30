@@ -1,19 +1,19 @@
 :root {
   font-family: 'Nunito Sans', 'Noto Sans Devanagari', sans-serif;
-  color: #18374c;
-  background: #f4f7fb;
+  color: #183a43;
+  background: #f4f7f4;
   font-synthesis: none;
-  --ink: #18374c;
-  --muted: #52697a;
-  --navy: #143a54;
-  --blue: #255ed0;
-  --line: #d8e2eb;
+  --ink: #183a43;
+  --muted: #586f70;
+  --navy: #163f3b;
+  --blue: #2d7667;
+  --line: #d7e3dc;
   --surface: #fff;
-  --ice: #e8f2fa;
-  --sun: #edc878;
-  --green: #226b60;
-  --danger: #9e3434;
-  --radius: 16px;
+  --ice: #e5eee8;
+  --sun: #d6a24b;
+  --green: #286e60;
+  --danger: #a44743;
+  --radius: 18px;
   --space-1: 4px;
   --space-2: 8px;
   --space-3: 12px;
@@ -40,11 +40,14 @@ a {
   color: var(--blue);
   text-underline-offset: 3px;
 }
+a:hover {
+  color: #1b5b50;
+}
 button,
 .button {
   cursor: pointer;
   min-height: 46px;
-  border-radius: 10px;
+  border-radius: 9px;
   padding: 10px 17px;
   border: 1px solid var(--line);
   background: var(--surface);
@@ -73,9 +76,9 @@ button:disabled {
   outline-offset: 4px;
 }
 .primary {
-  background: var(--blue);
+  background: var(--navy);
   color: white;
-  border-color: var(--blue);
+  border-color: var(--navy);
 }
 .secondary {
   background: white;
@@ -115,15 +118,18 @@ p {
   margin-top: 0;
 }
 h1 {
+  font-family: Georgia, 'Times New Roman', serif;
   font-size: clamp(1.8rem, 3vw, 2.6rem);
-  line-height: 1.2;
-  font-weight: 700;
-  letter-spacing: -0.035em;
+  line-height: 1.12;
+  font-weight: 500;
+  letter-spacing: -0.04em;
 }
 h2 {
+  font-family: Georgia, 'Times New Roman', serif;
   font-size: 1.4rem;
-  line-height: 1.4;
-  letter-spacing: -0.02em;
+  line-height: 1.25;
+  letter-spacing: -0.025em;
+  font-weight: 500;
 }
 h3 {
   font-size: 1.18rem;
@@ -159,7 +165,7 @@ small,
 .brand {
   display: flex;
   align-items: center;
-  gap: 11px;
+  gap: 9px;
   text-decoration: none;
   color: white;
   padding-left: 12px;
@@ -169,6 +175,13 @@ small,
 }
 .brand strong {
   font-size: 1.4rem;
+}
+.brand img {
+  display: block;
+  flex: 0 0 auto;
+  padding: 3px;
+  border-radius: 10px;
+  background: #f4f7f4;
 }
 nav {
   display: grid;
@@ -186,10 +199,10 @@ nav a {
 }
 nav a.active {
   color: white;
-  background: #2b526b;
+  background: #275b52;
 }
 nav a:hover {
-  background: #254b65;
+  background: #204f48;
 }
 .sidebar-note {
   margin-top: auto;
@@ -214,7 +227,7 @@ nav a:hover {
   align-items: center;
   justify-content: space-between;
   gap: 16px;
-  background: white;
+  background: rgb(255 255 255 / 90%);
 }
 .connection {
   display: flex;
@@ -243,7 +256,7 @@ nav a:hover {
   font-weight: 600;
 }
 .language-toggle button[data-state='on'] {
-  background: var(--ice);
+  background: #e4efe7;
   color: var(--navy);
 }
 main {
@@ -255,15 +268,22 @@ main {
 .hero {
   position: relative;
   background: var(--ice);
-  border-radius: 20px;
+  border: 1px solid #d7e3dc;
+  border-radius: 22px 22px 22px 6px;
   min-height: 340px;
   overflow: hidden;
   padding: 38px;
+  box-shadow: 0 12px 30px rgb(22 63 59 / 5%);
+  animation: portal-enter 600ms cubic-bezier(0.2, 0.75, 0.25, 1) both;
 }
 .hero-copy {
   position: relative;
   z-index: 1;
   max-width: 63%;
+}
+.hero-copy > p:first-child {
+  color: var(--green);
+  letter-spacing: 0.01em;
 }
 .hero-copy > p:first-child {
   color: #3d617a;
@@ -273,12 +293,12 @@ main {
 }
 .hero h1 {
   white-space: pre-line;
-  font-size: clamp(1.95rem, 3.2vw, 3.3rem);
+  font-size: clamp(2.1rem, 3.4vw, 3.5rem);
   margin-bottom: 20px;
 }
 .hero .intro {
   max-width: 41ch;
-  color: #39596e;
+  color: #405e5c;
   margin-bottom: 26px;
 }
 .mountains {
@@ -287,6 +307,7 @@ main {
   right: -45px;
   width: 60%;
   max-width: 640px;
+  animation: portal-enter 800ms cubic-bezier(0.2, 0.75, 0.25, 1) 80ms both;
 }
 .resources {
   margin-top: 38px;
@@ -309,16 +330,21 @@ main {
 .resource-card {
   border: 1px solid var(--line);
   background: white;
-  border-radius: var(--radius);
+  border-radius: 14px 14px 14px 4px;
   padding: 24px 20px 18px;
   text-decoration: none;
   color: var(--ink);
   display: flex;
   flex-direction: column;
+  transition:
+    border-color 160ms ease,
+    box-shadow 160ms ease,
+    transform 160ms ease;
 }
 a.resource-card:hover {
-  border-color: #7897ad;
-  box-shadow: 0 5px 16px #143a540a;
+  border-color: #7ba89a;
+  box-shadow: 0 8px 20px rgb(22 63 59 / 8%);
+  transform: translateY(-2px);
 }
 .resource-card h3 {
   margin: 18px 0 10px;
@@ -344,19 +370,19 @@ a.resource-card:hover {
   flex-shrink: 0;
 }
 .blue {
-  background: #eaf0ff;
-  color: #255ed0;
+  background: #e1ede6;
+  color: #286e60;
 }
 .green {
-  background: #e5f4ee;
-  color: #226b60;
+  background: #e3efe8;
+  color: #286e60;
 }
 .purple {
-  background: #f0edfc;
-  color: #7251a0;
+  background: #f0eadf;
+  color: #705d4a;
 }
 .gold {
-  background: #fff3d8;
+  background: #f3ead8;
   color: #896019;
 }
 .status {
@@ -401,13 +427,14 @@ a.resource-card:hover {
   gap: 18px;
   align-items: flex-start;
   padding: 23px 27px;
-  border: 1px dashed #a7bece;
-  border-radius: var(--radius);
+  border: 1px solid #c8d8cf;
+  border-radius: 12px 12px 12px 4px;
+  background: #edf3ee;
 }
 .network-note > svg {
   flex-shrink: 0;
   margin-top: 2px;
-  color: #4b728c;
+  color: var(--green);
 }
 .network-note h2 {
   font-size: 1rem;
@@ -458,7 +485,7 @@ footer {
 }
 .empty-state {
   border: 1px solid var(--line);
-  border-radius: var(--radius);
+  border-radius: 14px 14px 14px 4px;
   background: white;
   padding: 64px 24px;
   text-align: center;
@@ -482,7 +509,7 @@ footer {
   padding: 26px;
   background: white;
   border: 1px solid var(--line);
-  border-radius: var(--radius);
+  border-radius: 14px 14px 14px 4px;
 }
 .book > div {
   flex: 1;
@@ -510,7 +537,7 @@ footer {
   background: white;
   padding: 24px;
   border: 1px solid var(--line);
-  border-radius: var(--radius);
+  border-radius: 14px 14px 14px 4px;
 }
 .tutor-context h2 {
   font-size: 1.15rem;
@@ -520,7 +547,7 @@ footer {
 }
 .conversation {
   border: 1px solid var(--line);
-  border-radius: var(--radius);
+  border-radius: 14px 14px 14px 4px;
   background: white;
   overflow: hidden;
 }
@@ -557,7 +584,7 @@ footer {
   background: var(--ice);
 }
 .message.assistant {
-  background: #f6f8fb;
+  background: #f1f5f1;
 }
 .message p {
   white-space: pre-wrap;
@@ -611,7 +638,7 @@ footer {
 .panel {
   background: white;
   border: 1px solid var(--line);
-  border-radius: var(--radius);
+  border-radius: 14px 14px 14px 4px;
   padding: 28px;
   margin: 24px 0;
 }
@@ -653,6 +680,14 @@ footer {
 }
 .skip-link:focus {
   top: 15px;
+}
+@keyframes portal-enter {
+  from {
+    transform: translateY(9px);
+  }
+  to {
+    transform: translateY(0);
+  }
 }
 @media (min-width: 1600px) {
   .hero {

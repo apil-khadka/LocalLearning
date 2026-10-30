@@ -45,13 +45,13 @@ export function Mountains() {
   return (
     <svg className="mountains" viewBox="0 0 620 340" fill="none" aria-hidden="true">
       <circle cx="445" cy="74" r="33" fill="var(--sun)" />
-      <path d="M50 340 247 70l94 129 65-111 214 252Z" fill="#c7dce9" />
-      <path d="m247 70-54 74 47-14 32 35 24-28Z" fill="#f8fcff" />
-      <path d="m406 88-38 65 35-18 25 28 20-20Z" fill="#f8fcff" />
-      <path d="M0 340 153 189l122 151Zm198 0 159-169 165 169Z" fill="#8fb7c8" />
-      <path d="m357 171-50 54 47-14 20 20 18-24Z" fill="#e9f2f6" />
-      <path d="M0 340c123-73 188-45 287-2 110-111 210-93 333-36v38Z" fill="#527f96" />
-      <path d="M0 340c141-28 182-18 296 0 96-32 227-28 324-12v12Z" fill="#315c75" />
+      <path d="M50 340 247 70l94 129 65-111 214 252Z" fill="#c7ddcf" />
+      <path d="m247 70-54 74 47-14 32 35 24-28Z" fill="#f8fcf8" />
+      <path d="m406 88-38 65 35-18 25 28 20-20Z" fill="#f8fcf8" />
+      <path d="M0 340 153 189l122 151Zm198 0 159-169 165 169Z" fill="#91b9a5" />
+      <path d="m357 171-50 54 47-14 20 20 18-24Z" fill="#e9f2eb" />
+      <path d="M0 340c123-73 188-45 287-2 110-111 210-93 333-36v38Z" fill="#568f7d" />
+      <path d="M0 340c141-28 182-18 296 0 96-32 227-28 324-12v12Z" fill="#2d7667" />
     </svg>
   )
 }

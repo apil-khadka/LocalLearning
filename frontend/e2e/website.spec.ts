@@ -18,6 +18,7 @@ test('public website explains its limits, diagrams switch, and all local assets 
       '.css': 'text/css',
       '.js': 'text/javascript',
       '.svg': 'image/svg+xml',
+      '.png': 'image/png',
       '.woff2': 'font/woff2',
     }
     try {
@@ -34,6 +35,20 @@ test('public website explains its limits, diagrams switch, and all local assets 
   await page.goto('https://digital-himalaya.test/')
   await expect(page.getByRole('heading', { level: 1 })).toContainText('Learning shouldn’t')
   await expect(page.getByText('Field and real-model acceptance pending')).toBeVisible()
+  await expect(page.locator('.screenshot-gallery img')).toHaveCount(2)
+  await page.locator('.screenshot-gallery').scrollIntoViewIfNeeded()
+  await expect
+    .poll(() =>
+      page
+        .locator('.screenshot-gallery img')
+        .evaluateAll((images) =>
+          images.every(
+            (image) =>
+              image instanceof HTMLImageElement && image.complete && image.naturalWidth > 0,
+          ),
+        ),
+    )
+    .toBe(true)
   await page.getByRole('button', { name: 'A tutor question' }).click()
   await expect(page.locator('#network-flow')).toContainText('Selected chat provider')
   await expect(page.locator('#network-caption')).toContainText('hosted provider receives')
