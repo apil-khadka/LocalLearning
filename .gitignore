@@ -1,0 +1,22 @@
+# Private source documents and planning notes
+/internal/
+# Machine configuration, secrets, school data
+.env
+.env.*
+!.env.example
+/data/
+/backups/
+/content/private/
+# Dependencies and generated output
+.venv/
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.ruff_cache/
+node_modules/
+dist/
+coverage/
+playwright-report/
+test-results/
+*.tsbuildinfo
+.DS_Store
