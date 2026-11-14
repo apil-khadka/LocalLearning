@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 import json
 import sqlite3
 from pathlib import Path
@@ -14,7 +16,11 @@ class Store:
             db.execute("""CREATE TABLE IF NOT EXISTS documents (
                 id TEXT PRIMARY KEY, status TEXT NOT NULL, metadata TEXT NOT NULL
             )""")
-            db.execute("PRAGMA user_version = 1")
+            db.execute("""CREATE TABLE IF NOT EXISTS notes (
+                id TEXT PRIMARY KEY, status TEXT NOT NULL, data TEXT NOT NULL
+            )""")
+            if db.execute("PRAGMA user_version").fetchone()[0] < 2:
+                db.execute("PRAGMA user_version = 2")
 
     def connect(self):
         return sqlite3.connect(self.path, timeout=10)
@@ -100,6 +106,49 @@ class Store:
             "offset": offset,
             "subjects": subjects,
         }
+
+    def put_note(self, note: dict):
+        with self.connect() as db:
+            db.execute(
+                "INSERT INTO notes VALUES (?, ?, ?) ON CONFLICT(id) DO UPDATE SET "
+                "status=excluded.status, data=excluded.data",
+                (note["id"], note["status"], json.dumps(note, ensure_ascii=False)),
+            )
+
+    def get_note(self, note_id: str) -> dict | None:
+        with self.connect() as db:
+            row = db.execute("SELECT data FROM notes WHERE id = ?", (note_id,)).fetchone()
+        return json.loads(row[0]) if row else None
+
+    def list_notes(self, *, status: str | None = None) -> list[dict]:
+        with self.connect() as db:
+            rows = db.execute(
+                "SELECT data FROM notes" + (" WHERE status = ?" if status else "") + " ORDER BY id",
+                (status,) if status else (),
+            ).fetchall()
+        return [json.loads(row[0]) for row in rows]
+
+    def delete_note(self, note_id: str) -> bool:
+        with self.connect() as db:
+            return db.execute("DELETE FROM notes WHERE id = ?", (note_id,)).rowcount > 0
+
+    def approved_notes(
+        self, *, grade: int, subject: str, chapter: str = "", language: str | None = None
+    ) -> list[tuple[dict, dict]]:
+        """Approved notes paired with their book; notes whose book is not ready are hidden."""
+        wanted = subject.strip().casefold()
+        pairs = []
+        for note in self.list_notes(status="approved"):
+            if note["grade"] != grade or note["subject"].casefold() != wanted:
+                continue
+            if chapter and note["chapter"].casefold() != chapter.strip().casefold():
+                continue
+            if language and note["language"] != language:
+                continue
+            document = self.get(note["document_id"])
+            if document and document["status"] == "ready":
+                pairs.append((note, document))
+        return pairs
 
     @staticmethod
     def public(document: dict) -> dict:

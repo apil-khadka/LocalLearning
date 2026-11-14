@@ -52,6 +52,8 @@ Changing embedding model weights, prefixes or dimensions requires an intentional
 5. Add content withdrawal, bounded background ingestion with recovery, and catalog/index migration before expanding collections.
 6. Measure 12 simultaneous library clients separately from three AI requests; keep AI off if review fails.
 7. Run the complete [offline acceptance script](DEMO_SCRIPT.md), restore drill and operator training before deployment.
+8. Have teachers write and approve real [teaching notes](TEACHING_NOTES.md) for the indexed chapter, author a question set with expected pages, and record a scored baseline with the evaluation tool.
+9. Decide on individual staff accounts or a two-person approval procedure before notes reach students at a school.
 
 ## Public website
 

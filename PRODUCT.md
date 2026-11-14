@@ -26,16 +26,20 @@ The optional tutor uses imported textbook passages as evidence and identifies wh
 ## Operating Context
 
 Schools provision content and models while online, then evaluate the portal with student devices while disconnected from the WAN.
-Teachers or staff import PDF and text resources with grade, subject, chapter, source, and license information.
+Teachers or staff create named school accounts, organize learners into classes, and import PDF and text resources with grade, subject, chapter, source, and license information.
+Students use a personal dashboard and can reopen or delete their saved tutor sessions.
+Teachers can review tutor transcripts only for learners in classes assigned to them; transcript views are audited.
 Students browse the local catalog and use the tutor when the school has enabled its required services.
 Kolibri is a separate classroom service for its own courses, accounts, activities, and progress.
 
 ## Capabilities and Constraints
 
-The portal provides a local book catalog, student book access, an optional textbook-grounded tutor, and a protected staff workspace.
+The portal provides local student, teacher, and administrator accounts; learner and teacher dashboards; saved tutor history; a local book catalog; teacher-approved study notes linked to book pages; an optional textbook-grounded tutor with explain, hint and check-my-work modes; a read-only Kolibri course list; and a protected staff workspace.
 The interface supports English and Nepali, and the project packages the app and optional Kolibri service in containers.
 The tutor is disabled by default and depends on separately configured chat, embedding, and vector services.
-Digital Himalaya does not create student accounts, retain tutor chat history, or synchronize Kolibri accounts or progress.
+Digital Himalaya stores password hashes, role assignments, class membership, and tutor transcripts in its local SQLite data volume.
+Students can delete their own tutor sessions, and this does not delete transcript-access audit records.
+Digital Himalaya does not synchronize Kolibri accounts or progress.
 Deployment must suit modest school hardware and unreliable WAN access.
 Imported material needs rights review, source attribution, and teacher review before classroom use.
 Current prototype content is not approved as a Nepal curriculum set.

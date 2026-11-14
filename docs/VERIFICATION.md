@@ -1,9 +1,48 @@
 # Foundation verification
 
-Verified locally on 2026-10-30.
+Updated locally on 2026-11-14 against the current uncommitted working tree.
 This record describes software checks, not acceptance of a school deployment.
 
-## Current software and service state
+## Current software verification (2026-11-14)
+
+- `make check`, `make test`, and `make build` completed successfully.
+- Backend tests passed: 182 passed, 2 skipped.
+- The full frontend Playwright suite passed; Docker deployment cases are skipped by default unless deployment URLs and credentials are provided.
+- Docker images built successfully, then the isolated QA stack ran with `--no-build` on alternate loopback ports `18190` and `18191`.
+- Twelve built-container Playwright checks passed across desktop and Android-sized viewports, covering the student/staff listener boundary, Kolibri link, account recovery, staff redirect, and student history with assigned-teacher transcript review.
+- The opt-in `DEPLOYMENT_LIVE_AI=1` browser check passed against the live AI provider configured in the ignored `.env`; the real student tutor UI saved a session that the assigned teacher could open.
+- A separate Docker API smoke passed live AI chat, transcript audit and access isolation, staff document import, note review and approval, student note visibility, and note-grounded AI chat.
+- An API-container restart preserved QA accounts, class assignments, tutor history, approved notes, transcript audit rows, and Kolibri catalog reachability.
+- The Docker Kolibri integration returned version 0.19.5 with one of two listed channels available; the unavailable channel has no dead deep link.
+- The QA environment had a configured and reachable hosted chat provider, but no embedding provider or Qdrant vector service; textbook vector indexing returned HTTP 503 without breaking saved books or approved teaching notes.
+- HTTP QA used `AUTH_COOKIE_SECURE=false` on loopback only; the Compose stack still needs a TLS terminator and school-device HTTPS validation before LAN release.
+- The frontend production build emits a 502.53 kB JavaScript chunk warning; the build still succeeds.
+
+The results above are local evidence for the tested Docker configuration, not school-site release approval.
+There is no CI run URL for these uncommitted changes.
+Physical WAN-off testing, TLS and school VLAN checks, content redistribution rights, bilingual teacher scoring, backup restoration, phone and network capacity, and UPS recovery remain open gates in [`PRODUCTION_READINESS.md`](PRODUCTION_READINESS.md).
+The current application also lacks class withdrawal/transfer and teacher reassignment controls, and learner initial passwords are entered by teachers; resolve those roster and credential handoff gaps before broad school use.
+
+## Historical teaching notes, tutor modes and evaluation snapshot (2026-11-14)
+
+Software checks run locally on the uncommitted working tree:
+
+- `make check` (Ruff, format check, TypeScript, ESLint) passed.
+- `uv run pytest -q` in `backend/` passed 176 tests, with 2 opt-in live-service tests skipped. The new tests cover the note lifecycle and approval rules, student visibility, staff-token enforcement, restart persistence, request validation, the three tutor modes, hint withholding, evaluation round trips, safe runtime configuration fingerprints and score-sheet validation.
+- `npm run test:e2e` passed 30 browser cases at desktop and Android-sized viewports, with 6 skipped because they need `DEPLOYMENT_URL`. The new case covers staff-created notes, approval, the Study page, hint reveal, reader page links, and tutor check-my-work mode against the contract doubles.
+- `npm run build` for the frontend passed. Docker images were not rebuilt, and the production browser checks were not run.
+
+Not verified:
+
+- No real model, embedding service or Qdrant answered any of these checks. They use the HTTP contract doubles, so they show that the application builds the intended prompts and parses replies, not that a model follows the hint or debug instructions.
+- No teacher has written, approved or scored anything. `evals/sample-questions.json` is a format example, and no scored baseline exists.
+- The Kolibri catalog code is covered by contract tests. The local Kolibri service was not running during this pass, so the earlier research note's statement that PhET was imported was not re-checked here, and the Kolibri row below still stands.
+- Nepali strings for the new screens are unreviewed drafts.
+- The 5-link navbar was checked at 1280, 663 and 390 px in an emulated browser, not on a physical phone.
+
+## Historical software and service state snapshot
+
+The record below predates the current verification section and is retained for context only.
 
 `make check`, the frontend Prettier check, and `make build` passed.
 `make test` passed with 58 backend tests and 26 browser cases; 2 opt-in live-service backend tests and 6 production browser cases were skipped because they require `DEPLOYMENT_URL`.
@@ -17,10 +56,11 @@ That live answer had general grounding and no textbook sources because Qdrant wa
 AI is disabled by default and remained disabled after the live request.
 The local `.env` is ignored by Git, and credentials are not included in the public repository.
 
-The optional Kolibri 0.19.5 Compose service was started locally with persistent storage and reported reachable from the API and student portal.
-The local volume now contains a formal `Digital Himalaya Dev School` facility and a `devadmin` super-admin account.
+The 2026-10-30 baseline recorded the optional Kolibri 0.19.5 Compose service running locally with persistent storage and reachable from the API and student portal.
+That baseline recorded a formal `Digital Himalaya Dev School` facility and a `devadmin` super-admin account in the local volume.
 The generated password and access note are stored only under ignored `private-local/` files, and the bootstrap preserves the provisioned data when rerun.
-No learner accounts or course channels have been imported yet.
+The baseline reported no learner accounts or course channels.
+A 2026-11-04 research note later reported that PhET content had been imported, but this was not rechecked on 2026-11-14, so the current local imported-content state is unknown.
 The staff workspace includes an English/Nepali import and update checklist, and the [Kolibri operations guide](KOLIBRI_GUIDE.md) covers rights review, offline imports, channel updates, and post-update checks.
 
 No `QDRANT_URL` or embedding service is configured in the current local stack, so private books are stored in the library but are not indexed for tutor retrieval.

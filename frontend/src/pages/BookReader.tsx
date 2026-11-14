@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react'
 import { ArrowLeft, ArrowSquareOut, BookOpen } from '@phosphor-icons/react'
-import { Link, useParams } from 'react-router-dom'
+import { Link, useParams, useSearchParams } from 'react-router-dom'
 import { api, type Book } from '../lib/api'
 import type { Copy } from '../lib/i18n'
 import { ErrorNotice } from '../components/ui'
@@ -11,11 +11,15 @@ function gradeLabel(book: Book, t: Copy) {
 
 export default function BookReader({ t }: { t: Copy }) {
   const { id = '' } = useParams()
+  const [search] = useSearchParams()
   const [book, setBook] = useState<Book | null>(null)
   const [text, setText] = useState('')
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<unknown>(null)
   const [attempt, setAttempt] = useState(0)
+  const requested = Number(search.get('page'))
+  const startPage =
+    book && Number.isInteger(requested) && requested >= 1 && requested <= book.pages ? requested : 0
   const isTextFile = Boolean(book?.filename && !book.filename.toLowerCase().endsWith('.pdf'))
 
   useEffect(() => {
@@ -103,6 +107,7 @@ export default function BookReader({ t }: { t: Copy }) {
                 {t.bookContent}
               </span>
               <span>
+                {startPage ? `${t.openedAtPage} ${startPage} · ` : ''}
                 {book.pages} {t.pages}
               </span>
             </div>
@@ -113,8 +118,9 @@ export default function BookReader({ t }: { t: Copy }) {
             ) : (
               <div className="reader-document-frame">
                 <iframe
+                  key={startPage}
                   title={`${t.bookContent}: ${book.title}`}
-                  src={`/api/textbooks/${book.id}/file#toolbar=1&navpanes=0&view=FitH`}
+                  src={`/api/textbooks/${book.id}/file#${startPage ? `page=${startPage}&` : ''}toolbar=1&navpanes=0&view=FitH`}
                 />
               </div>
             )}

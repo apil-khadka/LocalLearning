@@ -13,8 +13,13 @@ Use the [README](../README.md) for local development commands.
 5. Choose either local Ollama chat or an OpenAI-compatible chat endpoint, then verify the selected provider with a direct request.
 6. Download the local embedding model only if textbook retrieval is needed, verify its license and run a direct local request.
 7. Download one approved Kiwix article collection, import one reviewed Kolibri channel with its actual media, and select one permitted searchable chapter.
-8. Copy `.env.example` to `.env`; set real service addresses, a random `ADMIN_TOKEN`, and verified student resource URLs.
+8. Copy `.env.example` to `.env`; set real service addresses, a random one-time `ADMIN_TOKEN`, `REQUIRE_AUTH=true`, `AUTH_COOKIE_SECURE=true` behind HTTPS, and verified student resource URLs.
 9. Run `docker compose build` and `docker compose up -d --wait` from the repository root.
+10. Put a trusted HTTPS terminator in front of the portal before student use; the supplied Compose listener serves plain HTTP.
+11. Open `/login` on the staff listener and use the one-time setup token to create the first administrator, then remove `ADMIN_TOKEN` from `.env` and restart the API.
+12. Sign in as the administrator, create teacher accounts, and have teachers create classes and learner accounts.
+13. Give each new account its initial password through a private school-approved channel, and verify that it must be changed on first sign-in.
+14. Use the administrator account controls to reset a lost password or disable an account; the next sign-in after a reset must use a new private password.
 
 ## Kolibri classroom service
 
@@ -50,7 +55,8 @@ Do not solve this by exposing model/database ports unrestricted on student Wi-Fi
 ## Staff import and AI activation
 
 Open the staff portal locally at `http://127.0.0.1:8091/staff` or through the SSH tunnel described in the network guide.
-Enter the staff token; it remains in page memory and is lost on reload/sign-out.
+Sign in with an individual teacher or administrator account.
+The initial administrator is created once from `/login` with the configured `ADMIN_TOKEN`; the token stops authorizing staff APIs as soon as the first account exists.
 Import the sample note or approved curriculum PDF with explicit attribution and permission.
 Keep each file under 10 MiB and each PDF under 100 pages by default; import chapters rather than whole large collections.
 The staff interface reports import failures, while scanned/missing text pages are flagged for OCR.
@@ -64,12 +70,14 @@ With the hosted provider enabled, questions, conversation history, and retrieved
 Use only test prompts or approved data until provider retention and privacy settings have been reviewed.
 The flag is an operational gate, not proof of safety or a substitute for age controls and supervision.
 The Digital Himalaya API does not link to Kolibri identities or provide student age verification.
-Kolibri's own roles and progress remain separate from the tutor and staff token.
-Restrict use to the approved supervised cohort until those controls exist.
+Kolibri's own roles and progress remain separate from the tutor and school accounts.
+Restrict use to the approved supervised cohort until the school's age, supervision, privacy, and provider-retention policies are in place.
 
 Set `PORTAL_BIND` to the actual server LAN address only after firewall checks pass, then recreate the portal container.
-Keep `STAFF_PORT` bound to loopback through the supplied Compose mapping.
-Confirm both paths from real client devices.
+For teachers connecting from a separate staff VLAN, set `STAFF_BIND` to a host address routed only from that VLAN and enforce the restriction in the firewall.
+The staff listener defaults to loopback, so remote teachers must use the documented management tunnel or the school must configure a staff-only route.
+The portal injects the configured `PORTAL_PORT` and `STAFF_PORT` into the built frontend so staff sign-in redirects follow custom port mappings.
+Confirm both paths from real student and staff devices.
 
 ## Offline packaging
 
@@ -95,6 +103,7 @@ Build for the target architecture before disconnecting internet and verify start
 
 ## Backup and restore
 
+Teaching notes are stored in the catalog database, so they are included in the application backup.
 Back up the application catalog/files and Qdrant index as a coordinated set while imports and chat are stopped.
 When Kolibri is enabled, back up its `kolibri-data` volume separately using a stopped-volume or Kolibri-supported export procedure so learner records, facility configuration, and imported channels stay together.
 Keep `.env` and school/network configuration in separate encrypted private backups.

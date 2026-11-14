@@ -9,6 +9,32 @@ from app.main import create_app
 
 TOKEN = "test-only-staff-token-that-is-not-a-real-secret"
 
+KOLIBRI_CHANNELS = [
+    {
+        "id": "197934f144305350b5820c7c4dd8e194",
+        "name": "PhET Interactive Simulations",
+        "description": "Interactive math and science simulations.",
+        "version": 18,
+        "lang_code": "en",
+        "lang_name": "English",
+        "total_resource_count": 1175,
+        "available": True,
+        "root": "197934f144305350b5820c7c4dd8e194",
+    },
+    {
+        "id": "000409f81dbe5d1ba67101cb9fed4530",
+        "name": "Touchable Earth (en)",
+        "description": "Kids-teach-kids world videos.",
+        "version": 7,
+        "lang_code": "en",
+        "lang_name": "English",
+        "total_resource_count": 0,
+        "available": False,
+        "root": "000409f81dbe5d1ba67101cb9fed4530",
+    },
+    {"id": "not-a-channel", "name": "Broken entry"},
+]
+
 
 class FakeLocalStack:
     """HTTP contract double. Never used by the running product."""
@@ -25,6 +51,12 @@ class FakeLocalStack:
         path = request.url.path
         self.calls.append((request.method, path))
         if request.url.host == "kolibri.test":
+            if path == "/api/public/info/":
+                return httpx.Response(
+                    200, json={"application": "kolibri", "kolibri_version": "0.19.5"}
+                )
+            if path == "/api/content/channel/":
+                return httpx.Response(200, json=list(KOLIBRI_CHANNELS))
             return httpx.Response(200, text="Kolibri test service")
         if self.outage and self.outage in str(request.url):
             raise httpx.ConnectError("test failure", request=request)

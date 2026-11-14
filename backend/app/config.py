@@ -12,6 +12,9 @@ class Settings(BaseSettings):
 
     data_dir: Path = Path("../data")
     ai_enabled: bool = False
+    require_auth: bool = False
+    auth_cookie_secure: bool = False
+    auth_cookie_name: str = "dh_session"
     chat_provider: Literal["openai-compatible", "ollama"] = "openai-compatible"
     chat_api_base_url: str = "https://inference.baseten.co/v1"
     chat_api_key: SecretStr = SecretStr("")
@@ -57,7 +60,13 @@ class Settings(BaseSettings):
     def validate_url(cls, value: str) -> str:
         if not value:
             return value
-        parsed = urlsplit(value)
+        if "\\" in value or any(char.isspace() for char in value):
+            raise ValueError("Use a valid HTTP(S) URL without whitespace or backslashes")
+        try:
+            parsed = urlsplit(value)
+            _ = parsed.port
+        except ValueError as exc:
+            raise ValueError("Use a valid HTTP(S) URL") from exc
         if (
             parsed.scheme not in {"http", "https"}
             or not parsed.hostname
@@ -65,8 +74,12 @@ class Settings(BaseSettings):
             or parsed.password
             or parsed.fragment
             or parsed.query
+            or "//" in parsed.path
+            or any(segment in {".", ".."} for segment in parsed.path.split("/"))
         ):
-            raise ValueError("Use an HTTP(S) URL without credentials, query or fragment")
+            raise ValueError(
+                "Use an HTTP(S) URL without credentials, query, fragment or unsafe path"
+            )
         return value.rstrip("/")
 
     @field_validator("qdrant_collection")

@@ -1,0 +1,35 @@
+{
+  "name": "sample-force-and-motion (format example, not teacher-approved)",
+  "authored_by": "Project sample for the original CC0 demonstration note. Replace with questions written and reviewed by teachers.",
+  "items": [
+    {
+      "id": "g8-sci-explain-01",
+      "grade": 8,
+      "subject": "Science",
+      "chapter": "Force and Motion",
+      "language": "en",
+      "mode": "explain",
+      "question": "What happens to acceleration if the same force acts on twice the mass?"
+    },
+    {
+      "id": "g8-sci-hint-01",
+      "grade": 8,
+      "subject": "Science",
+      "chapter": "Force and Motion",
+      "language": "en",
+      "mode": "hint",
+      "hint_level": 0,
+      "question": "A 2 kg cart is pushed with 6 N. How do I find its acceleration?"
+    },
+    {
+      "id": "g8-sci-debug-01",
+      "grade": 8,
+      "subject": "Science",
+      "chapter": "Force and Motion",
+      "language": "en",
+      "mode": "debug",
+      "question": "Please check my working for the acceleration of a 2 kg cart pushed with 6 N.",
+      "attempt": "a = F x m = 6 x 2 = 12 m/s2"
+    }
+  ]
+}

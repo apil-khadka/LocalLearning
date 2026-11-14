@@ -8,6 +8,9 @@ services:
     env_file: .env
     environment:
       DATA_DIR: /data
+      AI_ENABLED: ${AI_ENABLED:-false}
+      REQUIRE_AUTH: ${REQUIRE_AUTH:-true}
+      AUTH_COOKIE_SECURE: ${AUTH_COOKIE_SECURE:-true}
       KOLIBRI_PUBLIC_URL: ${KOLIBRI_PUBLIC_URL:-}
       KOLIBRI_PROBE_URL: ${KOLIBRI_PROBE_URL:-}
     volumes:
@@ -30,7 +33,10 @@ services:
       dockerfile: frontend/Dockerfile
     ports:
       - "${PORTAL_BIND:-127.0.0.1}:${PORTAL_PORT:-8090}:8080"
-      - "127.0.0.1:${STAFF_PORT:-8091}:8081"
+      - "${STAFF_BIND:-127.0.0.1}:${STAFF_PORT:-8091}:8081"
+    environment:
+      PORTAL_PUBLIC_PORT: ${PORTAL_PORT:-8090}
+      PORTAL_STAFF_PORT: ${STAFF_PORT:-8091}
     depends_on:
       api:
         condition: service_healthy

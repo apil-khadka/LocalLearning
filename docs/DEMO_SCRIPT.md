@@ -14,6 +14,8 @@ Publish only approved non-identifying evidence.
 | Real inference | A new question returns output from the configured chat provider through the portal; no test fixture server is running |
 | Grounding | Answer source chip opens the correct document/PDF page and the passage is relevant |
 | No-match handling | Wrong grade/chapter and unrelated questions show no false retrieved citations |
+| Teaching notes | A teacher drafts a note from reviewed book pages and a second teacher approves it; students see it on the Study page only after approval, and its page link opens the right page |
+| Tutor modes | Hint mode withholds the answer and debug mode names the error across the teacher-authored task set, scored with the [evaluation tool](TEACHING_NOTES.md#teacher-scored-evaluation) |
 | Kolibri classroom roles | A learner opens an assigned course; a coach can assign reviewed material; role boundaries and progress behave as configured |
 | Language | Teacher/fluent reviewer checks English and Nepali answers, mathematical meaning and readability |
 | Staff boundary | Student cannot access staff API/port, NOMAD, router administration, SSH, Ollama or Qdrant |

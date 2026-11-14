@@ -1,6 +1,19 @@
-import { expect, test } from '@playwright/test'
+import { expect, test, type Page } from '@playwright/test'
 
-const token = 'test-only-staff-token-that-is-not-a-real-secret'
+async function signIn(page: Page, username: string, password: string) {
+  await page.goto('/login')
+  await page.getByLabel('Username').fill(username)
+  await page.getByLabel('Password').fill(password)
+  const loginResponse = page.waitForResponse(
+    (response) =>
+      response.url().includes('/api/auth/login') && response.request().method() === 'POST',
+  )
+  await page.locator('form.account-form').getByRole('button', { name: 'Sign in' }).first().click()
+  expect((await loginResponse).status()).toBe(200)
+  await expect(page).toHaveURL(username === 'e2e-student' ? '/dashboard' : '/teacher')
+  await expect(page.getByRole('button', { name: 'Sign out' })).toBeVisible()
+  expect((await page.request.get('/api/auth/me')).status()).toBe(200)
+}
 
 test('home has truthful services, works in Nepali, and has no horizontal overflow', async ({
   page,
@@ -25,15 +38,37 @@ test('home has truthful services, works in Nepali, and has no horizontal overflo
   expect(errors).toEqual([])
 })
 
+test('courses page lists Kolibri channels with deep links', async ({ page }) => {
+  await page.goto('/courses')
+  await expect(page.getByRole('heading', { name: 'PhET Interactive Simulations' })).toBeVisible()
+  await expect(page.getByRole('heading', { name: 'Touchable Earth (en)' })).toBeVisible()
+  await expect(page.getByText('Kolibri version 0.19.5')).toBeVisible()
+  await expect(page.getByText('Listed only; content not imported yet')).toBeVisible()
+  await expect(
+    page.getByRole('link', { name: 'Open channel in Kolibri: Touchable Earth (en)' }),
+  ).toHaveCount(0)
+  await expect(
+    page.getByRole('link', { name: 'Open channel in Kolibri: PhET Interactive Simulations' }),
+  ).toHaveAttribute(
+    'href',
+    'http://kolibri.test:8080/en/learn/#/topics/c/197934f144305350b5820c7c4dd8e194',
+  )
+  await expect(page.getByRole('link', { name: 'Open the Kolibri library' })).toHaveAttribute(
+    'href',
+    'http://kolibri.test:8080',
+  )
+  expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true)
+})
+
 test('staff import flows through the API, books open, and tutor shows real retrieval metadata', async ({
   page,
 }) => {
+  const project = test.info().project.name
+  const bookTitle = `E2E force and motion ${project}`
+  const subjectName = `Physics ${project}`
+  const chapterName = `Force and Motion ${project}`
+  await signIn(page, 'e2e-teacher', 'E2E-Teacher-Password-2026!')
   await page.goto('/staff')
-  await page.getByLabel('Staff access token').fill('wrong')
-  await page.getByRole('button', { name: 'Open staff workspace' }).click()
-  await expect(page.getByRole('alert')).toContainText('Staff sign-in required')
-  await page.getByLabel('Staff access token').fill(token)
-  await page.getByRole('button', { name: 'Open staff workspace' }).click()
   await expect(page.getByRole('heading', { name: 'Import a chapter' })).toBeVisible()
   await expect(page.getByRole('heading', { name: 'Kolibri course management' })).toBeVisible()
   await expect(page.getByRole('link', { name: 'Open Kolibri' })).toHaveAttribute(
@@ -41,11 +76,18 @@ test('staff import flows through the API, books open, and tutor shows real retri
     'http://kolibri.test:8080',
   )
   await expect(page.getByRole('link', { name: 'Open Kolibri' })).toHaveAttribute('target', '_blank')
-  await page.getByText('Channel import and update workflow').click()
+  await page.locator('details.kolibri-workflow > summary').click()
+  await expect(page.locator('details.kolibri-workflow')).toHaveAttribute('open', '')
+  await expect(
+    page.getByRole('link', { name: 'Open the full Kolibri operations guide' }),
+  ).toHaveAttribute('href', '/guides/kolibri.md')
+  const guide = await page.request.get('/guides/kolibri.md')
+  expect(guide.status()).toBe(200)
+  expect(await guide.text()).toContain('Import a channel')
   await expect(page.getByText(/Review additions, changes, and removals/)).toBeVisible()
-  await page.getByLabel('Document title').fill('E2E force and motion')
-  await page.getByLabel('Subject', { exact: true }).fill('Physics')
-  await page.getByLabel('Chapter', { exact: true }).fill('Force and Motion')
+  await page.getByLabel('Document title').fill(bookTitle)
+  await page.getByLabel('Subject', { exact: true }).fill(subjectName)
+  await page.getByLabel('Chapter', { exact: true }).fill(chapterName)
   await page.getByLabel('License / permission').fill('CC0-1.0')
   await page.getByLabel('Source / attribution').fill('Original browser test fixture')
   await page.getByLabel('PDF or UTF-8 text file').setInputFiles({
@@ -53,17 +95,29 @@ test('staff import flows through the API, books open, and tutor shows real retri
     mimeType: 'text/plain',
     buffer: Buffer.from('Newton’s second law: force equals mass times acceleration.'),
   })
-  await page.getByRole('button', { name: 'Import and index' }).click()
-  await expect(page.getByRole('status')).toHaveText('Document ready in the library.')
+  await page.getByRole('button', { name: 'Save to library' }).click()
+  await expect(page.getByRole('status')).toHaveText(
+    'Book saved. Index it below to enable tutor search.',
+  )
+  const savedBooks = await page.request.get('/api/textbooks?grade=8')
+  const savedBook = (await savedBooks.json()).find(
+    (book: { title: string }) => book.title === bookTitle,
+  )
+  expect(savedBook).toBeTruthy()
+  await page.getByLabel('Book to index').selectOption(savedBook.id)
+  await page.getByRole('button', { name: 'Index one book' }).click()
+  await expect(page.locator('.index-library').getByRole('status')).toHaveText(
+    'Book indexed. Its passages are available to tutor search.',
+  )
   expect(
     await page.evaluate(() => ({ local: localStorage.length, session: sessionStorage.length })),
   ).toEqual({ local: 0, session: 0 })
   await page.getByRole('link', { name: 'My textbooks', exact: true }).click()
   await expect(
-    page.locator('.catalog-results').getByRole('heading', { name: 'E2E force and motion' }),
+    page.locator('.catalog-results').getByRole('heading', { name: bookTitle }),
   ).toBeVisible()
   const readerUrl = await page
-    .getByRole('link', { name: 'Open textbook: E2E force and motion' })
+    .getByRole('link', { name: `Open textbook: ${bookTitle}` })
     .getAttribute('href')
   expect(readerUrl).toMatch(/^\/books\/[a-f0-9]{32}$/)
   const bookId = readerUrl!.split('/').at(-1)
@@ -73,9 +127,7 @@ test('staff import flows through the API, books open, and tutor shows real retri
   const tutorBooks = await page.request.get('/api/textbooks?grade=8')
   expect(tutorBooks.status()).toBe(200)
   expect(await tutorBooks.json()).toEqual(
-    expect.arrayContaining([
-      expect.objectContaining({ title: 'E2E force and motion', chapter: 'Force and Motion' }),
-    ]),
+    expect.arrayContaining([expect.objectContaining({ title: bookTitle, chapter: chapterName })]),
   )
   const tutorBooksLoaded = page.waitForResponse(
     (response) => response.url().includes('/api/textbooks?grade=8') && response.status() === 200,
@@ -84,12 +136,12 @@ test('staff import flows through the API, books open, and tutor shows real retri
   await tutorBooksLoaded
   const subject = page.getByLabel('Subject', { exact: true })
   await expect(subject).toHaveJSProperty('tagName', 'SELECT')
-  await expect(subject.locator('option', { hasText: 'Physics' })).toHaveCount(1)
-  await subject.selectOption('Physics')
-  await expect(subject).toHaveValue('Physics')
+  await expect(subject.locator('option', { hasText: subjectName })).toHaveCount(1)
+  await subject.selectOption(subjectName)
+  await expect(subject).toHaveValue(subjectName)
   const chapter = page.getByLabel('Chapter', { exact: true })
-  await expect(chapter.locator('option', { hasText: 'Force and Motion' })).toHaveCount(1)
-  await chapter.selectOption('Force and Motion')
+  await expect(chapter.locator('option', { hasText: chapterName })).toHaveCount(1)
+  await chapter.selectOption(chapterName)
   await page.getByLabel('Your question').fill('Explain force and mass.')
   await page.getByRole('button', { name: 'Ask the tutor' }).click()
   await expect(page.getByText('Textbook passages retrieved', { exact: true })).toBeVisible()
@@ -97,9 +149,9 @@ test('staff import flows through the API, books open, and tutor shows real retri
     'A force changes motion.',
   )
   await expect(page.locator('.message.assistant h3')).toHaveText('Example')
-  await expect(page.getByRole('link', { name: 'E2E force and motion, pages 1' })).toHaveAttribute(
+  await expect(page.getByRole('link', { name: `${bookTitle}, pages 1` })).toHaveAttribute(
     'href',
-    /\/api\/textbooks\/[a-f0-9]{32}\/file#page=1/,
+    /^\/books\/[a-f0-9]{32}\?page=1$/,
   )
   await page.getByLabel('Grade', { exact: true }).selectOption('9')
   await expect(page.getByText('Test model output.', { exact: false })).toHaveCount(0)
@@ -110,7 +162,79 @@ test('staff import flows through the API, books open, and tutor shows real retri
   ).toBeVisible()
   await expect(page.locator('.sources a')).toHaveCount(0)
   await page.reload()
-  await expect(page.getByText('Every good question is a place to start.')).toBeVisible()
+  await expect(page.locator('.message.user')).toContainText(
+    'Explain force without a Grade 9 source.',
+  )
+  await expect(page.locator('.message.assistant')).toContainText('A force changes motion.')
+})
+
+test('student dashboard saves tutor history and assigned teacher can review the transcript', async ({
+  page,
+}) => {
+  await signIn(page, 'e2e-student', 'E2E-Student-Password-2026!')
+  await expect(page).toHaveURL('/dashboard')
+  await expect(page.getByText('E2E Grade 8 A')).toBeVisible()
+  await page.goto('/tutor')
+  await page.getByLabel('Your question').fill('How does force change motion?')
+  const chat = page.waitForResponse(
+    (response) =>
+      response.url().includes('/api/tutor/chat') && response.request().method() === 'POST',
+  )
+  await page.getByRole('button', { name: 'Ask the tutor' }).click()
+  const chatResponse = await chat
+  expect(chatResponse.status()).toBe(200)
+  const saved = await chatResponse.json()
+  expect(saved.session_id).toMatch(/^[a-f0-9]{32}$/)
+  await expect(page.locator('.message.assistant .message-content')).toContainText(
+    'A force changes motion.',
+  )
+
+  await page.goto('/dashboard')
+  await page.getByRole('link', { name: 'View all sessions' }).click()
+  await expect(page.locator('.account-session h3')).toHaveText('How does force change motion?')
+  await page.getByRole('link', { name: 'Open session' }).click()
+  await expect(page.locator('.message.user')).toContainText('How does force change motion?')
+  await expect(page.locator('.message.assistant')).toContainText('A force changes motion.')
+
+  await page.getByRole('button', { name: 'Sign out' }).click()
+  await signIn(page, 'e2e-teacher', 'E2E-Teacher-Password-2026!')
+  await expect(page).toHaveURL('/teacher')
+  await expect(page.getByRole('combobox', { name: 'Assigned classes' })).toContainText(
+    'E2E Grade 8 A',
+  )
+  await page.getByRole('button', { name: /E2E Student/ }).click()
+  await expect(page.locator('.teacher-transcript')).toContainText('How does force change motion?')
+  await expect(page.locator('.teacher-transcript')).toContainText('A force changes motion.')
+
+  await page.getByRole('button', { name: 'Sign out' }).click()
+  await signIn(page, 'e2e-student', 'E2E-Student-Password-2026!')
+  await page.goto('/history')
+  await expect(page.getByRole('link', { name: 'Open session' })).toHaveCount(1)
+  await page.getByRole('button', { name: 'Delete session' }).click()
+  await expect(page.getByText('Your saved tutor sessions will appear here.')).toBeVisible()
+})
+
+test('administrator can create, reset, disable, and restore named accounts', async ({ page }) => {
+  await signIn(page, 'e2e-admin', 'E2E-Admin-Password-2026!')
+  await expect(page).toHaveURL('/teacher')
+  const createdUsername = `e2e-created-${Date.now()}`
+  const teacherForm = page
+    .locator('form.account-form')
+    .filter({ hasText: 'Create teacher account' })
+  await teacherForm.getByLabel('Name shown in school').fill('New E2E Teacher')
+  await teacherForm.getByLabel('Username').fill(createdUsername)
+  await teacherForm.getByLabel('Password').fill('E2E-Created-Teacher-2026!')
+  await teacherForm.getByRole('button', { name: 'Create teacher account' }).click()
+  await expect(page.locator('.learner-list li').filter({ hasText: createdUsername })).toBeVisible()
+  await page.getByLabel('Filter accounts').fill(createdUsername)
+  const accountRow = page.locator('.learner-list li').filter({ hasText: createdUsername })
+  await expect(accountRow).toBeVisible()
+  await accountRow.getByRole('button', { name: 'Reset password' }).click()
+  await expect(accountRow.locator('.temporary-credential')).toContainText('Temp-')
+  await accountRow.getByRole('button', { name: 'Deactivate' }).click()
+  await expect(accountRow).toContainText('Account disabled')
+  await accountRow.getByRole('button', { name: 'Restore' }).click()
+  await expect(accountRow).toContainText('Must change initial password')
 })
 
 test('textbook filters include Kindergarten and cross-grade resources', async ({ page }) => {
@@ -393,17 +517,19 @@ test('primary navigation is a full-width sticky navbar at desktop, tablet, and p
     await expect(navbar).toHaveCSS('position', 'sticky')
     await expect(navbar).toHaveCSS('width', `${width}px`)
     await expect(navbar.locator('.connection, .language-toggle, .topbar-brand')).toHaveCount(0)
-    await expect(navigation.getByRole('link')).toHaveCount(3)
+    await expect(navigation.getByRole('link')).toHaveCount(6)
     await expect(navigation.getByRole('link', { name: 'Learning home' })).toBeVisible()
     await expect(navigation.getByRole('link', { name: 'AI tutor' })).toBeVisible()
     await expect(navigation.getByRole('link', { name: 'My textbooks' })).toBeVisible()
+    await expect(navigation.getByRole('link', { name: 'Study notes' })).toBeVisible()
+    await expect(navigation.getByRole('link', { name: 'Courses' })).toBeVisible()
     await expect(page.locator('.footer-brand')).toContainText('Himalaya')
     await expect(page.locator('.footer-meta .connection')).toBeVisible()
     await expect(page.locator('.footer-meta .language-toggle')).toBeVisible()
     expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true)
 
     if (width === 390) {
-      await expect(navigation.locator('.nav-label-short')).toHaveCount(3)
+      await expect(navigation.locator('.nav-label-short')).toHaveCount(6)
       await expect(navigation.locator('.nav-label-short').first()).toBeVisible()
       await expect(navigation.locator('.nav-label-full').first()).toBeHidden()
     }
@@ -416,4 +542,109 @@ test('primary navigation is a full-width sticky navbar at desktop, tablet, and p
     await navigation.getByRole('link', { name: 'My textbooks' }).click()
     await expect(page.getByRole('heading', { name: 'My textbooks' })).toBeVisible()
   }
+})
+
+test('approved teacher note appears in study notes, tutor modes, and reader pages', async ({
+  page,
+}, testInfo) => {
+  // The API fixture is shared by both browser projects, so each run uses its own names.
+  const tag = testInfo.project.name
+  const subject = `Chemistry ${tag}`
+  const title = `Parts of an atom ${tag}`
+  await signIn(page, 'e2e-teacher', 'E2E-Teacher-Password-2026!')
+  const authResponse = await page.request.get('/api/auth/me')
+  expect(authResponse.status()).toBe(200)
+  const headers = { 'X-CSRF-Token': (await authResponse.json()).csrf_token as string }
+  const imported = await page.request.post('/api/admin/documents', {
+    headers,
+    multipart: {
+      title: `E2E atoms book ${tag}`,
+      grade: '8',
+      subject,
+      chapter: 'Atoms',
+      license: 'CC0-1.0',
+      source: 'Original browser test fixture',
+      file: {
+        name: 'atoms.txt',
+        mimeType: 'text/plain',
+        buffer: Buffer.from('Atoms contain protons, neutrons and electrons.'),
+      },
+    },
+  })
+  expect(imported.status()).toBe(201)
+  const book = await imported.json()
+  const created = await page.request.post('/api/admin/notes', {
+    headers,
+    data: {
+      title,
+      grade: 8,
+      subject,
+      chapter: 'Atoms',
+      language: 'en',
+      document_id: book.id,
+      pages: [{ start: 1, end: 1 }],
+      key_ideas: ['Atoms contain protons, neutrons and electrons.'],
+      worked_example: 'Carbon has 6 protons.',
+      misconceptions: [{ wrong: 'Electrons are in the nucleus.', correction: 'They orbit it.' }],
+      hints: ['Name the particles first.', `Which particle has a negative charge? (${tag})`],
+      check_question: `Which particle is negative? (${tag})`,
+    },
+  })
+  expect(created.status()).toBe(201)
+  const note = await created.json()
+  await page.goto('/study')
+  await expect(page.getByRole('heading', { name: title })).toHaveCount(0)
+  const review = (status: string, reviewer = '') =>
+    page.request.post(`/api/admin/notes/${note.id}/review`, {
+      headers,
+      data: { status, reviewer },
+    })
+  expect((await review('in_review')).status()).toBe(200)
+  await page.goto('/staff')
+  const reviewRow = page.locator('.staff-note-list li').filter({ hasText: title })
+  await expect(reviewRow.getByRole('button', { name: 'Approve' })).toHaveCount(0)
+  await expect(reviewRow).toContainText(
+    'A different teacher or administrator must approve this note.',
+  )
+  const browser = page.context().browser()
+  expect(browser).not.toBeNull()
+  const adminContext = await browser!.newContext({ baseURL: new URL(page.url()).origin })
+  const adminLogin = await adminContext.request.post('/api/auth/login', {
+    data: { username: 'e2e-admin', password: 'E2E-Admin-Password-2026!' },
+  })
+  expect(adminLogin.status()).toBe(200)
+  const adminHeaders = { 'X-CSRF-Token': (await adminLogin.json()).csrf_token as string }
+  const approval = await adminContext.request.post(`/api/admin/notes/${note.id}/review`, {
+    headers: adminHeaders,
+    data: { status: 'approved' },
+  })
+  expect(approval.status()).toBe(200)
+  await adminContext.close()
+
+  await page.goto('/study')
+  await expect(page.getByRole('heading', { name: title })).toBeVisible()
+  const card = page.locator('article.study-note', { hasText: title })
+  await expect(card.getByText(`Which particle is negative? (${tag})`)).toBeVisible()
+  const second = card.getByText(`Which particle has a negative charge? (${tag})`)
+  await expect(second).toHaveCount(0)
+  await card.getByRole('button', { name: 'Show the next hint' }).click()
+  await card.getByRole('button', { name: 'Show the next hint' }).click()
+  await expect(second).toBeVisible()
+  expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true)
+  await card.getByRole('link', { name: 'Open book at page 1' }).click()
+  await expect(page.getByText(/Opened at page 1/)).toBeVisible()
+
+  await page.goto('/tutor')
+  await page.getByLabel('Subject', { exact: true }).selectOption(subject)
+  await page.getByRole('radio', { name: /Check my work/ }).check()
+  await page.getByLabel('Your question').fill('Check my atoms and protons answer.')
+  await expect(page.getByRole('button', { name: 'Check my work' }).last()).toBeDisabled()
+  await page.getByLabel('Your attempt').fill('Electrons are in the nucleus')
+  await page.getByRole('button', { name: 'Check my work' }).last().click()
+  await expect(page.getByText('Reviewed teacher note supplied')).toBeVisible()
+  await expect(
+    page.getByRole('link', { name: new RegExp(`Teacher note: ${title}, pages 1`) }),
+  ).toHaveAttribute('href', `/books/${book.id}?page=1`)
+  await page.getByRole('radio', { name: /Hint/ }).check()
+  await expect(page.getByText('Hint 1 / 5')).toBeVisible()
 })

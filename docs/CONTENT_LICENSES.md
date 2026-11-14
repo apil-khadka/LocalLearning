@@ -26,6 +26,11 @@ Locally fetched text-only Wikibooks prototypes include Wikijunior:Biology and se
 They are prototype fixtures, not curriculum approvals or public content bundles.
 The Solar System text comes from current Wikibooks pages, not the historical PDF copy.
 
+The portal links teaching notes and tutor citations to book pages in the reader, which shows the original file.
+It does not extract or display separate page images or figures.
+The project owner's permission for the private CDC collection covers local prototype use; written reuse terms for derived page images are not confirmed, so none are shown.
+Teaching notes are teacher-written text. A teacher who paraphrases a licensed book should record that book's attribution in the note's linked book entry.
+
 Frontend dependencies include Nunito Sans and Noto Sans Devanagari font packages, Phosphor icons, Radix UI, React and React Router.
 Their license files remain in installed packages and must be retained with redistributed bundles; the image build copies notices into its served distribution.
 Use the lockfiles to identify exact packages when preparing release notices and a software bill of materials.

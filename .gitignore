@@ -16,8 +16,12 @@ __pycache__/
 .ruff_cache/
 node_modules/
 dist/
+frontend/public/guides/kolibri.md
 coverage/
 playwright-report/
 test-results/
 *.tsbuildinfo
 .DS_Store
+# Evaluation run records and teacher score sheets (review before committing a baseline)
+/evals/runs/
+/evals/scores/

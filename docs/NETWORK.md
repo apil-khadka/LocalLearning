@@ -61,7 +61,7 @@ Check Docker-published ports on the host as well as router ACLs; a host firewall
 
 ## Staff entry
 
-Compose publishes the staff listener only on the Ubuntu host's loopback address, port 8091.
+Compose publishes the staff listener on loopback port 8091 by default.
 On an authorized staff laptop in VLAN 10, use a local SSH forward:
 
 ```sh
@@ -69,7 +69,10 @@ ssh -N -L 8091:127.0.0.1:8091 STAFF_SSH_USER@10.42.30.10
 ```
 
 Replace `STAFF_SSH_USER` with a verified local account, then open `http://127.0.0.1:8091/staff` on that laptop.
-The tunnel protects traffic in transit; the API separately requires the staff token.
+The tunnel protects traffic in transit; staff sign in with an individual Digital Himalaya account.
+If staff devices need direct access, set `STAFF_BIND` to an address reachable only from the staff VLAN, then confirm the router and host firewall deny the student VLAN.
+Set `STAFF_PORT` to the host port used for that route; the built portal reads it at startup and redirects staff sign-ins from the student listener.
+For student sessions, deploy HTTPS and set `AUTH_COOKIE_SECURE=true`; the SSH tunnel alone does not configure HTTPS for the student listener.
 The student listener denies the staff path/API independently of the token.
 NOMAD administration requires its own protected management path and must not be linked from the portal.
 

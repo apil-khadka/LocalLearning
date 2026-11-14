@@ -6,7 +6,7 @@ An offline-first learning portal for school networks in Nepal, with local books,
 AI starts disabled.
 Model inference, curriculum quality, Nepali language quality, school Wi-Fi capacity, and power recovery must pass the [deployment acceptance checks](docs/DEMO_SCRIPT.md) on the actual hardware.
 
-[Project website](https://apil-khadka.github.io/LocalLearning/) · [Product brief](PRODUCT.md) · [Build plan](docs/BUILD_PLAN.md) · [Architecture](docs/ARCHITECTURE.md) · [Network design](docs/NETWORK.md) · [Kolibri operations guide](docs/KOLIBRI_GUIDE.md) · [Verification](docs/VERIFICATION.md)
+[Project website](https://apil-khadka.github.io/LocalLearning/) · [Product brief](PRODUCT.md) · [Build plan](docs/BUILD_PLAN.md) · [Architecture](docs/ARCHITECTURE.md) · [Network design](docs/NETWORK.md) · [Kolibri operations guide](docs/KOLIBRI_GUIDE.md) · [Verification](docs/VERIFICATION.md) · [Teaching notes and evaluation](docs/TEACHING_NOTES.md) · [Production readiness gate](docs/PRODUCTION_READINESS.md)
 
 ## What is here
 
@@ -16,12 +16,22 @@ Model inference, curriculum quality, Nepali language quality, school Wi-Fi capac
 - A searchable, paginated textbook catalog with filters, multi-select, inline PDF preview, and staff diagnostics.
 - Staff-triggered vector indexing for saved books, processed one title at a time with small embedding batches.
 - Separate student and staff reverse-proxy listeners, container packaging, and automated checks.
+- Named student, teacher, and administrator accounts with role-scoped dashboards and class membership.
+- Saved tutor sessions per account; students control their history, assigned-class teachers can review transcripts, and transcript access is audited.
+- Teacher-written teaching notes linked to book pages, with draft, review and approval states, shown to students on a Study page without AI.
+- Tutor `explain`, `hint` and `debug` modes that cite approved notes and book pages and link to the reader page. See [teaching notes](docs/TEACHING_NOTES.md).
+- A command-line evaluation tool and score CSV for teacher-rated tutor runs ([evals](evals/README.md)).
+- A read-only Kolibri channel catalog on the Courses page. The portal never reads or writes Kolibri accounts, classes or progress.
 - An optional Kolibri 0.19.5 classroom service with persistent storage and a student portal link.
 - A static project website for GitHub Pages, independent of the school application.
 
 There are no scripted AI answers in the application.
 Unconfigured or unavailable services are reported honestly.
-The Digital Himalaya portal does not require student accounts or store chat history or analytics.
+The tutor requires sign-in when `REQUIRE_AUTH=true`; authenticated sessions and transcripts are stored in the local SQLite data volume.
+Students can see and delete their own tutor sessions.
+Teachers can open transcripts only for learners in their assigned classes, and each transcript view is audited.
+The initial administrator is created once with the one-time `ADMIN_TOKEN`; after that, staff use individual accounts and the bootstrap token no longer authorizes staff APIs.
+Set `AUTH_COOKIE_SECURE=true` when serving over HTTPS; only use `false` for local HTTP development on a trusted machine.
 When enabled, Kolibri manages separate classroom accounts and learning progress in its own data volume.
 The default AI chat endpoint is disabled until an operator adds a key and sets `AI_ENABLED=true`.
 When the OpenAI-compatible provider is selected, learner questions, conversation history and retrieved excerpts are sent to that configured provider.
@@ -88,9 +98,9 @@ To test the requested hosted model, fill in these local-only values in `.env` an
 ```dotenv
 AI_ENABLED=true
 CHAT_PROVIDER=openai-compatible
-CHAT_API_BASE_URL=https://inference.baseten.co/v1
+CHAT_API_BASE_URL=https://api.deepseek.com
 CHAT_API_KEY=your-private-key
-CHAT_MODEL=meta-models/muse-spark-open-1026
+CHAT_MODEL=deepseek-flash
 CHAT_REASONING_EFFORT=low
 ```
 
@@ -101,10 +111,11 @@ Clear `CHAT_REASONING_EFFORT` if the new service does not support Muse-style rea
 Textbook retrieval uses the separately configured embedding provider and Qdrant collection.
 With either one unavailable, chat can still return a clearly labeled general explanation without textbook citations.
 
-Set a random staff token of at least 32 characters in `.env` using a password manager or a local generator.
+Set a random one-time administrator setup token in `.env` using a password manager or a local generator.
 For example, `python3 -c 'import secrets; print(secrets.token_urlsafe(48))'` generates a value to copy into `ADMIN_TOKEN`.
-Keep it out of Git, logs and frontend build variables.
-In development, open `/staff`, sign in, and import `content/sample/force-and-motion.txt` with grade `8`, subject `Science`, chapter `Force and Motion`, license `CC0-1.0`, and source `Original demonstration note`.
+Keep it out of Git, logs and frontend build variables; after the first administrator is created, remove it from `.env` and restart the API.
+Sign in with the administrator account, create teacher accounts, and let teachers create classes and learner accounts.
+Open `/staff`, sign in, and import `content/sample/force-and-motion.txt` with grade `8`, subject `Science`, chapter `Force and Motion`, license `CC0-1.0`, and source `Original demonstration note`.
 For books already in the catalog, use **Prepare books for tutor search** in Staff and index one searchable title at a time.
 Each action embeds up to four passages per provider call and can be retried safely using stable vector IDs.
 Scanned books without selectable text need OCR before they can be indexed.
@@ -128,7 +139,10 @@ docker compose up -d --wait
 ./scripts/check-offline.sh http://127.0.0.1:8090
 ```
 
-The student portal is `http://127.0.0.1:8090` and staff sign-in is `http://127.0.0.1:8091/staff`.
+The student portal is `http://127.0.0.1:8090` and the staff workspace is `http://127.0.0.1:8091/staff`.
+Open `/login` to sign in; on an empty database, the page offers the one-time school administrator setup using the configured `ADMIN_TOKEN`.
+After creating that administrator, create teacher accounts from the teacher dashboard; teachers create classes and learner accounts.
+Newly created accounts must change their initial password before using the portal.
 Kolibri is an optional Compose profile so the base application does not pull or start the education service unless requested.
 Set `KOLIBRI_PUBLIC_URL=http://127.0.0.1:8092` and `KOLIBRI_PROBE_URL=http://kolibri:8080` in `.env`, then run `make education-up` to start and connect it alongside the portal.
 Kolibri keeps its database, user records, and imported content in a separate persistent `kolibri-data` volume.

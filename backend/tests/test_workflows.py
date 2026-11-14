@@ -40,11 +40,16 @@ def test_health_and_truthful_empty_services(tmp_path):
         assert client.get("/api/admin/index-status").status_code == 503
 
 
-def test_full_import_chat_file_and_restart(client, upload, settings, stack):
+def test_full_import_chat_file_and_restart(client, upload, settings, stack, staff):
     response = upload()
     assert response.status_code == 201, response.text
     doc = response.json()
     assert doc["status"] == "ready"
+    assert doc["index_status"] == "not_indexed"
+    indexed = client.post("/api/admin/index-book", headers=staff, json={"document_id": doc["id"]})
+    assert indexed.status_code == 200, indexed.text
+    doc = indexed.json()
+    assert doc["index_status"] == "indexed"
     assert "storage_name" not in doc
     assert client.get("/api/textbooks?grade=8&subject=science").json() == [doc]
     assert client.get("/api/textbooks/" + doc["id"]).json() == doc
@@ -83,9 +88,15 @@ def test_grade_subject_chapter_isolation(client, upload, change):
     assert answer["sources"] == []
 
 
-def test_threshold_and_empty_index_have_no_citations(client, upload, stack):
+def test_threshold_and_empty_index_have_no_citations(client, upload, stack, staff):
     assert question(client).json()["sources"] == []
-    upload()
+    doc = upload().json()
+    assert (
+        client.post(
+            "/api/admin/index-book", headers=staff, json={"document_id": doc["id"]}
+        ).status_code
+        == 200
+    )
     stack.score = 0.2
     answer = question(client).json()
     assert answer["grounding"] == "general"
@@ -102,14 +113,30 @@ def test_outages_return_safe_503(client, stack, outage):
     assert client.get("/api/services").json()["tutor"]["status"] == "unavailable"
 
 
-def test_failed_import_is_not_student_content_and_can_retry(client, upload, stack, staff):
+def test_embedding_outage_keeps_book_readable_and_can_retry_index(client, upload, stack, staff):
     stack.outage = "ollama.test"
-    assert upload().status_code == 503
-    assert client.get("/api/textbooks").json() == []
-    failed = client.get("/api/admin/index-status", headers=staff).json()["documents"]
-    assert failed[0]["status"] == "failed"
+    imported = upload()
+    assert imported.status_code == 201
+    assert imported.json()["status"] == "ready"
+    assert imported.json()["index_status"] == "not_indexed"
+    assert client.get("/api/textbooks").json()[0]["id"] == imported.json()["id"]
+    failed = client.post(
+        "/api/admin/index-book",
+        headers=staff,
+        json={"document_id": imported.json()["id"]},
+    )
+    assert failed.status_code == 503
+    failed_doc = client.get("/api/admin/index-status", headers=staff).json()["documents"][0]
+    assert failed_doc["status"] == "ready"
+    assert failed_doc["index_status"] == "failed"
     stack.outage = None
-    assert upload().json()["status"] == "ready"
+    retried = client.post(
+        "/api/admin/index-book",
+        headers=staff,
+        json={"document_id": imported.json()["id"]},
+    )
+    assert retried.status_code == 200
+    assert retried.json()["index_status"] == "indexed"
 
 
 def test_staff_auth_happens_before_file_parsing(client):
@@ -264,6 +291,7 @@ def test_external_links_require_successful_probe(settings, stack):
 def test_pdf_import_preserves_real_page_citation(client, staff):
     output = io.BytesIO()
     pdf = canvas.Canvas(output)
+    pdf.drawString(40, 700, "Force and motion")
     pdf.showPage()
     pdf.drawString(40, 700, "Newton's second law: Force equals mass times acceleration.")
     pdf.save()
@@ -282,8 +310,10 @@ def test_pdf_import_preserves_real_page_citation(client, staff):
     )
     assert imported.status_code == 201
     doc = imported.json()
-    assert doc["ocr_required_pages"] == [1]
-    assert question(client).json()["sources"][0]["page_start"] == 2
+    indexed = client.post("/api/admin/index-book", headers=staff, json={"document_id": doc["id"]})
+    assert indexed.status_code == 200
+    assert doc["ocr_required_pages"] == []
+    assert any(source["page_start"] == 2 for source in question(client).json()["sources"])
     served = client.get(f"/api/textbooks/{doc['id']}/file")
     assert served.content.startswith(b"%PDF-")
     assert served.headers["content-type"] == "application/pdf"

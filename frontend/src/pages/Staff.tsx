@@ -1,37 +1,52 @@
-import { useState, type FormEvent } from 'react'
-import { LockKey, UploadSimple } from '@phosphor-icons/react'
-import { api, type Book, type Services } from '../lib/api'
+import { useEffect, useState, type FormEvent } from 'react'
+import { UploadSimple } from '@phosphor-icons/react'
+import { Link } from 'react-router-dom'
+import {
+  api,
+  isStudentListener,
+  staffPortalUrl,
+  type AccountUser,
+  type Book,
+  type Services,
+} from '../lib/api'
 import type { Copy } from '../lib/i18n'
 import { ErrorNotice, Field, Status } from '../components/ui'
+import StaffNotes from './StaffNotes'
 
 type IndexStatus = { services: Services; documents: Book[] }
-export default function Staff({ t, refresh }: { t: Copy; refresh: () => void }) {
-  const [tokenInput, setTokenInput] = useState('')
-  const [token, setToken] = useState('')
+export default function Staff({
+  t,
+  refresh,
+  account,
+  authReady,
+}: {
+  t: Copy
+  refresh: () => void
+  account: AccountUser | null
+  authReady: boolean
+}) {
   const [status, setStatus] = useState<IndexStatus | null>(null)
   const [error, setError] = useState<unknown>(null)
   const [busy, setBusy] = useState(false)
   const [success, setSuccess] = useState(false)
   const [indexCandidateId, setIndexCandidateId] = useState('')
   const [indexSuccess, setIndexSuccess] = useState(false)
-  async function login(event: FormEvent) {
-    event.preventDefault()
-    setBusy(true)
-    setError(null)
-    try {
-      setStatus(
-        await api<IndexStatus>('/admin/index-status', {
-          headers: { Authorization: `Bearer ${tokenInput}` },
-        }),
-      )
-      setToken(tokenInput)
-      setTokenInput('')
-    } catch (e) {
-      setError(e)
-    } finally {
-      setBusy(false)
+  const requiresStaffListener = Boolean(
+    account && account.role !== 'student' && isStudentListener(),
+  )
+  const indexAvailable = Boolean(
+    ['ready', 'configured'].includes(status?.services.dependencies.embeddings ?? '') &&
+      status?.services.dependencies.vectors === 'ready',
+  )
+  useEffect(() => {
+    if (requiresStaffListener) {
+      window.location.replace(staffPortalUrl('/staff'))
+      return
     }
-  }
+    if (account?.role === 'teacher' || account?.role === 'admin') {
+      api<IndexStatus>('/admin/index-status').then(setStatus).catch(setError)
+    }
+  }, [account?.id, account?.role, requiresStaffListener])
   async function ingest(event: FormEvent<HTMLFormElement>) {
     event.preventDefault()
     setBusy(true)
@@ -42,17 +57,12 @@ export default function Staff({ t, refresh }: { t: Copy; refresh: () => void }) 
       await api('/admin/documents', {
         method: 'POST',
         body: new FormData(form),
-        headers: { Authorization: `Bearer ${token}` },
         signal: AbortSignal.timeout(600_000),
       })
       setSuccess(true)
       form.reset()
       refresh()
-      setStatus(
-        await api<IndexStatus>('/admin/index-status', {
-          headers: { Authorization: `Bearer ${token}` },
-        }),
-      )
+      setStatus(await api<IndexStatus>('/admin/index-status'))
     } catch (e) {
       setError(e)
     } finally {
@@ -67,14 +77,12 @@ export default function Staff({ t, refresh }: { t: Copy; refresh: () => void }) 
     try {
       await api<Book>('/admin/index-book', {
         method: 'POST',
-        headers: { Authorization: `Bearer ${token}`, 'Content-Type': 'application/json' },
+        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ document_id: indexCandidateId }),
         signal: AbortSignal.timeout(600_000),
       })
       setIndexSuccess(true)
-      const next = await api<IndexStatus>('/admin/index-status', {
-        headers: { Authorization: `Bearer ${token}` },
-      })
+      const next = await api<IndexStatus>('/admin/index-status')
       setStatus(next)
       refresh()
       const candidate = next.documents.find(
@@ -87,6 +95,8 @@ export default function Staff({ t, refresh }: { t: Copy; refresh: () => void }) 
       setBusy(false)
     }
   }
+  if (requiresStaffListener) return <p role="status">{t.loading}</p>
+
   return (
     <>
       <header className="page-heading">
@@ -94,38 +104,21 @@ export default function Staff({ t, refresh }: { t: Copy; refresh: () => void }) 
         <p>{t.staffIntro}</p>
       </header>
       <ErrorNotice error={error} t={t} />
-      {!token ? (
-        <form onSubmit={login} className="panel staff-login">
-          <LockKey size={35} aria-hidden="true" />
-          <Field label={t.token}>
-            <input
-              type="password"
-              required
-              autoComplete="current-password"
-              value={tokenInput}
-              onChange={(e) => setTokenInput(e.target.value)}
-            />
-          </Field>
-          <p className="small-note">{t.privacyToken}</p>
-          <button className="primary" disabled={busy}>
-            {busy ? t.loading : t.login}
-          </button>
-        </form>
+      {!authReady ? (
+        <p role="status">{t.loading}</p>
+      ) : !account ? (
+        <section className="panel">
+          <p>{t.staffSignInRequired}</p>
+          <Link className="primary button-link" to="/login">
+            {t.signIn}
+          </Link>
+        </section>
+      ) : account.role === 'student' ? (
+        <section className="panel">
+          <p>{t.staffRoleRequired}</p>
+        </section>
       ) : (
         <>
-          <button
-            className="secondary"
-            disabled={busy}
-            onClick={() => {
-              setToken('')
-              setStatus(null)
-              setError(null)
-              setSuccess(false)
-              setIndexSuccess(false)
-            }}
-          >
-            {t.logout}
-          </button>
           <section className="panel">
             <h2>{t.diagnostics}</h2>
             <div className="diagnostics">
@@ -156,6 +149,21 @@ export default function Staff({ t, refresh }: { t: Copy; refresh: () => void }) 
                 <p className="small-note">{t.kolibriNeedsSetup}</p>
               )}
             </div>
+            {status?.services.kolibri.version ||
+            status?.services.kolibri.available_count != null ? (
+              <p className="small-note">
+                {status.services.kolibri.version
+                  ? `${t.kolibriVersion} ${status.services.kolibri.version}`
+                  : null}
+                {status.services.kolibri.version && status.services.kolibri.available_count != null
+                  ? ' · '
+                  : null}
+                {status.services.kolibri.available_count != null
+                  ? `${status.services.kolibri.available_count} ${t.kolibriChannelCounts}`
+                  : null}{' '}
+                <Link to="/courses">{t.courses}</Link>
+              </p>
+            ) : null}
             <details className="kolibri-workflow">
               <summary>{t.kolibriWorkflow}</summary>
               <ol>
@@ -166,11 +174,7 @@ export default function Staff({ t, refresh }: { t: Copy; refresh: () => void }) 
                 <li>{t.kolibriVerifyStep}</li>
               </ol>
               <p className="small-note">{t.kolibriSeparationNote}</p>
-              <a
-                href="https://github.com/apil-khadka/LocalLearning/blob/main/docs/KOLIBRI_GUIDE.md"
-                target="_blank"
-                rel="noreferrer"
-              >
+              <a href="/guides/kolibri.md" target="_blank" rel="noreferrer">
                 {t.kolibriGuide}
               </a>
             </details>
@@ -244,13 +248,14 @@ export default function Staff({ t, refresh }: { t: Copy; refresh: () => void }) 
               </Field>
               <button
                 className="primary"
-                disabled={busy || !indexCandidateId}
+                disabled={busy || !indexCandidateId || !indexAvailable}
                 onClick={indexBook}
                 type="button"
               >
                 {busy ? t.indexingBook : t.indexOneBook}
               </button>
             </div>
+            {!indexAvailable && <p className="small-note">{t.indexUnavailable}</p>}
             {indexSuccess && <p role="status">{t.bookIndexed}</p>}
           </section>
           <section className="panel">
@@ -265,6 +270,7 @@ export default function Staff({ t, refresh }: { t: Copy; refresh: () => void }) 
               </p>
             ))}
           </section>
+          <StaffNotes t={t} documents={status?.documents ?? []} account={account} />
         </>
       )}
     </>

@@ -30,7 +30,7 @@ Keep the initial super-admin credentials in the school's private credential stor
 Give device content-management permission only to staff who are responsible for selecting and updating channels.
 Use coach accounts to manage classes, lessons, quizzes, and learner progress.
 Create learner accounts or groups using the school's normal student privacy process.
-Never place Kolibri credentials in `.env`, tracked files, or the Digital Himalaya staff token field.
+Never place Kolibri credentials in `.env`, tracked files, or Digital Himalaya account fields.
 For this local prototype, the dev password and its access note live only in the git-ignored `private-local/` directory.
 Do not reuse the dev account or its password in a school deployment.
 
@@ -76,9 +76,15 @@ Do not update channels during high learner activity.
 An update can make a lesson or quiz that references a changed or moved resource stop working, so verify these activities after every channel update.
 For a site without internet, use an approved channel export or storage-drive update workflow and apply the same review and verification steps.
 
+## Linking notes to channels
+
+A teaching note can store a Kolibri channel ID so the Study page shows a related-channel link.
+The link is only a reference built from `KOLIBRI_PUBLIC_URL`. The portal does not check that the channel is imported and does not read or write Kolibri accounts, classes or progress.
+
 ## Verify the integration
 
-- The staff workspace reports Kolibri as reachable and its **Open Kolibri** link opens from the staff browser.
+- The staff workspace reports Kolibri as reachable with its version and ready-channel count, and its **Open Kolibri** link opens from the staff browser.
+- The portal Courses page lists the imported channels with per-channel **Open in Kolibri** deep links.
 - A learner can open an assigned channel resource through Kolibri from a student device.
 - A coach can see the intended class and assign a reviewed lesson or quiz.
 - A learner can complete the test activity and the coach can see its progress in Kolibri.

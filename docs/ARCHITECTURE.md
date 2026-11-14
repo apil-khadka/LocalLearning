@@ -39,7 +39,7 @@ Any supported add-on integration should use documented extension points and serv
 `deployment/` owns the two Nginx listeners.
 The `content-data` volume contains the catalog and uploaded files; Qdrant persistence is owned by the existing service deployment.
 When the optional `education` Compose profile is enabled, Kolibri uses its own `kolibri-data` volume and student-facing ports 8092/8093 by default.
-The portal links to Kolibri and the API checks its configured health URL; Kolibri handles its own learners, coaches, classes, progress and course content.
+The portal links to Kolibri, the API checks its configured health URL and mirrors its public channel catalog with Learn-page deep links; Kolibri handles its own learners, coaches, classes, progress and course content.
 There is no shared login, account synchronization, automatic course import, or direct tutor-to-Kolibri content ingestion.
 Back up the catalog and vector index together.
 
@@ -56,12 +56,17 @@ Recovery tooling and garbage collection are follow-up work.
 | Method | Route | Behavior |
 | --- | --- | --- |
 | GET | `/api/health` | Application liveness; not a claim of model readiness |
-| GET | `/api/services` | Local model/vector reachability and chat-provider configuration state |
+| GET | `/api/services` | Local model/vector reachability, safe evaluation model/retrieval metadata, and chat-provider configuration state; the Kolibri entry adds version and channel/resource counts when its catalog answers |
+| GET | `/api/kolibri/channels` | Sanitized Kolibri channel catalog with Learn-page deep links, read through the unauthenticated content API; 503 when unconfigured or unavailable |
 | GET | `/api/textbooks` | Ready documents filtered by optional grade/subject |
 | GET | `/api/textbooks/catalog` | Searchable catalog page with total count and grade-specific subject options |
 | GET | `/api/textbooks/{id}` | Safe document metadata |
 | GET | `/api/textbooks/{id}/file` | Catalog-resolved PDF or text; no raw path input |
-| POST | `/api/tutor/chat` | Optional local embeddings, filtered retrieval, configured chat answer and source metadata |
+| POST | `/api/tutor/chat` | Optional local embeddings, filtered retrieval, approved teaching notes, configured chat answer and source metadata; `mode` is `explain` (default), `hint` or `debug` |
+| GET | `/api/notes`, `/api/notes/{id}` | Approved teaching notes whose linked book is ready; no review metadata |
+| GET/POST | `/api/admin/notes` | Authenticated list and create (always as draft) |
+| PUT/DELETE | `/api/admin/notes/{id}` | Authenticated edit (returns the note to draft) and delete |
+| POST | `/api/admin/notes/{id}/review` | Authenticated status change; approval needs a reviewer name, prior `in_review` state and a ready book |
 | GET | `/api/admin/index-status` | Authenticated service checks and all import states |
 | POST | `/api/admin/documents` | Authenticated bounded PDF/text import |
 | POST | `/api/admin/index-book` | Authenticated one-book indexing from an existing catalog file |
@@ -80,7 +85,9 @@ Staff can index existing books one per request, with at most four text chunks in
 Stable chunk IDs make retries idempotent, and per-book state records books that are not indexed, indexing, indexed, failed, or waiting for OCR.
 The process never starts an automatic backfill across the full catalog.
 Embedding dimensions come from returned vectors, and existing collection dimensions are checked before writing.
-Student answers have `grounding: textbook` when passages were retrieved or `general` when no suitable passages were retrieved.
+Student answers have `grounding: textbook` when passages were retrieved, `note` when only approved teaching notes were supplied, or `general` otherwise.
+These labels say what material the model received, not that the answer was checked against it.
+Teaching notes, tutor modes and the evaluation tool are described in [teaching notes](TEACHING_NOTES.md).
 Failures use HTTP 503; no canned answer is substituted.
 
 The selected chat provider receives grade/language instructions, bounded history, and retrieved data marked as untrusted.

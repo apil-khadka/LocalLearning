@@ -19,6 +19,7 @@ export default function Home({ t, services }: { t: Copy; services: Services | nu
       color: 'blue',
       path: '/tutor',
       status: services?.tutor.status,
+      note: null,
     },
     {
       title: t.books,
@@ -27,6 +28,7 @@ export default function Home({ t, services }: { t: Copy; services: Services | nu
       color: 'green',
       path: '/books',
       status: services?.books.status,
+      note: null,
     },
     {
       title: t.wikipedia,
@@ -35,6 +37,7 @@ export default function Home({ t, services }: { t: Copy; services: Services | nu
       color: 'purple',
       url: services?.kiwix.url,
       status: services?.kiwix.status,
+      note: null,
     },
     {
       title: t.videos,
@@ -43,6 +46,10 @@ export default function Home({ t, services }: { t: Copy; services: Services | nu
       color: 'gold',
       url: services?.kolibri.url,
       status: services?.kolibri.status,
+      note:
+        services?.kolibri.available_count != null
+          ? `${services.kolibri.available_count} ${t.kolibriChannelCounts}`
+          : null,
     },
   ]
   return (
@@ -67,7 +74,7 @@ export default function Home({ t, services }: { t: Copy; services: Services | nu
           </div>
         </div>
         <div className="resource-grid">
-          {resources.map(({ title, description, icon: Icon, color, path, url, status }) => {
+          {resources.map(({ title, description, icon: Icon, color, path, url, status, note }) => {
             const content = (
               <>
                 <span className={`resource-icon ${color}`}>
@@ -81,6 +88,7 @@ export default function Home({ t, services }: { t: Copy; services: Services | nu
                   ) : (
                     <span className="muted">{services ? t.unavailable : t.checking}</span>
                   )}
+                  {note ? <span className="muted">{note}</span> : null}
                 </div>
               </>
             )
