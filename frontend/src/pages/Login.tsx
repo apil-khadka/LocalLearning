@@ -54,7 +54,7 @@ export default function Login({
       setCsrfToken(result.csrf_token)
       onAuthenticated(result.user)
       if (result.user.role !== 'student' && isStudentListener()) {
-        window.location.assign(staffPortalUrl('/teacher'))
+        window.location.assign(staffPortalUrl(result.user.role === 'admin' ? '/admin' : '/teacher'))
         return
       }
       navigate(
@@ -62,7 +62,9 @@ export default function Login({
           ? '/change-password'
           : result.user.role === 'student'
             ? '/dashboard'
-            : '/teacher',
+            : result.user.role === 'admin'
+              ? '/admin'
+              : '/teacher',
         { replace: true },
       )
     } catch (cause) {
@@ -76,7 +78,7 @@ export default function Login({
     <section className="account-page">
       <header className="page-heading">
         <h1>{setup ? t.setupAdmin : t.signIn}</h1>
-        <p>{setup ? t.setupAdminHelp : t.account}</p>
+        <p>{setup ? t.setupAdminHelp : t.signInHelp}</p>
       </header>
       <form className="panel account-form" onSubmit={submit}>
         {setup && (
@@ -85,12 +87,28 @@ export default function Login({
               <input name="token" type="password" required autoComplete="off" />
             </Field>
             <Field label={t.displayName}>
-              <input name="display_name" required maxLength={80} autoComplete="name" />
+              <input
+                name="display_name"
+                required
+                maxLength={80}
+                autoComplete="name"
+                enterKeyHint="next"
+              />
             </Field>
           </>
         )}
         <Field label={t.username}>
-          <input name="username" required minLength={3} maxLength={48} autoComplete="username" />
+          <input
+            name="username"
+            required
+            minLength={3}
+            maxLength={48}
+            autoComplete="username"
+            autoCapitalize="none"
+            autoCorrect="off"
+            spellCheck={false}
+            enterKeyHint="next"
+          />
         </Field>
         <Field label={t.password}>
           <input
@@ -100,6 +118,7 @@ export default function Login({
             minLength={12}
             maxLength={128}
             autoComplete={setup ? 'new-password' : 'current-password'}
+            enterKeyHint="done"
           />
         </Field>
         <ErrorNotice error={error} t={t} />

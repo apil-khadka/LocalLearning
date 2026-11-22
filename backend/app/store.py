@@ -4,6 +4,8 @@ import json
 import sqlite3
 from pathlib import Path
 
+from app.book_search import subject_matches
+
 
 class Store:
     """Small local catalog. Only ready documents can be retrieved or served."""
@@ -136,10 +138,9 @@ class Store:
         self, *, grade: int, subject: str, chapter: str = "", language: str | None = None
     ) -> list[tuple[dict, dict]]:
         """Approved notes paired with their book; notes whose book is not ready are hidden."""
-        wanted = subject.strip().casefold()
         pairs = []
         for note in self.list_notes(status="approved"):
-            if note["grade"] != grade or note["subject"].casefold() != wanted:
+            if note["grade"] != grade or not subject_matches(note["subject"], subject):
                 continue
             if chapter and note["chapter"].casefold() != chapter.strip().casefold():
                 continue

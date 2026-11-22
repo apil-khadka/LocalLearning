@@ -11,7 +11,7 @@ Model inference, curriculum quality, Nepali language quality, school Wi-Fi capac
 ## What is here
 
 - A responsive React/TypeScript portal with English and Nepali interface text.
-- A FastAPI API with switchable chat and separate Ollama or OpenAI-compatible embedding providers.
+- A FastAPI API with switchable chat (OpenAI-compatible, Ollama, or LM Studio) and separate Ollama or OpenAI-compatible embedding providers.
 - Protected PDF/text ingestion, page-aware chunks, real retrieval metadata, and safe no-match responses.
 - A searchable, paginated textbook catalog with filters, multi-select, inline PDF preview, and staff diagnostics.
 - Staff-triggered vector indexing for saved books, processed one title at a time with small embedding batches.
@@ -35,7 +35,7 @@ Set `AUTH_COOKIE_SECURE=true` when serving over HTTPS; only use `false` for loca
 When enabled, Kolibri manages separate classroom accounts and learning progress in its own data volume.
 The default AI chat endpoint is disabled until an operator adds a key and sets `AI_ENABLED=true`.
 When the OpenAI-compatible provider is selected, learner questions, conversation history and retrieved excerpts are sent to that configured provider.
-Keep `CHAT_PROVIDER=ollama` to process chat on a reachable local Ollama service instead.
+Keep `CHAT_PROVIDER=ollama` to process chat on a reachable local Ollama service instead, or set `CHAT_PROVIDER=lmstudio` with `LMSTUDIO_BASE_URL` and `LMSTUDIO_MODEL` in `.env` for a local LM Studio server.
 The source planning attachments are private local material and are excluded from both Git and Docker builds.
 Prototype book samples can be fetched locally with `make books-pilot` and `make books-more`.
 They are text-only Wikibooks books or selected chapters with revision-level attribution, saved under ignored `content/private/` and excluded from public builds.
@@ -106,6 +106,7 @@ CHAT_REASONING_EFFORT=low
 
 The key is never committed.
 To switch chat to local Ollama, use `CHAT_PROVIDER=ollama` and set `OLLAMA_BASE_URL` and `OLLAMA_MODEL`.
+To switch chat to local LM Studio, use `CHAT_PROVIDER=lmstudio` and configure `LMSTUDIO_BASE_URL` and `LMSTUDIO_MODEL` in `.env`.
 To switch to another OpenAI-compatible service, change `CHAT_API_BASE_URL`, `CHAT_API_KEY`, and `CHAT_MODEL`.
 Clear `CHAT_REASONING_EFFORT` if the new service does not support Muse-style reasoning controls.
 Textbook retrieval uses the separately configured embedding provider and Qdrant collection.
@@ -114,7 +115,7 @@ With either one unavailable, chat can still return a clearly labeled general exp
 Set a random one-time administrator setup token in `.env` using a password manager or a local generator.
 For example, `python3 -c 'import secrets; print(secrets.token_urlsafe(48))'` generates a value to copy into `ADMIN_TOKEN`.
 Keep it out of Git, logs and frontend build variables; after the first administrator is created, remove it from `.env` and restart the API.
-Sign in with the administrator account, create teacher accounts, and let teachers create classes and learner accounts.
+Sign in with the administrator account to create teacher accounts and assign classes; teachers then create learner accounts for their classes.
 Open `/staff`, sign in, and import `content/sample/force-and-motion.txt` with grade `8`, subject `Science`, chapter `Force and Motion`, license `CC0-1.0`, and source `Original demonstration note`.
 For books already in the catalog, use **Prepare books for tutor search** in Staff and index one searchable title at a time.
 Each action embeds up to four passages per provider call and can be retried safely using stable vector IDs.
@@ -141,14 +142,18 @@ docker compose up -d --wait
 
 The student portal is `http://127.0.0.1:8090` and the staff workspace is `http://127.0.0.1:8091/staff`.
 Open `/login` to sign in; on an empty database, the page offers the one-time school administrator setup using the configured `ADMIN_TOKEN`.
-After creating that administrator, create teacher accounts from the teacher dashboard; teachers create classes and learner accounts.
-Newly created accounts must change their initial password before using the portal.
+For loopback HTTP development, use `REQUIRE_AUTH=true` and `AUTH_COOKIE_SECURE=false`; keep secure cookies enabled when serving over HTTPS.
+Store local administrator credentials in the ignored `private-local/` directory and remove the one-time `ADMIN_TOKEN` after setup.
+For the local Phi tutor, set `AI_ENABLED=true`, `CHAT_PROVIDER=lmstudio`, `LMSTUDIO_BASE_URL=http://host.docker.internal:1234`, and `LMSTUDIO_MODEL=phi-4-mini-instruct` in `.env`, clear `CHAT_REASONING_EFFORT`, then load only that model in LM Studio.
+After creating that administrator, use the admin dashboard to create teacher accounts and assign classes. Teachers sign in to their own dashboard to create learner accounts. Share each generated one-time password locally; each new account must change it at first sign-in.
 Kolibri is an optional Compose profile so the base application does not pull or start the education service unless requested.
 Set `KOLIBRI_PUBLIC_URL=http://127.0.0.1:8092` and `KOLIBRI_PROBE_URL=http://kolibri:8080` in `.env`, then run `make education-up` to start and connect it alongside the portal.
 Kolibri keeps its database, user records, and imported content in a separate persistent `kolibri-data` volume.
 On a fresh local volume, `make education-up` provisions a formal `Digital Himalaya Dev School` facility and a `devadmin` super-admin account from the password in the ignored `private-local/kolibri-admin-password` file.
 The bootstrap skips any volume that already contains a facility, so it does not reset existing Kolibri accounts or content.
-Import approved channels in Kolibri's own interface; this project does not download course content or provision learner accounts.
+The local development Kolibri facility currently contains a small PhET selection: two videos, three interactive simulations, and three activity guides.
+Kolibri keeps its own accounts and content; it does not share sign-in or course progress with this portal.
+Review and import any additional channels through Kolibri's own interface using the [content operations guide](docs/KOLIBRI_GUIDE.md).
 The local dev password and access note belong only in the ignored `private-local/` directory and must not be committed or reused for a school deployment.
 Use the [Kolibri operations guide](docs/KOLIBRI_GUIDE.md) for role setup, rights review, offline channel imports, update review, verification, and backup steps.
 For a school LAN, set `KOLIBRI_BIND` to the server's reserved LAN IP and `KOLIBRI_PUBLIC_URL` to the student-reachable address after reviewing firewall rules.

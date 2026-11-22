@@ -8,20 +8,27 @@ from pydantic_settings import BaseSettings, SettingsConfigDict
 
 
 class Settings(BaseSettings):
-    model_config = SettingsConfigDict(env_file="../.env", extra="ignore")
+    model_config = SettingsConfigDict(
+        env_file=(Path(__file__).resolve().parents[2] / ".env", ".env"),
+        extra="ignore",
+    )
 
     data_dir: Path = Path("../data")
     ai_enabled: bool = False
     require_auth: bool = False
     auth_cookie_secure: bool = False
     auth_cookie_name: str = "dh_session"
-    chat_provider: Literal["openai-compatible", "ollama"] = "openai-compatible"
+    chat_provider: Literal["openai-compatible", "ollama", "lmstudio"] = "openai-compatible"
     chat_api_base_url: str = "https://inference.baseten.co/v1"
     chat_api_key: SecretStr = SecretStr("")
     chat_model: str = "meta-models/muse-spark-open-1026"
     chat_reasoning_effort: Literal["", "low", "medium", "high", "xhigh"] = ""
     ollama_base_url: str = ""
     ollama_model: str = "qwen3:4b-instruct"
+    lmstudio_base_url: str = ""
+    lmstudio_model: str = ""
+    lmstudio_api_key: SecretStr = SecretStr("")
+    lmstudio_max_output_tokens: int = Field(4096, ge=64, le=16384)
     embed_provider: Literal["ollama", "openai-compatible"] = "ollama"
     embed_api_base_url: str = ""
     embed_api_key: SecretStr = SecretStr("")
@@ -48,6 +55,7 @@ class Settings(BaseSettings):
 
     @field_validator(
         "ollama_base_url",
+        "lmstudio_base_url",
         "chat_api_base_url",
         "embed_api_base_url",
         "qdrant_url",
@@ -89,9 +97,23 @@ class Settings(BaseSettings):
             raise ValueError("Use a dedicated collection beginning with dh_")
         return value
 
+    @field_validator("lmstudio_model")
+    @classmethod
+    def strip_lmstudio_model(cls, value: str) -> str:
+        return value.strip()
+
     @field_validator("admin_token")
     @classmethod
     def strong_token(cls, value: SecretStr) -> SecretStr:
         if value.get_secret_value() and len(value.get_secret_value()) < 32:
             raise ValueError("ADMIN_TOKEN must be empty (staff disabled) or at least 32 characters")
         return value
+
+    @property
+    def active_chat_model(self) -> str:
+        """Return the configured model identifier for the active chat provider."""
+        if self.chat_provider == "openai-compatible":
+            return self.chat_model
+        if self.chat_provider == "lmstudio":
+            return self.lmstudio_model
+        return self.ollama_model

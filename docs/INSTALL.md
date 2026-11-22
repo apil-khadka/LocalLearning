@@ -10,16 +10,17 @@ Use the [README](../README.md) for local development commands.
 2. Configure the [network boundary](NETWORK.md) before exposing services to students.
 3. If using NOMAD, follow its [official repository instructions](https://github.com/Crosstalk-Solutions/project-nomad) and inspect the installer before running it.
 4. Verify the actual installed Ollama/Qdrant addresses and versions; do not install duplicates automatically.
-5. Choose either local Ollama chat or an OpenAI-compatible chat endpoint, then verify the selected provider with a direct request.
+5. Choose local Ollama chat, local LM Studio chat, or an OpenAI-compatible chat endpoint, then verify the selected provider with a direct request.
 6. Download the local embedding model only if textbook retrieval is needed, verify its license and run a direct local request.
 7. Download one approved Kiwix article collection, import one reviewed Kolibri channel with its actual media, and select one permitted searchable chapter.
 8. Copy `.env.example` to `.env`; set real service addresses, a random one-time `ADMIN_TOKEN`, `REQUIRE_AUTH=true`, `AUTH_COOKIE_SECURE=true` behind HTTPS, and verified student resource URLs.
 9. Run `docker compose build` and `docker compose up -d --wait` from the repository root.
 10. Put a trusted HTTPS terminator in front of the portal before student use; the supplied Compose listener serves plain HTTP.
 11. Open `/login` on the staff listener and use the one-time setup token to create the first administrator, then remove `ADMIN_TOKEN` from `.env` and restart the API.
-12. Sign in as the administrator, create teacher accounts, and have teachers create classes and learner accounts.
-13. Give each new account its initial password through a private school-approved channel, and verify that it must be changed on first sign-in.
-14. Use the administrator account controls to reset a lost password or disable an account; the next sign-in after a reset must use a new private password.
+12. Sign in as the administrator, create teacher accounts with generated one-time passwords, and assign their classes.
+13. Share each teacher's one-time password locally. Teachers create learner accounts for their classes and share each learner's one-time password locally.
+14. Verify that each new account must change its password at first sign-in.
+15. Use the administrator account controls to reset a lost password or disable an account; share reset passwords locally, and require a password change at the next sign-in.
 
 ## Kolibri classroom service
 
@@ -63,6 +64,7 @@ The staff interface reports import failures, while scanned/missing text pages ar
 Text files have one logical page.
 
 For local chat, set `CHAT_PROVIDER=ollama` and configure `OLLAMA_BASE_URL` and `OLLAMA_MODEL`.
+For local LM Studio chat, set `CHAT_PROVIDER=lmstudio` and configure `LMSTUDIO_BASE_URL` and `LMSTUDIO_MODEL` in `.env`.
 For an OpenAI-compatible chat API, set `CHAT_PROVIDER=openai-compatible`, `CHAT_API_BASE_URL`, `CHAT_API_KEY`, and `CHAT_MODEL` in the ignored `.env` file.
 For Baseten's selected model, the defaults are `https://inference.baseten.co/v1` and `meta-models/muse-spark-open-1026`.
 After successful provider checks and teacher review, set `AI_ENABLED=true` and run `docker compose up -d --force-recreate api`.

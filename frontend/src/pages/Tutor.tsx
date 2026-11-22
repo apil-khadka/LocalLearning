@@ -1,5 +1,5 @@
-import { useEffect, useState, type FormEvent } from 'react'
-import { ChatCircleDots, PaperPlaneTilt, Sparkle } from '@phosphor-icons/react'
+import { useEffect, useRef, useState, type FormEvent, type KeyboardEvent } from 'react'
+import { BookOpen, ChatCircleDots, PaperPlaneTilt, Sparkle } from '@phosphor-icons/react'
 import ReactMarkdown from 'react-markdown'
 import { Link, useSearchParams } from 'react-router-dom'
 import {
@@ -28,6 +28,33 @@ const commonSubjects = [
   'Computer Science',
 ]
 
+function starterPromptsFor(subject: string, language: Language): string[] {
+  const lower = subject.toLowerCase()
+  if (lower.includes('science')) {
+    return language === 'ne'
+      ? [
+          'चाल र वेग भनेको के हो? यिनीहरूबीच के फरक छ?',
+          'वनस्पतिमा प्रकाश संश्लेषण किन महत्त्वपूर्ण छ?',
+        ]
+      : [
+          'What is speed and velocity? How are they different?',
+          'Why is photosynthesis important for living things?',
+        ]
+  }
+  if (lower.includes('math')) {
+    return language === 'ne'
+      ? [
+          'उचित उपसमुच्च र अनुचित उपसमुच्चबीच के फरक छ?',
+          'परिमेय र अपरिमेय संख्या कसरी चिन्ने?',
+        ]
+      : [
+          'What is the difference between a proper and improper subset?',
+          'How do rational and irrational numbers differ?',
+        ]
+  }
+  return []
+}
+
 export default function Tutor({
   t,
   language,
@@ -54,13 +81,31 @@ export default function Tutor({
   const [attempt, setAttempt] = useState('')
   const [hintLevel, setHintLevel] = useState(0)
   const [messages, setMessages] = useState<Message[]>([])
+  const [pendingTurn, setPendingTurn] = useState<{ question: string; attempt?: string } | null>(
+    null,
+  )
   const [sessionId, setSessionId] = useState<string | null>(null)
   const [error, setError] = useState<unknown>(null)
   const [busy, setBusy] = useState(false)
+  const subjectTouchedRef = useRef(false)
+  const messagesEndRef = useRef<HTMLDivElement>(null)
+  const formRef = useRef<HTMLFormElement>(null)
+
   useEffect(() => {
     const controller = new AbortController()
     api<Book[]>(`/textbooks?grade=${grade}`, { signal: controller.signal })
-      .then(setBooks)
+      .then((loaded) => {
+        setBooks(loaded)
+        if (!subjectTouchedRef.current) {
+          const hasScience = loaded.some((b) => b.subject.toLowerCase() === 'science')
+          const sciTech = loaded.find(
+            (b) => b.subject.toLowerCase() === 'science and technology',
+          )?.subject
+          if (!hasScience && sciTech) {
+            setSubject((current) => (current === 'Science' ? sciTech : current))
+          }
+        }
+      })
       .catch(() => setBooks([]))
     return () => controller.abort()
   }, [grade])
@@ -80,6 +125,7 @@ export default function Tutor({
       messages: TutorMessage[]
     }>(`/account/sessions/${requestedSession}`)
       .then((saved) => {
+        subjectTouchedRef.current = true
         setSessionId(saved.id)
         setGrade(String(saved.grade))
         setSubject(saved.subject)
@@ -108,6 +154,11 @@ export default function Tutor({
       })
       .catch(setError)
   }, [account, authReady, requestedSession])
+
+  useEffect(() => {
+    messagesEndRef.current?.scrollIntoView({ behavior: 'smooth', block: 'end' })
+  }, [messages.length, pendingTurn])
+
   const chapters = [
     ...new Set(
       books
@@ -117,14 +168,17 @@ export default function Tutor({
   ]
   const subjects = [
     ...new Map(
-      [...commonSubjects, ...books.map((book) => book.subject), subject]
+      [...books.map((book) => book.subject), ...commonSubjects, subject]
         .map((value) => value.trim())
         .filter(Boolean)
         .map((value) => [value.toLowerCase(), value] as const),
     ).values(),
   ]
+  const starterPrompts = starterPromptsFor(subject, language)
+
   const reset = () => {
     setMessages([])
+    setPendingTurn(null)
     setSessionId(null)
     setHintLevel(0)
     setError(null)
@@ -133,9 +187,14 @@ export default function Tutor({
   async function send(event: FormEvent) {
     event.preventDefault()
     if (!question.trim() || busy || (mode === 'debug' && !attempt.trim())) return
+    const content = question.trim()
+    const trimmedAttempt = attempt.trim()
     setBusy(true)
     setError(null)
-    const content = question.trim()
+    setPendingTurn({
+      question: content,
+      ...(mode === 'debug' && trimmedAttempt ? { attempt: trimmedAttempt } : {}),
+    })
     try {
       const reply = await api<Reply>('/tutor/chat', {
         method: 'POST',
@@ -149,7 +208,7 @@ export default function Tutor({
           mode,
           hint_level: hintLevel,
           ...(sessionId ? { session_id: sessionId } : {}),
-          ...(mode === 'debug' ? { attempt: attempt.trim() } : {}),
+          ...(mode === 'debug' ? { attempt: trimmedAttempt } : {}),
           history: messages
             .slice(-8)
             .map(({ role, content }) => ({ role, content: content.slice(0, 3000) })),
@@ -157,7 +216,7 @@ export default function Tutor({
       })
       setMessages((previous) => [
         ...previous,
-        { role: 'user', content, ...(attempt.trim() ? { attempt: attempt.trim() } : {}) },
+        { role: 'user', content, ...(mode === 'debug' && trimmedAttempt ? { attempt: trimmedAttempt } : {}) },
         { role: 'assistant', content: reply.answer, reply },
       ])
       if (reply.session_id) {
@@ -170,7 +229,16 @@ export default function Tutor({
     } catch (e) {
       setError(e)
     } finally {
+      setPendingTurn(null)
       setBusy(false)
+    }
+  }
+  function handleQuestionKeyDown(event: KeyboardEvent<HTMLTextAreaElement>) {
+    if (event.key === 'Enter' && !event.shiftKey && !event.nativeEvent.isComposing) {
+      event.preventDefault()
+      if (!busy && question.trim() && subject.trim() && (mode !== 'debug' || attempt.trim())) {
+        formRef.current?.requestSubmit()
+      }
     }
   }
   if (!authReady) return <p role="status">{t.loading}</p>
@@ -204,56 +272,62 @@ export default function Tutor({
       </header>
       <div className="tutor-layout">
         <aside className="tutor-context">
-          <h2>{t.chapter}</h2>
+          <div className="tutor-context-header">
+            <h2>{t.chapter}</h2>
+            {services && <Status value={services.tutor.status} t={t} />}
+          </div>
           <fieldset disabled={busy}>
-            <Field label={t.grade}>
-              <select
-                value={grade}
-                disabled={busy || (account?.role === 'student' && account.grade !== null)}
-                onChange={(e) => {
-                  setGrade(e.target.value)
-                  setChapter('')
-                  reset()
-                }}
-              >
-                {Array.from({ length: 12 }, (_, i) => (
-                  <option key={i} value={i + 1}>
-                    {i + 1}
-                  </option>
-                ))}
-              </select>
-            </Field>
-            <Field label={t.subject}>
-              <select
-                value={subject}
-                required
-                onChange={(e) => {
-                  setSubject(e.target.value)
-                  setChapter('')
-                  reset()
-                }}
-              >
-                {subjects.map((value) => (
-                  <option key={value} value={value}>
-                    {value}
-                  </option>
-                ))}
-              </select>
-            </Field>
-            <Field label={t.chapter}>
-              <select
-                value={chapter}
-                onChange={(e) => {
-                  setChapter(e.target.value)
-                  reset()
-                }}
-              >
-                <option value="">{t.allChapters}</option>
-                {chapters.map((c) => (
-                  <option key={c}>{c}</option>
-                ))}
-              </select>
-            </Field>
+            <div className="tutor-fields">
+              <Field label={t.grade}>
+                <select
+                  value={grade}
+                  disabled={busy || (account?.role === 'student' && account.grade !== null)}
+                  onChange={(e) => {
+                    setGrade(e.target.value)
+                    setChapter('')
+                    reset()
+                  }}
+                >
+                  {Array.from({ length: 12 }, (_, i) => (
+                    <option key={i} value={i + 1}>
+                      {i + 1}
+                    </option>
+                  ))}
+                </select>
+              </Field>
+              <Field label={t.subject}>
+                <select
+                  value={subject}
+                  required
+                  onChange={(e) => {
+                    subjectTouchedRef.current = true
+                    setSubject(e.target.value)
+                    setChapter('')
+                    reset()
+                  }}
+                >
+                  {subjects.map((value) => (
+                    <option key={value} value={value}>
+                      {value}
+                    </option>
+                  ))}
+                </select>
+              </Field>
+              <Field label={t.chapter}>
+                <select
+                  value={chapter}
+                  onChange={(e) => {
+                    setChapter(e.target.value)
+                    reset()
+                  }}
+                >
+                  <option value="">{t.allChapters}</option>
+                  {chapters.map((c) => (
+                    <option key={c}>{c}</option>
+                  ))}
+                </select>
+              </Field>
+            </div>
             <fieldset className="mode-picker" disabled={busy}>
               <legend>{t.learningMode}</legend>
               {modes.map((value) => (
@@ -276,23 +350,38 @@ export default function Tutor({
               ))}
             </fieldset>
           </fieldset>
-          {services && <Status value={services.tutor.status} t={t} />}
           <p className="small-note">{t.teacherNote}</p>
           {account?.role === 'student' && <p className="small-note">{t.sessionPrivacyNotice}</p>}
         </aside>
         <div className="conversation">
           <div className="messages" role="log" aria-label={t.tutor} aria-live="polite">
-            {!messages.length && (
+            {!messages.length && !pendingTurn && (
               <div className="empty-chat">
                 <span className="resource-icon blue">
                   <ChatCircleDots size={34} aria-hidden="true" />
                 </span>
                 <h2>{t.emptyChat}</h2>
                 <p>{t.emptyChatNote}</p>
-                <button className="practice" onClick={() => setQuestion(t.sampleQuestion)}>
-                  <Sparkle size={18} aria-hidden="true" />
-                  {t.practice}
-                </button>
+                <div className="starter-prompts" aria-label={t.starterPromptsLabel}>
+                  <button
+                    type="button"
+                    className="practice"
+                    onClick={() => setQuestion(t.sampleQuestion)}
+                  >
+                    <Sparkle size={18} aria-hidden="true" />
+                    {t.practice}
+                  </button>
+                  {starterPrompts.map((prompt) => (
+                    <button
+                      type="button"
+                      key={prompt}
+                      className="starter-chip"
+                      onClick={() => setQuestion(prompt)}
+                    >
+                      {prompt}
+                    </button>
+                  ))}
+                </div>
               </div>
             )}
             {messages.map((message, i) => (
@@ -311,36 +400,63 @@ export default function Tutor({
                   </p>
                 )}
                 {message.reply && (
-                  <>
-                    <small>
+                  <div className="message-meta">
+                    <span className={`grounding-badge grounding-${message.reply.grounding}`}>
                       {message.reply.grounding === 'textbook'
                         ? t.grounded
                         : message.reply.grounding === 'note'
                           ? t.groundedNote
                           : t.general}
-                    </small>
+                    </span>
                     {message.reply.sources.length > 0 && (
                       <div className="sources">
-                        <span>{t.sources}</span>
-                        {message.reply.sources.map((source) => (
-                          <Link
-                            key={source.chunk_id}
-                            to={readerLink(source.document_id, source.page_start)}
-                          >
-                            {source.kind === 'note' ? `${t.teacherNoteLabel}: ` : ''}
-                            {source.title}, {t.pages} {source.page_start}
-                          </Link>
-                        ))}
+                        <span className="sources-label">{t.sources}</span>
+                        <div className="source-list">
+                          {message.reply.sources.map((source) => (
+                            <Link
+                              key={source.chunk_id}
+                              className="source-chip"
+                              to={readerLink(source.document_id, source.page_start)}
+                            >
+                              <BookOpen size={15} aria-hidden="true" />
+                              <span>
+                                {source.kind === 'note' ? `${t.teacherNoteLabel}: ` : ''}
+                                {source.title}, {t.pages} {source.page_start}
+                              </span>
+                            </Link>
+                          ))}
+                        </div>
                       </div>
                     )}
-                  </>
+                  </div>
                 )}
               </article>
             ))}
-            {busy && <p role="status">{t.thinking}</p>}
+            {pendingTurn && (
+              <>
+                <article className="message pending-user">
+                  <strong>{t.question}</strong>
+                  <p className="message-content">{pendingTurn.question}</p>
+                  {pendingTurn.attempt && (
+                    <p className="message-attempt">
+                      <strong>{t.yourAttempt}:</strong> {pendingTurn.attempt}
+                    </p>
+                  )}
+                </article>
+                <div className="thinking-bubble" role="status">
+                  <span className="thinking-dots" aria-hidden="true">
+                    <span />
+                    <span />
+                    <span />
+                  </span>
+                  <span>{t.thinking}</span>
+                </div>
+              </>
+            )}
+            <div ref={messagesEndRef} />
           </div>
           <ErrorNotice error={error} t={t} />
-          <form className="composer" onSubmit={send}>
+          <form ref={formRef} className="composer" onSubmit={send}>
             <Field label={t.question}>
               <textarea
                 value={question}
@@ -349,6 +465,7 @@ export default function Tutor({
                 rows={3}
                 placeholder={t.questionHint}
                 onChange={(e) => setQuestion(e.target.value)}
+                onKeyDown={handleQuestionKeyDown}
               />
             </Field>
             {mode === 'debug' && (
@@ -368,6 +485,7 @@ export default function Tutor({
                 {t.hintStep} {hintLevel + 1} / 5
               </p>
             )}
+            <p className="small-note composer-hint">{t.enterToSendHint}</p>
             <div className="composer-actions">
               <button
                 type="button"

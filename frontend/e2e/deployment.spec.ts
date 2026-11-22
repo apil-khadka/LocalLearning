@@ -151,19 +151,16 @@ test('Docker staff listener supports administrator account recovery controls', a
     'Set staff listener and administrator test credentials',
   )
   await signIn(page, base!, username, password)
-  await expect(page).toHaveURL(/\/teacher$/)
+  await expect(page).toHaveURL(/\/admin$/)
   const createdUsername = `docker-qa-${Date.now()}`
-  const teacherForm = page
-    .locator('form.account-form')
-    .filter({ hasText: 'Create teacher account' })
+  const teacherForm = page.locator('form.admin-teacher-form')
   await teacherForm.getByLabel('Name shown in school').fill('Docker QA Teacher')
   await teacherForm.getByLabel('Username').fill(createdUsername)
-  await teacherForm.getByLabel('Password').fill('Docker-QA-Teacher-2026!')
   await teacherForm.getByRole('button', { name: 'Create teacher account' }).click()
   const accountRow = page.locator('.learner-list li').filter({ hasText: createdUsername })
   await expect(accountRow).toBeVisible()
   await accountRow.getByRole('button', { name: 'Reset password' }).click()
-  await expect(accountRow.locator('.temporary-credential')).toContainText('Temp-')
+  await expect(page.locator('.credential-reveal .temporary-credential')).toContainText('Temp-')
   await accountRow.getByRole('button', { name: 'Deactivate' }).click()
   await expect(accountRow).toContainText('Account disabled')
   await accountRow.getByRole('button', { name: 'Restore' }).click()
@@ -180,9 +177,9 @@ test('Docker admin sign-in from the student listener redirects to staff', async 
     'Set Docker listener URLs and admin credentials',
   )
   await signIn(page, base!, username, password)
-  await expect(page).toHaveURL(new URL('/teacher', staffBase!).toString())
+  await expect(page).toHaveURL(new URL('/admin', staffBase!).toString())
   await expect(
-    page.locator('form.account-form').filter({ hasText: 'Create teacher account' }),
+    page.locator('form.admin-teacher-form'),
   ).toBeVisible()
 })
 

@@ -221,6 +221,7 @@ def test_chat_validation_and_nepali_instruction(client, stack):
     response = question(client, message="बल के हो?", language="ne")
     assert response.status_code == 200
     assert "Reply in Nepali" in stack.last_chat["messages"][0]["content"]
+    assert "random topic" in stack.last_chat["messages"][0]["content"]
 
 
 def test_page_extraction_blank_pages_and_overlap():

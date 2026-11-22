@@ -33,6 +33,34 @@ def test_live_model(tmp_path):
 
 
 @pytest.mark.skipif(
+    not os.getenv("LIVE_LMSTUDIO_URL") or not os.getenv("LIVE_LMSTUDIO_MODEL"),
+    reason="Set LIVE_LMSTUDIO_URL and LIVE_LMSTUDIO_MODEL for real LM Studio inference",
+)
+def test_live_lmstudio_chat(tmp_path):
+    model = os.environ["LIVE_LMSTUDIO_MODEL"]
+    settings = Settings(
+        _env_file=None,
+        data_dir=tmp_path,
+        ai_enabled=True,
+        chat_provider="lmstudio",
+        lmstudio_base_url=os.environ["LIVE_LMSTUDIO_URL"],
+        lmstudio_model=model,
+        qdrant_url="",
+    )
+    with TestClient(create_app(settings)) as client:
+        services = client.get("/api/services").json()
+        assert services["tutor"]["status"] == "ready"
+        assert services["dependencies"]["chat_model"] == "ready"
+        response = client.post(
+            "/api/tutor/chat", json={"message": "Explain force in two sentences."}
+        )
+        assert response.status_code == 200, response.text
+        payload = response.json()
+        assert payload["answer"].strip()
+        assert payload["model"] == model
+
+
+@pytest.mark.skipif(
     not os.getenv("QDRANT_TEST_URL"), reason="Set QDRANT_TEST_URL for real vector storage"
 )
 def test_real_qdrant_ingestion_retrieval_and_retry(tmp_path):

@@ -48,7 +48,7 @@ from app.notes import (
     revise_note,
     student_view,
 )
-from app.schemas import ChatRequest, ChatResponse, DocumentInput, IndexBookRequest
+from app.schemas import ChatRequest, ChatResponse, DocumentInput, IndexBookRequest, Turn
 from app.store import Store
 from app.tutor import answer_question, embedding_identity
 
@@ -526,6 +526,17 @@ def create_app(settings: Settings | None = None, client: httpx.AsyncClient | Non
                 else "unconfigured"
             )
             embed_status = "configured" if services.embeddings_configured else "unconfigured"
+            if settings.chat_provider == "lmstudio":
+                if not settings.lmstudio_base_url or not settings.lmstudio_model:
+                    chat_status = "unconfigured"
+                else:
+                    try:
+                        names = await services.lmstudio_models()
+                        chat_status = (
+                            "ready" if settings.lmstudio_model in names else "missing_model"
+                        )
+                    except DependencyUnavailable:
+                        chat_status = "unavailable"
             needs_ollama = settings.chat_provider == "ollama" or settings.embed_provider == "ollama"
             if not needs_ollama:
                 return {"chat_model": chat_status, "embeddings": embed_status}
@@ -616,11 +627,7 @@ def create_app(settings: Settings | None = None, client: httpx.AsyncClient | Non
             "dependencies": {**models, "vectors": vectors},
             "evaluation_config": {
                 "chat_provider": settings.chat_provider,
-                "chat_model": (
-                    settings.chat_model
-                    if settings.chat_provider == "openai-compatible"
-                    else settings.ollama_model
-                ),
+                "chat_model": settings.active_chat_model,
                 "chat_reasoning_effort": settings.chat_reasoning_effort or None,
                 "embedding_provider": settings.embed_provider,
                 "embedding_model": settings.embed_model,
@@ -826,11 +833,17 @@ def create_app(settings: Settings | None = None, client: httpx.AsyncClient | Non
                 if not previous:
                     raise HTTPException(404, "Tutor session not found.")
                 history = [
-                    {
-                        "role": item["role"],
-                        "content": item["content"]
-                        + (f"\nLearner attempt: {item['attempt']}" if item.get("attempt") else ""),
-                    }
+                    Turn(
+                        role=item["role"],
+                        content=(
+                            item["content"]
+                            + (
+                                f"\nLearner attempt: {item['attempt']}"
+                                if item.get("attempt")
+                                else ""
+                            )
+                        )[:3000],
+                    )
                     for item in previous["messages"][-8:]
                 ]
             effective_request = request.model_copy(update={"history": history})

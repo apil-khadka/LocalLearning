@@ -259,11 +259,24 @@ def test_bootstrap_roles_persistent_chat_and_assigned_transcripts(tmp_path: Path
         reply = client.post("/api/tutor/chat", headers=learner_csrf, json=chat_data)
         assert reply.status_code == 200, reply.text
         session_id = reply.json()["session_id"]
+        followup = client.post(
+            "/api/tutor/chat",
+            headers=learner_csrf,
+            json={
+                **chat_data,
+                "session_id": session_id,
+                "message": "What if mass doubles?",
+            },
+        )
+        assert followup.status_code == 200, followup.text
+        assert followup.json()["session_id"] == session_id
         sessions = client.get("/api/account/sessions").json()
         assert len(sessions) == 1 and sessions[0]["id"] == session_id
         transcript = client.get(f"/api/account/sessions/{session_id}")
         assert transcript.status_code == 200
         assert [message["role"] for message in transcript.json()["messages"]] == [
+            "user",
+            "assistant",
             "user",
             "assistant",
         ]

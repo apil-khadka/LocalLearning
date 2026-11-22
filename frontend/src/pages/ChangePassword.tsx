@@ -35,7 +35,14 @@ export default function ChangePassword({
       })
       setCsrfToken(result.csrf_token)
       onAuthenticated(result.user)
-      navigate(result.user.role === 'student' ? '/dashboard' : '/teacher', { replace: true })
+      navigate(
+        result.user.role === 'student'
+          ? '/dashboard'
+          : result.user.role === 'admin'
+            ? '/admin'
+            : '/teacher',
+        { replace: true },
+      )
     } catch (cause) {
       setError(cause)
     } finally {

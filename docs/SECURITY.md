@@ -8,7 +8,7 @@ The production student listener blocks `/staff` and `/api/admin`.
 The staff listener defaults to host loopback; direct staff-VLAN access requires an explicit `STAFF_BIND` plus firewall enforcement, or staff can use SSH forwarding.
 Students, teachers, and administrators have separate local accounts, roles, and password hashes.
 The one-time `ADMIN_TOKEN` authorizes the first administrator setup only; after any account exists, it no longer authorizes staff APIs.
-Teachers create classes and learner accounts; administrators create teacher accounts.
+Administrators create teacher accounts and assign classes; teachers create learner accounts and manage class activity.
 New accounts must change their initial password before using the application.
 Administrators can reset an account to a temporary password and disable or restore it; teacher password resets are limited to learners in the teacher's assigned class.
 Resetting a password revokes the account's sessions and requires a password change at next sign-in; disabling an account also revokes its sessions.

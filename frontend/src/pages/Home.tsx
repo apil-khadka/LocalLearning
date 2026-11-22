@@ -59,10 +59,16 @@ export default function Home({ t, services }: { t: Copy; services: Services | nu
           <p>{t.school}</p>
           <h1>{t.greeting}</h1>
           <p className="intro">{t.intro}</p>
-          <Link className="button primary" to="/books">
-            <BookOpen size={20} aria-hidden="true" />
-            {t.books}
-          </Link>
+          <div className="hero-actions">
+            <Link className="button primary" to="/books">
+              <BookOpen size={20} aria-hidden="true" />
+              {t.books}
+            </Link>
+            <Link className="button secondary" to="/tutor">
+              <ChatCircleDots size={20} aria-hidden="true" />
+              {t.tutor}
+            </Link>
+          </div>
         </div>
         <Mountains />
       </section>

@@ -17,6 +17,11 @@ Confirm offline package availability and redistribution rights directly with con
 The official Kolibri 0.19.5 container is MIT-licensed, but that software license does not grant rights to its separately distributed learning channels.
 Review and retain the license and attribution for every Kolibri channel and resource selected for a school.
 
+The local development Kolibri facility imports a small subset of the public PhET Interactive Simulations channel (channel ID `197934f144305350b5820c7c4dd8e194`): Forces and Motion: Basics and Fraction Matcher videos, their simulations, and related activity guides, plus the Density simulation and guide.
+The channel reports CC BY attribution to PhET Interactive Simulations, University of Colorado Boulder; the [PhET licensing guidance](https://phet.colorado.edu/en/help-center/getting-started) requires attribution when sharing or redistributing simulations.
+Kolibri stores the resource-level license and attribution metadata with each item.
+This is a local prototype selection, not a school-approved curriculum package.
+
 The initial book-source review is in [book-sources.md](research/book-sources.md).
 That review found different terms at E-Pustakalaya per item, no reuse terms on the CDC catalog entries reviewed, and a CC BY 4.0 Open Textbook Library candidate.
 For the local CDC prototype collection, the project owner confirmed permission to use the copied materials.

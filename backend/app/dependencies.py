@@ -48,6 +48,78 @@ class LocalServices:
         except (httpx.HTTPError, ValueError) as exc:
             raise DependencyUnavailable("A required local service is unavailable.") from exc
 
+    def _lmstudio_url(self, suffix: str) -> str:
+        base = self.settings.lmstudio_base_url
+        if not base:
+            return ""
+        for tail in ("/api/v1/chat", "/api/v1"):
+            if base.endswith(tail):
+                base = base.removesuffix(tail)
+                break
+        return base + "/api/v1" + suffix
+
+    def _lmstudio_headers(self) -> dict[str, str]:
+        token = self.settings.lmstudio_api_key.get_secret_value()
+        return {"Authorization": f"Bearer {token}"} if token else {}
+
+    async def lmstudio_models(self) -> set[str]:
+        """List available LLM identifiers from LM Studio's REST v1 models endpoint."""
+        data = await self.request(
+            "GET",
+            self._lmstudio_url("/models"),
+            headers=self._lmstudio_headers(),
+        )
+        if not isinstance(data, dict) or not isinstance(data.get("models"), list):
+            raise DependencyUnavailable("The model service returned invalid data.")
+        names: set[str] = set()
+        for item in data["models"]:
+            if not isinstance(item, dict):
+                raise DependencyUnavailable("The model service returned invalid data.")
+            model_type = item.get("type")
+            if model_type is not None and model_type != "llm":
+                continue
+            for field in ("key", "id", "selected_variant"):
+                value = item.get(field)
+                if isinstance(value, str) and value:
+                    names.add(value)
+            variants = item.get("variants")
+            if isinstance(variants, list):
+                names.update(v for v in variants if isinstance(v, str) and v)
+            instances = item.get("loaded_instances")
+            if isinstance(instances, list):
+                for inst in instances:
+                    if isinstance(inst, dict) and isinstance(inst.get("id"), str) and inst["id"]:
+                        names.add(inst["id"])
+        return names
+
+    @staticmethod
+    def _lmstudio_payload(messages: list[dict], model: str, max_output_tokens: int) -> dict:
+        system_parts = [
+            m["content"] for m in messages if m.get("role") == "system" and m.get("content")
+        ]
+        turns = [m for m in messages if m.get("role") != "system"]
+        if len(turns) == 1:
+            prompt_input = turns[0]["content"]
+        elif len(turns) > 1:
+            history_text = "\n\n".join(
+                f"{turn['role'].capitalize()}: {turn['content']}" for turn in turns[:-1]
+            )
+            prompt_input = (
+                f"Untrusted previous conversation:\n{history_text}\n\n"
+                f"Current learner turn:\n{turns[-1]['content']}"
+            )
+        else:
+            prompt_input = ""
+        payload: dict = {
+            "model": model,
+            "input": prompt_input,
+            "max_output_tokens": max_output_tokens,
+            "store": False,
+        }
+        if system_parts:
+            payload["system_prompt"] = "\n\n".join(system_parts)
+        return payload
+
     async def models(self) -> set[str]:
         data = await self.request("GET", self.settings.ollama_base_url + "/api/tags")
         try:
@@ -124,6 +196,37 @@ class LocalServices:
                 return answer
             except (OpenAIError, IndexError, TypeError, ValueError) as exc:
                 raise DependencyUnavailable("The AI provider could not return an answer.") from exc
+
+        if self.settings.chat_provider == "lmstudio":
+            if not self.settings.lmstudio_base_url or not self.settings.lmstudio_model:
+                raise DependencyUnavailable("The AI provider is not configured.")
+            data = await self.request(
+                "POST",
+                self._lmstudio_url("/chat"),
+                headers=self._lmstudio_headers(),
+                json=self._lmstudio_payload(
+                    messages,
+                    self.settings.lmstudio_model,
+                    self.settings.lmstudio_max_output_tokens,
+                ),
+                timeout=self.settings.model_timeout_seconds,
+            )
+            try:
+                if not isinstance(data, dict) or not isinstance(data.get("output"), list):
+                    raise ValueError("invalid output")
+                parts = [
+                    item["content"].strip()
+                    for item in data["output"]
+                    if isinstance(item, dict)
+                    and item.get("type") == "message"
+                    and isinstance(item.get("content"), str)
+                    and item["content"].strip()
+                ]
+                if not parts:
+                    raise ValueError("empty reply")
+                return "\n\n".join(parts)
+            except (KeyError, TypeError, ValueError) as exc:
+                raise DependencyUnavailable("The model did not return a readable answer.") from exc
 
         data = await self.request(
             "POST",

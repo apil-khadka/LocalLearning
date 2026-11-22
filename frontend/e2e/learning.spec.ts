@@ -1,4 +1,5 @@
 import { expect, test, type Page } from '@playwright/test'
+import AxeBuilder from '@axe-core/playwright'
 
 async function signIn(page: Page, username: string, password: string) {
   await page.goto('/login')
@@ -10,7 +11,9 @@ async function signIn(page: Page, username: string, password: string) {
   )
   await page.locator('form.account-form').getByRole('button', { name: 'Sign in' }).first().click()
   expect((await loginResponse).status()).toBe(200)
-  await expect(page).toHaveURL(username === 'e2e-student' ? '/dashboard' : '/teacher')
+  await expect(page).toHaveURL(
+    username === 'e2e-student' ? '/dashboard' : username === 'e2e-admin' ? '/admin' : '/teacher',
+  )
   await expect(page.getByRole('button', { name: 'Sign out' })).toBeVisible()
   expect((await page.request.get('/api/auth/me')).status()).toBe(200)
 }
@@ -216,25 +219,55 @@ test('student dashboard saves tutor history and assigned teacher can review the 
 
 test('administrator can create, reset, disable, and restore named accounts', async ({ page }) => {
   await signIn(page, 'e2e-admin', 'E2E-Admin-Password-2026!')
-  await expect(page).toHaveURL('/teacher')
+  await expect(page).toHaveURL('/admin')
+  await expect(page.getByRole('heading', { name: 'School administration' })).toBeVisible()
   const createdUsername = `e2e-created-${Date.now()}`
-  const teacherForm = page
-    .locator('form.account-form')
-    .filter({ hasText: 'Create teacher account' })
+  const teacherForm = page.locator('form.admin-teacher-form')
   await teacherForm.getByLabel('Name shown in school').fill('New E2E Teacher')
   await teacherForm.getByLabel('Username').fill(createdUsername)
-  await teacherForm.getByLabel('Password').fill('E2E-Created-Teacher-2026!')
   await teacherForm.getByRole('button', { name: 'Create teacher account' }).click()
-  await expect(page.locator('.learner-list li').filter({ hasText: createdUsername })).toBeVisible()
+  const credentials = page.locator('.credential-reveal')
+  await expect(credentials).toContainText(createdUsername)
+  await expect(credentials.locator('.temporary-credential')).toContainText('Temp-')
   await page.getByLabel('Filter accounts').fill(createdUsername)
   const accountRow = page.locator('.learner-list li').filter({ hasText: createdUsername })
   await expect(accountRow).toBeVisible()
   await accountRow.getByRole('button', { name: 'Reset password' }).click()
-  await expect(accountRow.locator('.temporary-credential')).toContainText('Temp-')
+  await expect(credentials.locator('.temporary-credential')).toContainText('Temp-')
   await accountRow.getByRole('button', { name: 'Deactivate' }).click()
   await expect(accountRow).toContainText('Account disabled')
   await accountRow.getByRole('button', { name: 'Restore' }).click()
   await expect(accountRow).toContainText('Must change initial password')
+})
+
+test('teacher provisions a learner with a temporary password that changes at first sign-in', async ({
+  page,
+}) => {
+  await signIn(page, 'e2e-teacher', 'E2E-Teacher-Password-2026!')
+  const username = `offline-learner-${Date.now()}`
+  await page.getByLabel('Name shown in school').fill('Offline Learner')
+  await page.getByLabel('Learner username').fill(username)
+  await page.getByRole('button', { name: 'Add learner account' }).click()
+
+  const credentials = page.locator('.credential-reveal')
+  await expect(credentials).toContainText(username)
+  const temporaryPassword = await credentials.locator('.temporary-credential').innerText()
+  expect(temporaryPassword).toMatch(/^Temp-/)
+
+  await page.getByRole('button', { name: 'Sign out' }).click()
+  await page.goto('/login')
+  const loginForm = page.locator('form.account-form')
+  await loginForm.getByLabel('Username').fill(username)
+  await loginForm.getByLabel('Password').fill(temporaryPassword)
+  await loginForm.getByRole('button', { name: 'Sign in' }).click()
+  await expect(page).toHaveURL('/change-password')
+  await page.getByLabel('Current password').fill(temporaryPassword)
+  await page.getByLabel('New password', { exact: true }).fill('Learner-New-Password-2026!')
+  await page.getByLabel('Confirm new password').fill('Learner-New-Password-2026!')
+  await page.getByRole('button', { name: 'Change your password' }).click()
+  await expect(page).toHaveURL('/dashboard')
+  await expect(page.getByRole('heading', { name: 'My learning' })).toBeVisible()
+  await expect(page.getByText('Welcome back, Offline Learner')).toBeVisible()
 })
 
 test('textbook filters include Kindergarten and cross-grade resources', async ({ page }) => {
@@ -513,26 +546,39 @@ test('primary navigation is a full-width sticky navbar at desktop, tablet, and p
 
     const navbar = page.locator('.topbar')
     const navigation = page.getByRole('navigation', { name: 'Main navigation' })
+    const utilities = page.locator('.topbar-utilities')
     await expect(page.locator('.sidebar')).toHaveCount(0)
     await expect(navbar).toHaveCSS('position', 'sticky')
     await expect(navbar).toHaveCSS('width', `${width}px`)
-    await expect(navbar.locator('.connection, .language-toggle, .topbar-brand')).toHaveCount(0)
-    await expect(navigation.getByRole('link')).toHaveCount(6)
+    await expect(navbar.locator('.topbar-brand')).toContainText('Himalaya')
+    await expect(utilities.locator('.language-toggle')).toBeVisible()
+    await expect(utilities.getByRole('link', { name: 'Sign in' })).toBeVisible()
+    await expect(page.locator('.footer-meta .language-toggle')).toHaveCount(0)
+    await expect(navigation.getByRole('link')).toHaveCount(5)
     await expect(navigation.getByRole('link', { name: 'Learning home' })).toBeVisible()
     await expect(navigation.getByRole('link', { name: 'AI tutor' })).toBeVisible()
     await expect(navigation.getByRole('link', { name: 'My textbooks' })).toBeVisible()
     await expect(navigation.getByRole('link', { name: 'Study notes' })).toBeVisible()
     await expect(navigation.getByRole('link', { name: 'Courses' })).toBeVisible()
+    const navTops = await navigation
+      .locator('a')
+      .evaluateAll((links) => links.map((link) => Math.round(link.getBoundingClientRect().top)))
+    expect(Math.max(...navTops) - Math.min(...navTops)).toBeLessThan(2)
     await expect(page.locator('.footer-brand')).toContainText('Himalaya')
     await expect(page.locator('.footer-meta .connection')).toBeVisible()
-    await expect(page.locator('.footer-meta .language-toggle')).toBeVisible()
     expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true)
 
     if (width === 390) {
-      await expect(navigation.locator('.nav-label-short')).toHaveCount(6)
+      await expect(navigation.locator('.nav-label-short')).toHaveCount(5)
       await expect(navigation.locator('.nav-label-short').first()).toBeVisible()
       await expect(navigation.locator('.nav-label-full').first()).toBeHidden()
     }
+
+    await utilities.getByRole('radio', { name: 'नेपाली' }).click()
+    await expect(page.locator('html')).toHaveAttribute('lang', 'ne')
+    expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true)
+    await utilities.getByRole('radio', { name: 'English' }).click()
+    await expect(page.locator('html')).toHaveAttribute('lang', 'en')
 
     await page.evaluate(() => window.scrollTo({ top: 1000, behavior: 'instant' }))
     await expect
@@ -647,4 +693,85 @@ test('approved teacher note appears in study notes, tutor modes, and reader page
   ).toHaveAttribute('href', `/books/${book.id}?page=1`)
   await page.getByRole('radio', { name: /Hint/ }).check()
   await expect(page.getByText('Hint 1 / 5')).toBeVisible()
+})
+
+test('mobile and desktop layout stay accessible, single-row in navbar, and tutor supports starter chips and Enter-to-send', async ({
+  page,
+}) => {
+  await page.setViewportSize({ width: 1280, height: 800 })
+  await page.goto('/tutor')
+  expect(
+    (await new AxeBuilder({ page }).withTags(['wcag2a', 'wcag2aa', 'wcag21aa']).analyze())
+      .violations,
+  ).toEqual([])
+  const desktopTutor = await page.locator('.tutor-layout').boundingBox()
+  const desktopContext = await page.locator('.tutor-context').boundingBox()
+  const desktopConversation = await page.locator('.conversation').boundingBox()
+  expect(desktopTutor).not.toBeNull()
+  expect(desktopContext).not.toBeNull()
+  expect(desktopConversation).not.toBeNull()
+  expect(desktopContext!.y + desktopContext!.height).toBeLessThan(desktopConversation!.y)
+  expect(desktopConversation!.width).toBeGreaterThanOrEqual(desktopTutor!.width - 1)
+
+  await page.setViewportSize({ width: 390, height: 844 })
+  for (const route of ['/', '/tutor', '/books', '/courses', '/study']) {
+    await page.goto(route)
+    expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true)
+  }
+
+  await page.goto('/tutor')
+  const mobileTutor = await page.locator('.tutor-layout').boundingBox()
+  const mobileContext = await page.locator('.tutor-context').boundingBox()
+  const mobileConversation = await page.locator('.conversation').boundingBox()
+  expect(mobileTutor).not.toBeNull()
+  expect(mobileContext).not.toBeNull()
+  expect(mobileConversation).not.toBeNull()
+  expect(mobileContext!.y + mobileContext!.height).toBeLessThan(mobileConversation!.y)
+  expect(mobileConversation!.width).toBeGreaterThanOrEqual(mobileTutor!.width - 1)
+
+  await page.goto('/')
+  const navTops = await page
+    .locator('.primary-navigation a')
+    .evaluateAll((links) => links.map((link) => Math.round(link.getBoundingClientRect().top)))
+  expect(Math.max(...navTops) - Math.min(...navTops)).toBeLessThan(2)
+  expect(
+    (await new AxeBuilder({ page }).withTags(['wcag2a', 'wcag2aa', 'wcag21aa']).analyze())
+      .violations,
+  ).toEqual([])
+
+  await page.goto('/tutor')
+  await expect(page.locator('.mode-picker input[type="radio"]')).toHaveCount(3)
+  const radioBoxes = await page
+    .locator('.mode-picker input[type="radio"]')
+    .evaluateAll((inputs) => inputs.map((input) => input.getBoundingClientRect().width))
+  expect(radioBoxes.every((width) => width > 0 && width <= 24)).toBe(true)
+
+  const starter = page.locator('.starter-chip').first()
+  await expect(starter).toBeVisible()
+  const starterText = (await starter.textContent())!.trim()
+  await starter.click()
+  const textarea = page.getByLabel('Your question')
+  await expect(textarea).toHaveValue(starterText)
+  await textarea.press('Enter')
+
+  await expect(page.locator('.message.user .message-content')).toContainText(starterText)
+  await expect(page.locator('.message.assistant .message-content strong')).toHaveText(
+    'A force changes motion.',
+  )
+  await expect(page.locator('.grounding-badge')).toBeVisible()
+  expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true)
+  expect(
+    (await new AxeBuilder({ page }).withTags(['wcag2a', 'wcag2aa', 'wcag21aa']).analyze())
+      .violations,
+  ).toEqual([])
+
+  await signIn(page, 'e2e-student', 'E2E-Student-Password-2026!')
+  await expect(page.locator('.topbar')).toHaveCSS('position', 'sticky')
+  await page.locator('.topbar-utilities').getByRole('radio', { name: 'नेपाली' }).click()
+  await expect(page.locator('html')).toHaveAttribute('lang', 'ne')
+  expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true)
+  expect(
+    (await new AxeBuilder({ page }).withTags(['wcag2a', 'wcag2aa', 'wcag21aa']).analyze())
+      .violations,
+  ).toEqual([])
 })
