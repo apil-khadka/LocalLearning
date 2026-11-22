@@ -16,7 +16,7 @@ Use the [README](../README.md) for local development commands.
 8. Copy `.env.example` to `.env`; set real service addresses, a random one-time `ADMIN_TOKEN`, `REQUIRE_AUTH=true`, `AUTH_COOKIE_SECURE=true` behind HTTPS, and verified student resource URLs.
 9. Run `docker compose build` and `docker compose up -d --wait` from the repository root.
 10. Put a trusted HTTPS terminator in front of the portal before student use; the supplied Compose listener serves plain HTTP.
-11. Open `/login` on the staff listener and use the one-time setup token to create the first administrator, then remove `ADMIN_TOKEN` from `.env` and restart the API.
+11. Open `/login` on the staff listener and use the one-time setup token to create the first administrator, then remove `ADMIN_TOKEN` from `.env` and recreate the API with `docker compose up -d --no-deps --force-recreate api`.
 12. Sign in as the administrator, create teacher accounts with generated one-time passwords, and assign their classes.
 13. Share each teacher's one-time password locally. Teachers create learner accounts for their classes and share each learner's one-time password locally.
 14. Verify that each new account must change its password at first sign-in.

@@ -114,7 +114,7 @@ If configured vector services fail, the API returns an error rather than silentl
 
 Set a random one-time administrator setup token in `.env` using a password manager or a local generator.
 For example, `python3 -c 'import secrets; print(secrets.token_urlsafe(48))'` generates a value to copy into `ADMIN_TOKEN`.
-Keep it out of Git, logs and frontend build variables; after the first administrator is created, remove it from `.env` and restart the API.
+Keep it out of Git, logs and frontend build variables; after the first administrator is created, remove it from `.env` and recreate the API with `docker compose up -d --no-deps --force-recreate api` so its container environment no longer contains the token.
 Sign in with the administrator account to create teacher accounts and assign classes; teachers then create learner accounts for their classes.
 Open `/staff`, sign in, and import `content/sample/force-and-motion.txt` with grade `8`, subject `Science`, chapter `Force and Motion`, license `CC0-1.0`, and source `Original demonstration note`.
 For books already in the catalog, use **Prepare books for tutor search** in Staff and index one searchable title at a time.
@@ -134,6 +134,22 @@ A successful HTTP probe proves reachability, not that an article or video was do
 
 ## Run containers
 
+For a one-command local Phi-4 demo, install and start Docker and LM Studio, then run:
+
+```sh
+make phi4-demo
+```
+
+The first run downloads the Phi-4 Mini Instruct Q4_K_M model (about 2.5 GB), starts its LM Studio server, builds the app containers, and configures the app to use only `phi-4-mini-instruct`.
+When the app database has no active users, the command prints a one-time school setup token and saves a private copy in `private-local/phi4-demo-access.md`.
+The person using the demo enters that token on the first-run sign-in page, then chooses the school administrator username and password.
+After the first administrator is created, run `make phi4-demo` again to remove the setup token; the existing account stays unchanged and its password is never printed or reset.
+The portal and staff sign-in bind to the computer's current LAN IPv4 address so another person on the same trusted network can open the printed URLs.
+Set `DEMO_BIND_IP` before running the command if the computer has multiple network interfaces or needs a reserved address.
+The LM Studio model API also binds to that LAN address so the Docker API can reach it; use this setup only on a trusted network, not on a public network or the Internet.
+The initial model download and container build need internet access; after they finish, the app and model run locally.
+This target starts the AI app only; Kolibri and educational collections remain optional and follow the separate content setup steps below.
+
 ```sh
 docker compose build
 docker compose up -d --wait
@@ -143,7 +159,7 @@ docker compose up -d --wait
 The student portal is `http://127.0.0.1:8090` and the staff workspace is `http://127.0.0.1:8091/staff`.
 Open `/login` to sign in; on an empty database, the page offers the one-time school administrator setup using the configured `ADMIN_TOKEN`.
 For loopback HTTP development, use `REQUIRE_AUTH=true` and `AUTH_COOKIE_SECURE=false`; keep secure cookies enabled when serving over HTTPS.
-Store local administrator credentials in the ignored `private-local/` directory and remove the one-time `ADMIN_TOKEN` after setup.
+Store local administrator credentials in the ignored `private-local/` directory and remove the one-time `ADMIN_TOKEN` after setup, then recreate the API container.
 For the local Phi tutor, set `AI_ENABLED=true`, `CHAT_PROVIDER=lmstudio`, `LMSTUDIO_BASE_URL=http://host.docker.internal:1234`, and `LMSTUDIO_MODEL=phi-4-mini-instruct` in `.env`, clear `CHAT_REASONING_EFFORT`, then load only that model in LM Studio.
 The current local prototype uses this model profile.
 The matched 39-probe comparison found a speed/accuracy trade-off: Reasoning Plus scored 30/39 primary probes versus 25/39 for Mini Instruct, while Mini Instruct's mean response time was about 27.6 times shorter.

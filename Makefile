@@ -1,7 +1,9 @@
-.PHONY: eval eval-template eval-report setup check test build books-pilot books-more books-cdc-k12 books-import-k12 education-up education-down
+.PHONY: eval eval-template eval-report setup check test build phi4-demo books-pilot books-more books-cdc-k12 books-import-k12 education-up education-down
 setup:
 	uv sync --project backend --locked
 	npm ci --prefix frontend
+phi4-demo:
+	python3 scripts/setup_phi4_demo.py
 check:
 	uv run --project backend ruff check backend scripts
 	uv run --project backend ruff format --check backend scripts
