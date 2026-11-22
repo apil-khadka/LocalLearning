@@ -21,6 +21,7 @@ from scripts.verify_model_limits import (  # noqa: E402
     check_numeric_answer,
     compute_classroom_capacity,
     compute_context_budget,
+    evaluate_probe,
     resolve_lmstudio_config,
 )
 
@@ -129,4 +130,69 @@ def test_numeric_budget_capacity_and_env_resolution(tmp_path, monkeypatch):
     url, model, _ = resolve_lmstudio_config(env_file)
     assert url == "http://127.0.0.1:1234"
     assert model == "custom-model-from-env"
-    assert len(build_probe_suite()) >= 28
+    suite = build_probe_suite()
+    assert len(suite) == 39
+
+    calculus_spec = next(s for s in suite if s.id == "p6_g12_calculus")
+    calc_equiv = evaluate_probe(
+        calculus_spec,
+        {
+            "ok": True,
+            "latency_s": 1.2,
+            "stats": {"reasoning_output_tokens": 50, "total_output_tokens": 120},
+            "text": r"Therefore f'(1) = 4 ln(2) + \frac{3}{2}.",
+            "reasoning_starved": False,
+        },
+    )
+    assert calc_equiv["passed"] is True
+
+    starved = evaluate_probe(
+        calculus_spec,
+        {
+            "ok": True,
+            "latency_s": 5.0,
+            "stats": {"reasoning_output_tokens": 600, "total_output_tokens": 600},
+            "text": "",
+            "reasoning_chars": 2400,
+            "reasoning_starved": True,
+        },
+    )
+    assert starved["passed"] is False
+    assert starved["details"] == {"reason": "reasoning_token_starvation"}
+
+    det_spec = next(s for s in suite if s.id == "p6_g11_matrix_det")
+    assert (
+        evaluate_probe(
+            det_spec, {"ok": True, "latency_s": 1.0, "stats": {}, "text": "det(A) = 23."}
+        )["passed"]
+        is True
+    )
+    int_spec = next(s for s in suite if s.id == "p6_g12_integral")
+    assert (
+        evaluate_probe(
+            int_spec,
+            {"ok": True, "latency_s": 1.0, "stats": {}, "text": "The integral equals ln(13)."},
+        )["passed"]
+        is True
+    )
+    prob_spec = next(s for s in suite if s.id == "p6_g12_probability")
+    assert (
+        evaluate_probe(
+            prob_spec,
+            {"ok": True, "latency_s": 1.0, "stats": {}, "text": "The probability is 5/14."},
+        )["passed"]
+        is True
+    )
+    comp_spec = next(s for s in suite if s.id == "p6_g10_see_compound")
+    assert (
+        evaluate_probe(
+            comp_spec,
+            {
+                "ok": True,
+                "latency_s": 1.0,
+                "stats": {},
+                "text": "Compound amount is Rs. 13,310 and interest is Rs. 3,310.",
+            },
+        )["passed"]
+        is True
+    )

@@ -1,0 +1,989 @@
+%PDF-1.4
+%‚„œ”
+1 0 obj
+<<
+/Producer (ReportLab PDF Library \055 \050opensource\051)
+/Author (LocalLearning evaluation)
+/CreationDate (D\07220261122191643\05305\04700\047)
+/Creator (\050unspecified\051)
+/Keywords ()
+/ModDate (D\07220261122191643\05305\04700\047)
+/Subject (\050unspecified\051)
+/Title (Phi\0554 local model comparison)
+/Trapped (\057False)
+>>
+endobj
+2 0 obj
+<<
+/Type /Pages
+/Count 4
+/Kids [ 4 0 R 9 0 R 11 0 R 13 0 R ]
+>>
+endobj
+3 0 obj
+<<
+/Type /Catalog
+/Pages 2 0 R
+>>
+endobj
+4 0 obj
+<<
+/Contents 5 0 R
+/MediaBox [ 0 0 612 792 ]
+/Resources <<
+/Font 6 0 R
+/ProcSet [ /PDF /Text /ImageB /ImageC /ImageI ]
+>>
+/Rotate 0
+/Trans <<
+>>
+/Type /Page
+/Parent 2 0 R
+>>
+endobj
+5 0 obj
+<<
+/Length 6866
+>>
+stream
+1 0 0 1 0 0 cm  BT /F1 12 Tf 14.4 TL ET
+q
+.843137 .878431 .905882 RG
+.5 w
+n 42 763 m 570 763 l S
+.364706 .419608 .47451 rg
+BT /F2 7.2 Tf 8.64 TL ET
+BT 1 0 0 1 42 770 Tm (LOCAL MODEL EVALUATION) Tj T* ET
+BT /F1 7.2 Tf 8.64 TL ET
+BT 1 0 0 1 470.0784 770 Tm (LocalLearning tutor | LM Studio) Tj T* ET
+n 42 28 m 570 28 l S
+BT /F1 7 Tf 8.4 TL ET
+BT 1 0 0 1 42 17 Tm (39 fixed probes | one run per model | descriptive results) Tj T* ET
+BT 1 0 0 1 547.817 17 Tm (Page 1) Tj T* ET
+Q
+q
+1 0 0 1 48 736 cm
+Q
+q
+1 0 0 1 48 707 cm
+q
+.078431 .156863 .247059 rg
+BT 1 0 0 1 0 4 Tm /F2 25 Tf 29 TL (Phi-4 models, head to head) Tj T* ET
+Q
+Q
+q
+1 0 0 1 48 679 cm
+q
+.364706 .419608 .47451 rg
+BT 1 0 0 1 0 15 Tm /F1 9 Tf 12 TL (A matched local evaluation of Microsoft Phi-4 Reasoning Plus and Phi-4 Mini Instruct in the Digital Himalaya tutor harness | 22) Tj T* (November 2026) Tj T* ET
+Q
+Q
+q
+1 0 0 1 48 617 cm
+q
+.917647 .960784 .94902 rg
+n 0 50 131 -50 re f*
+.917647 .94902 .972549 rg
+n 131 50 131 -50 re f*
+.917647 .960784 .94902 rg
+n 262 50 131 -50 re f*
+.917647 .94902 .972549 rg
+n 393 50 131 -50 re f*
+0 0 0 rg
+BT /F1 10 Tf 12 TL ET
+q
+1 0 0 1 6 10 cm
+q
+BT 1 0 0 1 0 22.5 Tm 20.5225 0 Td 10 TL /F2 7.5 Tf .078431 .156863 .247059 rg (P1-P8 primary checks) Tj /F1 7.5 Tf  T* 20.6295 0 Td /F2 12 Tf (30 / 39) Tj /F1 7.5 Tf  T* -2.07825 0 Td (Mini: 25 / 39) Tj T* -39.07375 0 Td ET
+Q
+Q
+q
+1 0 0 1 137 10 cm
+q
+BT 1 0 0 1 0 22.5 Tm 28.03 0 Td 10 TL /F2 7.5 Tf .078431 .156863 .247059 rg (Grades 5-12 math) Tj /F1 7.5 Tf  T* 10.788 0 Td /F2 12 Tf (12 / 13*) Tj /F1 7.5 Tf  T* 2.34075 0 Td (Mini: 6 / 13) Tj T* -41.15875 0 Td ET
+Q
+Q
+q
+1 0 0 1 268 10 cm
+q
+BT 1 0 0 1 0 22.5 Tm 32.62 0 Td 10 TL /F2 7.5 Tf .078431 .156863 .247059 rg (Plain-text math) Tj /F1 7.5 Tf  T* 8.532 0 Td /F2 12 Tf (21 / 21) Tj /F1 7.5 Tf  T* -2.07825 0 Td (Mini: 11 / 21) Tj T* -39.07375 0 Td ET
+Q
+Q
+q
+1 0 0 1 399 10 cm
+q
+BT 1 0 0 1 0 22.5 Tm 23.4475 0 Td 10 TL /F2 7.5 Tf .078431 .156863 .247059 rg (Mean response time) Tj /F1 7.5 Tf  T* 16.0365 0 Td /F2 12 Tf (75.74 s) Tj /F1 7.5 Tf  T* .84225 0 Td (Mini: 2.74 s) Tj T* -40.32625 0 Td ET
+Q
+Q
+q
+1 J
+1 j
+.843137 .878431 .905882 RG
+.5 w
+n 0 50 m 524 50 l S
+n 0 0 m 524 0 l S
+n 0 0 m 0 50 l S
+n 524 0 m 524 50 l S
+n 131 0 m 131 50 l S
+n 262 0 m 262 50 l S
+n 393 0 m 393 50 l S
+Q
+Q
+Q
+q
+1 0 0 1 48 607 cm
+Q
+q
+1 0 0 1 48 586 cm
+q
+.078431 .156863 .247059 rg
+BT 1 0 0 1 0 2.5 Tm /F2 10.5 Tf 13 TL (Primary score comparison) Tj T* ET
+Q
+Q
+q
+1 0 0 1 48 454 cm
+BT /F2 7.4 Tf 8.88 TL ET
+.129412 .521569 .47451 rg
+n 392 117 8 6 re f*
+.078431 .156863 .247059 rg
+BT 1 0 0 1 404 117 Tm (Reasoning Plus) Tj T* ET
+.207843 .435294 .607843 rg
+n 472 117 8 6 re f*
+.078431 .156863 .247059 rg
+BT 1 0 0 1 484 117 Tm (Mini) Tj T* ET
+.078431 .156863 .247059 rg
+BT /F2 8 Tf 9.6 TL ET
+BT 1 0 0 1 0 96 Tm (P1-P8 overall) Tj T* ET
+.945098 .960784 .972549 rg
+n 158 98 308 7 re f*
+n 158 88 308 7 re f*
+.129412 .521569 .47451 rg
+n 158 98 236.9231 7 re f*
+.207843 .435294 .607843 rg
+n 158 88 197.4359 7 re f*
+.078431 .156863 .247059 rg
+BT /F1 7.4 Tf 8.88 TL ET
+BT 1 0 0 1 479.8704 98 Tm (76.9% / 64.1%) Tj T* ET
+.078431 .156863 .247059 rg
+BT /F2 8 Tf 9.6 TL ET
+BT 1 0 0 1 0 62 Tm (P6 math answers) Tj T* ET
+.945098 .960784 .972549 rg
+n 158 64 308 7 re f*
+n 158 54 308 7 re f*
+.129412 .521569 .47451 rg
+n 158 64 284.3077 7 re f*
+.207843 .435294 .607843 rg
+n 158 54 142.1538 7 re f*
+.078431 .156863 .247059 rg
+BT /F1 7.4 Tf 8.88 TL ET
+BT 1 0 0 1 479.8704 64 Tm (92.3% / 46.2%) Tj T* ET
+.078431 .156863 .247059 rg
+BT /F2 8 Tf 9.6 TL ET
+BT 1 0 0 1 0 28 Tm (P9 math formatting) Tj T* ET
+.945098 .960784 .972549 rg
+n 158 30 308 7 re f*
+n 158 20 308 7 re f*
+.129412 .521569 .47451 rg
+n 158 30 308 7 re f*
+.207843 .435294 .607843 rg
+n 158 20 161.3333 7 re f*
+.078431 .156863 .247059 rg
+BT /F1 7.4 Tf 8.88 TL ET
+BT 1 0 0 1 475.756 30 Tm (100.0% / 52.4%) Tj T* ET
+.843137 .878431 .905882 RG
+n 0 1 m 528 1 l S
+Q
+q
+1 0 0 1 48 433 cm
+q
+.078431 .156863 .247059 rg
+BT 1 0 0 1 0 2.5 Tm /F2 10.5 Tf 13 TL (Reading the result) Tj T* ET
+Q
+Q
+q
+1 0 0 1 48 391 cm
+q
+.078431 .156863 .247059 rg
+BT 1 0 0 1 0 27.5 Tm /F1 8.5 Tf 12 TL (Reasoning Plus scored higher on the fixed math set and followed the plain-text math rule in every scored math response. Its mean) Tj T* (latency was about 27.6 times Mini Instruct, and six Reasoning Plus probes exhausted their output budget before a final answer. Mini) Tj T* (Instruct was much faster, passed all five hint/debug probes and all three injection probes, and recalled five of six context needles.) Tj T* ET
+Q
+Q
+q
+1 0 0 1 48 370 cm
+q
+.078431 .156863 .247059 rg
+BT 1 0 0 1 0 2.5 Tm /F2 10.5 Tf 13 TL (Measured local configurations) Tj T* ET
+Q
+Q
+q
+1 0 0 1 48 307.8 cm
+q
+.078431 .156863 .247059 rg
+n 0 57.2 528 -18.8 re f*
+1 1 1 rg
+n 0 38.4 528 -19.2 re f*
+.945098 .960784 .972549 rg
+n 0 19.2 528 -19.2 re f*
+1 1 1 rg
+BT /F1 10 Tf 12 TL ET
+q
+1 0 0 1 5 43.4 cm
+q
+1 1 1 rg
+BT 1 0 0 1 0 1.5 Tm /F2 7.3 Tf 8.8 TL (Model) Tj T* ET
+Q
+Q
+q
+1 0 0 1 150 43.4 cm
+q
+1 1 1 rg
+BT 1 0 0 1 0 1.5 Tm /F2 7.3 Tf 8.8 TL (Parameters / weights) Tj T* ET
+Q
+Q
+q
+1 0 0 1 340 43.4 cm
+q
+1 1 1 rg
+BT 1 0 0 1 0 1.5 Tm /F2 7.3 Tf 8.8 TL (Loaded context) Tj T* ET
+Q
+Q
+q
+1 0 0 1 445 43.4 cm
+q
+1 1 1 rg
+BT 1 0 0 1 0 1.5 Tm /F2 7.3 Tf 8.8 TL (Disk size) Tj T* ET
+Q
+Q
+0 0 0 rg
+q
+1 0 0 1 5 24.2 cm
+q
+.078431 .156863 .247059 rg
+BT 1 0 0 1 0 2 Tm /F1 7.2 Tf 9.2 TL (Phi-4 Reasoning Plus) Tj T* ET
+Q
+Q
+q
+1 0 0 1 150 24.2 cm
+q
+.078431 .156863 .247059 rg
+BT 1 0 0 1 0 2 Tm /F1 7.2 Tf 9.2 TL (14.7B | mlx 4bit) Tj T* ET
+Q
+Q
+q
+1 0 0 1 340 24.2 cm
+q
+.078431 .156863 .247059 rg
+BT 1 0 0 1 0 2 Tm /F1 7.2 Tf 9.2 TL (16,384 tokens) Tj T* ET
+Q
+Q
+q
+1 0 0 1 445 24.2 cm
+q
+.078431 .156863 .247059 rg
+BT 1 0 0 1 0 2 Tm /F1 7.2 Tf 9.2 TL (8.26 GB) Tj T* ET
+Q
+Q
+q
+1 0 0 1 5 5 cm
+q
+.078431 .156863 .247059 rg
+BT 1 0 0 1 0 2 Tm /F1 7.2 Tf 9.2 TL (Phi-4 Mini Instruct) Tj T* ET
+Q
+Q
+q
+1 0 0 1 150 5 cm
+q
+.078431 .156863 .247059 rg
+BT 1 0 0 1 0 2 Tm /F1 7.2 Tf 9.2 TL (3B | gguf Q4_K_M) Tj T* ET
+Q
+Q
+q
+1 0 0 1 340 5 cm
+q
+.078431 .156863 .247059 rg
+BT 1 0 0 1 0 2 Tm /F1 7.2 Tf 9.2 TL (8,192 tokens) Tj T* ET
+Q
+Q
+q
+1 0 0 1 445 5 cm
+q
+.078431 .156863 .247059 rg
+BT 1 0 0 1 0 2 Tm /F1 7.2 Tf 9.2 TL (2.49 GB) Tj T* ET
+Q
+Q
+q
+1 J
+1 j
+.843137 .878431 .905882 RG
+.35 w
+n 0 38.4 m 528 38.4 l S
+n 0 19.2 m 528 19.2 l S
+n 0 0 m 528 0 l S
+Q
+Q
+Q
+q
+1 0 0 1 48 301.8 cm
+Q
+q
+1 0 0 1 48 268.2 cm
+q
+BT 1 0 0 1 0 20.4 Tm 9.2 TL /F2 7.2 Tf .078431 .156863 .247059 rg (Known scoring false negative.) Tj /F1 7.2 Tf ( The Reasoning Plus G10 rational-equation response correctly concludes that no value of x satisfies the equation, but the) Tj T* -0.085938 Tw (automated phrase matcher did not recognize its wording. The reported P6 score stays at 12/13 to preserve the raw harness result; direct review of that one answer) Tj T* 0 Tw (would make it 13/13 for this set. This was a focused check of the flagged item, not a full human grading pass.) Tj T* ET
+Q
+Q
+ 
+
+endstream
+endobj
+6 0 obj
+<<
+/F1 7 0 R
+/F2 8 0 R
+>>
+endobj
+7 0 obj
+<<
+/BaseFont /Helvetica
+/Encoding /WinAnsiEncoding
+/Name /F1
+/Subtype /Type1
+/Type /Font
+>>
+endobj
+8 0 obj
+<<
+/BaseFont /Helvetica-Bold
+/Encoding /WinAnsiEncoding
+/Name /F2
+/Subtype /Type1
+/Type /Font
+>>
+endobj
+9 0 obj
+<<
+/Contents 10 0 R
+/MediaBox [ 0 0 612 792 ]
+/Resources <<
+/Font 6 0 R
+/ProcSet [ /PDF /Text /ImageB /ImageC /ImageI ]
+>>
+/Rotate 0
+/Trans <<
+>>
+/Type /Page
+/Parent 2 0 R
+>>
+endobj
+10 0 obj
+<<
+/Filter [ /ASCII85Decode /FlateDecode ]
+/Length 2542
+>>
+stream
+Gb!#^>Bei3&UsJXQq-TdMrsud4F&l"RatVgA$o,0!g/S'KXV-+f^A!bmgM`ZO^^W)&Xq2/P8FM>q#J]q\Ubg3puCW=o*XEB3F)U7"4)bu'"lQt@=AUQjqiMR3,'4S5lsfM:^`f;NRH=3:[]s,#bEY`#^o8'!%Nd;=1:eH\8[$Z9\^JTd*#lW`SX6(Gp$0))@@R+1fin[',D(&j0D3$$Cb+9H$f;Obq4=UHi":#rTiV>T/Z?PGJF(Zo?T,jH$kR:DO-X!Nf35\88WBJhJsrY;6QYY]10Yei:\BXFF>=$DoCu?q<>CPCs_SsbQ78,%=!_!$8P_@B3mhRRfulLdaT7I?UN!_<)(2%lmoTgV._s\(!!iLb>)nmE=s7FM3F[t;>NF[EU^`2qE(]n]ndAc+@Z6Xf8EF70.PQoQ0LeXMOJU6HrEm#Wl\J/,TnehRMTakA@1C?:W#M-nH(^dfg:ptHeDTG%W7f-MMi1ta<&(X8437mqVI^tVnaR5mZ@Ucj&V%pad:s<6dp7);fUp7I0Qc*i8/PJm".lX`<@e3=g:^4Tc3Q1Fj<;G'hT'C>s[<)E)DEd1c6fBc^lY%.`\p4a<rkcg1!e*j1pLc50U[l8Q"`Vr#%rNcSQrDJRJnjH^Nf'@H;$FT^Z%qUR`t+UMqI0cdm+q%rKM_HsG`hEjH$a)T=$NY;LL$rV81NkS9LOGkt&*be5Nt%%Y!RP;[Jt-%Zr\ZEt+VI;2,AD^$JFZ!]6dWFk7I\,4;+Sg4$^_oKqnUN6u1EMaXk%.DAGm7$R*ZhEode,hh`Wfqkfm0*dtru@-4L#S7*3LYI6:G_ES#KkRp:u[et"$2PlR4!J>:8@F&SB3f0H!h0H^#ZgNV3)o?D-A)^0%s4QgrpL[WsGj11LY_@PbsF'W*c"]EU_<>0>P^CSRBX*ie>2NTP][LDudq@a>]:'*mf8eoQ<I_7<D6#\<0Ntff[OUek@<8lgPG4a<$RiLdq*2[LFb#@pWF'9o[3%a*1iIkb+AUa(l?j16Q7)<Vn_8XKmV&ZV\.Z@adRh<[s-G)6\_QqqVW7b2+$H&]u0C+[4RHdT25&kA"!@I@^T@8KmS$j?o_(/(kS)_,]6X(mWh7;eY0S/X4#,\f7^`QP*6)r/p/Ln4X^VA.(N4Nf5g#KbG>CLd\[jF:^@?1@<\f2`Q6+9FY^#l50\&-6C.b'W.GGV#@nq-<\:7B4E:RcWhP0b-qQB'_=O6Sa<K:OBo/IF=:D"LU9^Si#GXKM7#l:2Nc-'c?mY?%ab\@b(of)O+;fVUQJ:ETKW>/1\8^0<c!@363YEZ5IU/Cce4*Id)i.kECDn4ElfWJ,PhTYkHNC<]46b^4)e8Bpej%Hoak\.las7oMGZ[a`&-AX(0Dk0VV/l_NOPu'kiM,1:W:)F^^T=$@DEqs.FKBBr>6fSRQ[GiVTLV+0*"l,;#.?_4';-oMK_mSMLtOBCM'q\Q7/":NL(ZI><H@Nb")5J#;t[58JUG/D7J8Jfnup*)ea*"CkYpe@>IRB@'gSp'HII<<muO`c:*S;H*cfB7i)FJI/)_`J!EfZa+'_@2_`'e"Z$mO.p_oig2p,qW<eP0]"K04L#?r=\#0gDm2ZCQF6ZOJLh%`;=)j"%h44=am<7^Fbr'7AQE?WT^H6VM]'&h>MX0]g>^#s2bcX]@i21b_\`:Xq0H:=PBl!^BF,e9Mn431P1t#@u&)udYCG`$.5>_.Ts!uIbP8OS.gbp.6Wf-h&bPk!GkVpJKPO$P>%XVoGo=aK1n])EmrUVpe>S6osO:UOdA1RIP&Nlq>DQh(Md-!DjC>"q=I`P><6?Ut6%5PGJ+>^%B,$ITPq`T=7'lEG6XO*<[r40er='q&&[m*gNhrOFMK_S'%NUS(A_!>I\2)G/Ae?COK,]]%ZbfA-IQ>_Kb/4//Dcqf4R3SlQjZ?bGmDLtW><p^V&Z3UQsQHPdJ^STW-g-bPMn??Bh_1h+0%]Ir"(e*U)M^[)TJgX7bC0g4D-,ZL8`Xsp#@kU'DQD2]A-Rqg&)b`=>k2fn?L$q'XD)GP!F'M/=#F/H:p>?!/cj$_i.bMGq92V!9lBLUegO/,ROe^<1kc78*Th@;C3cJqA>%ptQ4DtT!$Q'Hp<GW2s:Ru=[Pe&d=fcFag*.o,2`S=#iGpPLla%K1IHWZ4*3_Z4OC@cjp?nF\fQ#F/kXMPr*>Jp0;d_pc&/h?W(iK]mdJ,EgeSuj0Jjo]M)PUW2JMZAr@n#9j#YOHkF!*c:tFX`NWq8g`8[(Grf>(toi>J44n4JcZZ5L'4NC,kkOk1$Su^7emmO3[cX-lpgOgE.[gdp[1o^Rb+ljmDAc8`Nm3IWeEQ^Q"lPqlk)>a;#d]<W)9K:ftl;dNL`$g/N++6o#JB021W](ZmbFcsN9*TY)Wc?@ZdVh379"gXGC#8$q`-JPm4-M9mg*UruE.P\b;TrUJp5p/".Xeosib`QGn_TVBinL;H&Ca7]"_0i8s0*I'Y>OlXosLt,*qM4RKd,;L0=N2Edmqf44U]OX%i,(BWPC_c2(%H3?\X'.'Z=m+\5#.XF]IjI$%~>
+endstream
+endobj
+11 0 obj
+<<
+/Contents 12 0 R
+/MediaBox [ 0 0 612 792 ]
+/Resources <<
+/Font 6 0 R
+/ProcSet [ /PDF /Text /ImageB /ImageC /ImageI ]
+>>
+/Rotate 0
+/Trans <<
+>>
+/Type /Page
+/Parent 2 0 R
+>>
+endobj
+12 0 obj
+<<
+/Filter [ /ASCII85Decode /FlateDecode ]
+/Length 2766
+>>
+stream
+GauHOgN)%.&q0LUoV:"Wdff,Ef020^M(>pX`/1o!['`mF#t`4"KL1cd;md]3%IdiK(.kKa;7Y]%%C-K_VpPJ_+9<F2M#Nt+!:OQ>ooT5o@($'p=WYfTi7HZ8O#&<W>iLKG7A22^(#+0O3UlG0bjo1`<e0?u(q>Z[+54;j_8D]&#$tsJ@!O"-lj3V%4eG!M4O[.%MP[R%/*O4AK!`d#.T+kML\&,2+)^N)o9Wg5`J=G6F8,-mfr$L<rs`St@<U&4VOB]O0=3;Mg]+?T,W*,CZn-I,KW;1C$3,dmcgXc].2Q4R[=(g"RYM&X?&.)UmPfZL)TdtI_4Og:lVbrp6kiKP.-grcXFsiS/43R_A5_u@`?2@FaZ?K`Y)/]Yh[?Ol<O^]Nl&pV0p#oJQXD^K0Tc5/iYGCqO8s*Aj-'e6kKZmR/p66Z.1m-Wd>Qq!,,Ct$"=BU%NR8thL`BoeL/J89ZT<Kk\b')M1!]u4!`C;f8kQJNOfC4fT^CMG!77DJFJ[iLeBMr-a6>j#7J(..m>SPV<>LfIkN'1W?-_`4C$+4;?XVe.$IjSa]j4@JCaQRZ$FPRQKGf=^]&ll+kKL+jmAR]//g#n.9Uj[rCfWi7_GIf&N'k%JXEIhlS:\TD,U.[G+.-GIhZ!u%g@iS9(Wg#kTETm1(Y;HYn]s4=hL_/oDSNa;*[(7_p*2uq&3N0?D8+nar3Z@Z3NE,7$h:(+s4o5]Qr'nXD[i)0-G+@;a*t<h2kl-5f,6r?)@_YA-2b'Xj&aMW]jZ=mTAe<+1)q8M,E;3DRWiVD!&B(uu)sp3crDL>2haB'NFN=)p;8_X-7QW9AQLi<`pg`Z[Jg-t-?ju.3(rnWKNcG5#3:@#G.Z#QHQ;f)[(.-'!9Y*VKjq?glS5H1<LiYG4j;:<0,=os3bTZA.5EI(9<)YP5bVeU/Q#eBOU8IIkTTri(ALnpE,N$P`c(H#p@r>feCco-C`0lE6k)eqdpgT=5-?<.P5Hh)M01F:d1$0^`>2gLn&Rpe]M)dD2e4ImC\6$R=N_q'?"A(V13@#V@el9['RUr]7Fa4EL,#B4sRLS)cjGD_J>`AKA6`fPN_(iY\4DN60bb:"$*.p3a!QQ2.<5:5DK_shn5N*Zu@V*gm>)Y(Mb_DSF\Ja5`,]VrL6f0U'@o#K06SL.paf@\5]q">_qjce-r:bUr8*;d%\h9V:lTKGj<gg$IC!_[@d)gC(TTSMK-eHIj7]qZ?>c.Q?\Lr&G]t&&I__"Qo("uj^F\a%^HhDODb4go:PL#^o@^kSH\)40/BqZ87rYXM",HcqX:G4qs@?)#bA4Qum`8@3?EO<%6Ol5/F8aQ+rT3p<s(kn*tW>qfpGl>df<mTAXUZ8^BnK&?fob)J05neS)E0#]7C*Rc#cG81Ehi:Gb3hA"VRA;>MZXkTgVUD1KnLX64jM6062XOl+o]pHE%Gob:h#KJuFO>BkKJSo!gQSR6<Y9H%fZZ0,S>XdD)+;&-;o!N<r#M<.@FU#iK<Y)/%hB?7SI/(q((olRj,"q\iI"NjSN3JVZilgC/7Tu+K+;RW6GY-V1mH,O(iQrAf8`5.4;"$j/5V.72C66[p4c7^:_,%T"jYTs*4U[k$-/eKs+FhYQ:5j(3/#6aTkV]_fQ'd+U,f/jH6CWEfT02PYAnmgcB8NZnOPI-!rg2"Ef*n=/c'^9F*fX\X#[\(?<t%0P5fQ/bs>d:SR[2P"=-\jjl2-W5$M'>-S+'7&uShhf:G>6l\WuqA[mgZ1f]S^/fIX46/@kO`PnC>2Nnm;"dF/L+CujKV!:Fh'V>T!EWD`ocp$<6\f9h][S9KJPC/gOqC(Y"1?D/8!Uf@`.-c3*8dQGCX[HH',[N919u^L\%6B/BKB>t7)L82lmtip)3M?-31f'*,gkRVQK3U3u:,-DlrW!#EJPG\O7&FS\iPS:4T/e%R?M^#,JZ@e<=D$n?:unliPS[7!em(9H+OV7^,a#f^W[3`eU^nYVM]-l9\[kG3.HEq:8g['2#mFqc4b1NcJLS39hq4Z9pd@a'BF`.4EjsAi-C?TEHN8-L^o#^Bn]@(U`fPXX$XW=[ku"o@EK<-[$*p/GMHBHO3EL8R3@K)qZ;lm"/D2gFV(nXr7c7H,Ks[YFS^hFD':,uh;0g%?NA7L8*fi;$Cei;sI<*c#qm4;P4+n$so(+;@e/gu3D7QhVH?l_@eRr3j>aP=+IB_8Qk]1%*ca2=D?1)IeYQp5ucTi`'9!Qa8]6ZWE/p;8`"P(S9Ys3GTH;Imp[d2W)i75AR#_V<CY3e(oSM0&!fZpD,1u%<]LV0C+lbe`k7tL8iIhcEk^k-0]6,Ak5Qi.H^(0`D4rpmWpHRgrMg$HtO"KK3:-u$hf54abs,cakFX]DrI-q'87"0mA(O9d-K>ZW\/a1m"iWj?)f<OAns:+MWRc?bM#,qE"_-H%#&dLWcr+\Gk?8h*]3XHOAq$3,,f(I=n=F?%9)4l*:71ga6-5fqLg\8RqFoQ/pR"sfY:4p&iq%i_#hi\k-jW,"jZrEc8(WaY1nKs`>5#J&W-j9jeGn<".6fA33USRX5;"eH44Zb;9i&6k>g^NXXK^#%b2A$>21Fl-dR;IWjR54<0'>;bU;fF^>_Xs,=_oU1l;RHQKu*Hj*=:gm46RCWbU()G\=qij`2B`Ub<J^8Cb@RVC3k8tYo/noBmEpRMihn%dSFu\<S5Vme^fZ=YpDa^!CeOo#;s-0=!.-55-HcfF#Cfsbee:)M6k_%/Mp;koV$]A2pWP#?:EFnWCPcl\O_:bFuNq]=~>
+endstream
+endobj
+13 0 obj
+<<
+/Contents 14 0 R
+/MediaBox [ 0 0 612 792 ]
+/Resources <<
+/Font 6 0 R
+/ProcSet [ /PDF /Text /ImageB /ImageC /ImageI ]
+>>
+/Rotate 0
+/Trans <<
+>>
+/Type /Page
+/Parent 2 0 R
+>>
+endobj
+14 0 obj
+<<
+/Length 10865
+>>
+stream
+1 0 0 1 0 0 cm  BT /F1 12 Tf 14.4 TL ET
+q
+.843137 .878431 .905882 RG
+.5 w
+n 42 763 m 570 763 l S
+.364706 .419608 .47451 rg
+BT /F2 7.2 Tf 8.64 TL ET
+BT 1 0 0 1 42 770 Tm (LOCAL MODEL EVALUATION) Tj T* ET
+BT /F1 7.2 Tf 8.64 TL ET
+BT 1 0 0 1 470.0784 770 Tm (LocalLearning tutor | LM Studio) Tj T* ET
+n 42 28 m 570 28 l S
+BT /F1 7 Tf 8.4 TL ET
+BT 1 0 0 1 42 17 Tm (39 fixed probes | one run per model | descriptive results) Tj T* ET
+BT 1 0 0 1 547.817 17 Tm (Page 4) Tj T* ET
+Q
+q
+1 0 0 1 48 738 cm
+Q
+q
+1 0 0 1 48 717 cm
+q
+.078431 .156863 .247059 rg
+BT 1 0 0 1 0 3 Tm /F2 16 Tf 19 TL (Context, language, and method) Tj T* ET
+Q
+Q
+q
+1 0 0 1 48 697 cm
+q
+.078431 .156863 .247059 rg
+BT 1 0 0 1 0 3.5 Tm /F1 8.5 Tf 12 TL (The larger Reasoning Plus context helped at the largest needle size, but output-budget starvation remained a separate failure mode.) Tj T* ET
+Q
+Q
+q
+1 0 0 1 48 676 cm
+q
+.078431 .156863 .247059 rg
+BT 1 0 0 1 0 2.5 Tm /F2 10.5 Tf 13 TL (P8: needle retrieval by target prompt size) Tj T* ET
+Q
+Q
+q
+1 0 0 1 48 551 cm
+q
+.078431 .156863 .247059 rg
+n 0 120 527 -16.8 re f*
+1 1 1 rg
+n 0 103.2 527 -17.2 re f*
+.945098 .960784 .972549 rg
+n 0 86 527 -17.2 re f*
+1 1 1 rg
+n 0 68.8 527 -17.2 re f*
+.945098 .960784 .972549 rg
+n 0 51.6 527 -17.2 re f*
+1 1 1 rg
+n 0 34.4 527 -17.2 re f*
+.945098 .960784 .972549 rg
+n 0 17.2 527 -17.2 re f*
+1 1 1 rg
+BT /F1 10 Tf 12 TL ET
+q
+1 0 0 1 4 107.2 cm
+q
+1 1 1 rg
+BT 1 0 0 1 0 1.5 Tm /F2 7.3 Tf 8.8 TL (Target size) Tj T* ET
+Q
+Q
+q
+1 0 0 1 84 107.2 cm
+q
+1 1 1 rg
+BT 1 0 0 1 0 1.5 Tm /F2 7.3 Tf 8.8 TL (Reasoning Plus) Tj T* ET
+Q
+Q
+q
+1 0 0 1 189 107.2 cm
+q
+1 1 1 rg
+BT 1 0 0 1 0 1.5 Tm /F2 7.3 Tf 8.8 TL (Mini Instruct) Tj T* ET
+Q
+Q
+q
+1 0 0 1 294 107.2 cm
+q
+1 1 1 rg
+BT 1 0 0 1 0 1.5 Tm /F2 7.3 Tf 8.8 TL (Reasoning Plus input tokens) Tj T* ET
+Q
+Q
+q
+1 0 0 1 411 107.2 cm
+q
+1 1 1 rg
+BT 1 0 0 1 0 1.5 Tm /F2 7.3 Tf 8.8 TL (Mini input tokens) Tj T* ET
+Q
+Q
+0 0 0 rg
+q
+1 0 0 1 4 90 cm
+q
+.078431 .156863 .247059 rg
+BT 1 0 0 1 0 2 Tm /F1 7.2 Tf 9.2 TL (500 tokens) Tj T* ET
+Q
+Q
+q
+1 0 0 1 84 90 cm
+q
+.078431 .156863 .247059 rg
+BT 1 0 0 1 0 2 Tm /F1 7.2 Tf 9.2 TL (STARVED) Tj T* ET
+Q
+Q
+q
+1 0 0 1 189 90 cm
+q
+.078431 .156863 .247059 rg
+BT 1 0 0 1 0 2 Tm /F1 7.2 Tf 9.2 TL (PASS) Tj T* ET
+Q
+Q
+q
+1 0 0 1 294 90 cm
+q
+.078431 .156863 .247059 rg
+BT 1 0 0 1 0 2 Tm /F1 7.2 Tf 9.2 TL (732) Tj T* ET
+Q
+Q
+q
+1 0 0 1 411 90 cm
+q
+.078431 .156863 .247059 rg
+BT 1 0 0 1 0 2 Tm /F1 7.2 Tf 9.2 TL (501) Tj T* ET
+Q
+Q
+q
+1 0 0 1 4 72.8 cm
+q
+.078431 .156863 .247059 rg
+BT 1 0 0 1 0 2 Tm /F1 7.2 Tf 9.2 TL (2000 tokens) Tj T* ET
+Q
+Q
+q
+1 0 0 1 84 72.8 cm
+q
+.078431 .156863 .247059 rg
+BT 1 0 0 1 0 2 Tm /F1 7.2 Tf 9.2 TL (PASS) Tj T* ET
+Q
+Q
+q
+1 0 0 1 189 72.8 cm
+q
+.078431 .156863 .247059 rg
+BT 1 0 0 1 0 2 Tm /F1 7.2 Tf 9.2 TL (PASS) Tj T* ET
+Q
+Q
+q
+1 0 0 1 294 72.8 cm
+q
+.078431 .156863 .247059 rg
+BT 1 0 0 1 0 2 Tm /F1 7.2 Tf 9.2 TL (2292) Tj T* ET
+Q
+Q
+q
+1 0 0 1 411 72.8 cm
+q
+.078431 .156863 .247059 rg
+BT 1 0 0 1 0 2 Tm /F1 7.2 Tf 9.2 TL (2061) Tj T* ET
+Q
+Q
+q
+1 0 0 1 4 55.6 cm
+q
+.078431 .156863 .247059 rg
+BT 1 0 0 1 0 2 Tm /F1 7.2 Tf 9.2 TL (4000 tokens) Tj T* ET
+Q
+Q
+q
+1 0 0 1 84 55.6 cm
+q
+.078431 .156863 .247059 rg
+BT 1 0 0 1 0 2 Tm /F1 7.2 Tf 9.2 TL (PASS) Tj T* ET
+Q
+Q
+q
+1 0 0 1 189 55.6 cm
+q
+.078431 .156863 .247059 rg
+BT 1 0 0 1 0 2 Tm /F1 7.2 Tf 9.2 TL (PASS) Tj T* ET
+Q
+Q
+q
+1 0 0 1 294 55.6 cm
+q
+.078431 .156863 .247059 rg
+BT 1 0 0 1 0 2 Tm /F1 7.2 Tf 9.2 TL (4307) Tj T* ET
+Q
+Q
+q
+1 0 0 1 411 55.6 cm
+q
+.078431 .156863 .247059 rg
+BT 1 0 0 1 0 2 Tm /F1 7.2 Tf 9.2 TL (4076) Tj T* ET
+Q
+Q
+q
+1 0 0 1 4 38.4 cm
+q
+.078431 .156863 .247059 rg
+BT 1 0 0 1 0 2 Tm /F1 7.2 Tf 9.2 TL (6000 tokens) Tj T* ET
+Q
+Q
+q
+1 0 0 1 84 38.4 cm
+q
+.078431 .156863 .247059 rg
+BT 1 0 0 1 0 2 Tm /F1 7.2 Tf 9.2 TL (STARVED) Tj T* ET
+Q
+Q
+q
+1 0 0 1 189 38.4 cm
+q
+.078431 .156863 .247059 rg
+BT 1 0 0 1 0 2 Tm /F1 7.2 Tf 9.2 TL (PASS) Tj T* ET
+Q
+Q
+q
+1 0 0 1 294 38.4 cm
+q
+.078431 .156863 .247059 rg
+BT 1 0 0 1 0 2 Tm /F1 7.2 Tf 9.2 TL (6387) Tj T* ET
+Q
+Q
+q
+1 0 0 1 411 38.4 cm
+q
+.078431 .156863 .247059 rg
+BT 1 0 0 1 0 2 Tm /F1 7.2 Tf 9.2 TL (6156) Tj T* ET
+Q
+Q
+q
+1 0 0 1 4 21.2 cm
+q
+.078431 .156863 .247059 rg
+BT 1 0 0 1 0 2 Tm /F1 7.2 Tf 9.2 TL (7300 tokens) Tj T* ET
+Q
+Q
+q
+1 0 0 1 84 21.2 cm
+q
+.078431 .156863 .247059 rg
+BT 1 0 0 1 0 2 Tm /F1 7.2 Tf 9.2 TL (PASS) Tj T* ET
+Q
+Q
+q
+1 0 0 1 189 21.2 cm
+q
+.078431 .156863 .247059 rg
+BT 1 0 0 1 0 2 Tm /F1 7.2 Tf 9.2 TL (PASS) Tj T* ET
+Q
+Q
+q
+1 0 0 1 294 21.2 cm
+q
+.078431 .156863 .247059 rg
+BT 1 0 0 1 0 2 Tm /F1 7.2 Tf 9.2 TL (7817) Tj T* ET
+Q
+Q
+q
+1 0 0 1 411 21.2 cm
+q
+.078431 .156863 .247059 rg
+BT 1 0 0 1 0 2 Tm /F1 7.2 Tf 9.2 TL (7586) Tj T* ET
+Q
+Q
+q
+1 0 0 1 4 4 cm
+q
+.078431 .156863 .247059 rg
+BT 1 0 0 1 0 2 Tm /F1 7.2 Tf 9.2 TL (8500 tokens) Tj T* ET
+Q
+Q
+q
+1 0 0 1 84 4 cm
+q
+.078431 .156863 .247059 rg
+BT 1 0 0 1 0 2 Tm /F1 7.2 Tf 9.2 TL (PASS) Tj T* ET
+Q
+Q
+q
+1 0 0 1 189 4 cm
+q
+.078431 .156863 .247059 rg
+BT 1 0 0 1 0 2 Tm /F1 7.2 Tf 9.2 TL (CONTEXT ERROR) Tj T* ET
+Q
+Q
+q
+1 0 0 1 294 4 cm
+q
+.078431 .156863 .247059 rg
+BT 1 0 0 1 0 2 Tm /F1 7.2 Tf 9.2 TL (9247) Tj T* ET
+Q
+Q
+q
+1 0 0 1 411 4 cm
+q
+.078431 .156863 .247059 rg
+BT 1 0 0 1 0 2 Tm /F1 7.2 Tf 9.2 TL (-) Tj T* ET
+Q
+Q
+q
+1 J
+1 j
+.843137 .878431 .905882 RG
+.35 w
+n 0 103.2 m 527 103.2 l S
+n 0 86 m 527 86 l S
+n 0 68.8 m 527 68.8 l S
+n 0 51.6 m 527 51.6 l S
+n 0 34.4 m 527 34.4 l S
+n 0 17.2 m 527 17.2 l S
+n 0 0 m 527 0 l S
+Q
+Q
+Q
+q
+1 0 0 1 48 546 cm
+Q
+q
+1 0 0 1 48 512.4 cm
+q
+.078431 .156863 .247059 rg
+BT 1 0 0 1 0 20.4 Tm /F1 7.2 Tf 9.2 TL (Reasoning Plus passed the largest needle at about 9,247 actual prompt tokens with a 16,384-token context. Mini Instruct passed through the 7,300 target, then) Tj T* -0.059424 Tw (LM Studio rejected the largest request at 9,016 tokens against its 8,192-token context. Reasoning Plus did not produce a final answer on the 500- and 6,000-token) Tj T* 0 Tw (targets because its 1,024-token P8 output cap was consumed by reasoning.) Tj T* ET
+Q
+Q
+q
+1 0 0 1 48 491.4 cm
+q
+.078431 .156863 .247059 rg
+BT 1 0 0 1 0 2.5 Tm /F2 10.5 Tf 13 TL (P7: Nepali-language checks) Tj T* ET
+Q
+Q
+q
+1 0 0 1 48 394.4 cm
+q
+.078431 .156863 .247059 rg
+n 0 92 527 -15.8 re f*
+1 1 1 rg
+n 0 76.2 527 -25.4 re f*
+.945098 .960784 .972549 rg
+n 0 50.8 527 -25.4 re f*
+1 1 1 rg
+n 0 25.4 527 -25.4 re f*
+1 1 1 rg
+BT /F1 10 Tf 12 TL ET
+q
+1 0 0 1 3.5 79.7 cm
+q
+1 1 1 rg
+BT 1 0 0 1 0 1.5 Tm /F2 7.3 Tf 8.8 TL (Probe) Tj T* ET
+Q
+Q
+q
+1 0 0 1 135.5 79.7 cm
+q
+1 1 1 rg
+BT 1 0 0 1 0 1.5 Tm /F2 7.3 Tf 8.8 TL (Reasoning Plus) Tj T* ET
+Q
+Q
+q
+1 0 0 1 217.5 79.7 cm
+q
+1 1 1 rg
+BT 1 0 0 1 0 1.5 Tm /F2 7.3 Tf 8.8 TL (Mini Instruct) Tj T* ET
+Q
+Q
+q
+1 0 0 1 299.5 79.7 cm
+q
+1 1 1 rg
+BT 1 0 0 1 0 1.5 Tm /F2 7.3 Tf 8.8 TL (What the automatic score means) Tj T* ET
+Q
+Q
+0 0 0 rg
+q
+1 0 0 1 3.5 63.5 cm
+q
+.078431 .156863 .247059 rg
+BT 1 0 0 1 0 2 Tm /F1 7.2 Tf 9.2 TL (Grade 8 science explanation) Tj T* ET
+Q
+Q
+q
+1 0 0 1 135.5 63.5 cm
+q
+.078431 .156863 .247059 rg
+BT 1 0 0 1 0 2 Tm /F1 7.2 Tf 9.2 TL (PASS) Tj T* ET
+Q
+Q
+q
+1 0 0 1 217.5 63.5 cm
+q
+.078431 .156863 .247059 rg
+BT 1 0 0 1 0 2 Tm /F1 7.2 Tf 9.2 TL (FAIL) Tj T* ET
+Q
+Q
+q
+1 0 0 1 299.5 54.3 cm
+q
+.078431 .156863 .247059 rg
+BT 1 0 0 1 0 11.2 Tm /F1 7.2 Tf 9.2 TL (Script, lexical markers, and a few required topic cues only; no) Tj T* (native-speaker review.) Tj T* ET
+Q
+Q
+q
+1 0 0 1 3.5 38.1 cm
+q
+.078431 .156863 .247059 rg
+BT 1 0 0 1 0 2 Tm /F1 7.2 Tf 9.2 TL (Grade 8 rational / irrational numbers) Tj T* ET
+Q
+Q
+q
+1 0 0 1 135.5 38.1 cm
+q
+.078431 .156863 .247059 rg
+BT 1 0 0 1 0 2 Tm /F1 7.2 Tf 9.2 TL (STARVED) Tj T* ET
+Q
+Q
+q
+1 0 0 1 217.5 38.1 cm
+q
+.078431 .156863 .247059 rg
+BT 1 0 0 1 0 2 Tm /F1 7.2 Tf 9.2 TL (PASS) Tj T* ET
+Q
+Q
+q
+1 0 0 1 299.5 28.9 cm
+q
+.078431 .156863 .247059 rg
+BT 1 0 0 1 0 11.2 Tm /F1 7.2 Tf 9.2 TL (Script, lexical markers, and a few required topic cues only; no) Tj T* (native-speaker review.) Tj T* ET
+Q
+Q
+q
+1 0 0 1 3.5 12.7 cm
+q
+.078431 .156863 .247059 rg
+BT 1 0 0 1 0 2 Tm /F1 7.2 Tf 9.2 TL (Nepal geographic regions) Tj T* ET
+Q
+Q
+q
+1 0 0 1 135.5 12.7 cm
+q
+.078431 .156863 .247059 rg
+BT 1 0 0 1 0 2 Tm /F1 7.2 Tf 9.2 TL (STARVED) Tj T* ET
+Q
+Q
+q
+1 0 0 1 217.5 12.7 cm
+q
+.078431 .156863 .247059 rg
+BT 1 0 0 1 0 2 Tm /F1 7.2 Tf 9.2 TL (FAIL) Tj T* ET
+Q
+Q
+q
+1 0 0 1 299.5 3.5 cm
+q
+.078431 .156863 .247059 rg
+BT 1 0 0 1 0 11.2 Tm /F1 7.2 Tf 9.2 TL (Script, lexical markers, and a few required topic cues only; no) Tj T* (native-speaker review.) Tj T* ET
+Q
+Q
+q
+1 J
+1 j
+.843137 .878431 .905882 RG
+.35 w
+n 0 76.2 m 527 76.2 l S
+n 0 50.8 m 527 50.8 l S
+n 0 25.4 m 527 25.4 l S
+n 0 0 m 527 0 l S
+Q
+Q
+Q
+q
+1 0 0 1 48 389.4 cm
+Q
+q
+1 0 0 1 48 365 cm
+q
+.078431 .156863 .247059 rg
+BT 1 0 0 1 0 11.2 Tm /F1 7.2 Tf 9.2 TL (Reasoning Plus passed only the script/language-marker science check; two answers starved. Mini Instruct scored one of three but its other outputs showed Hindi) Tj T* (bleed or corrupted geography terms. Neither model is validated for autonomous Nepali tutoring by this test.) Tj T* ET
+Q
+Q
+q
+1 0 0 1 48 344 cm
+q
+.078431 .156863 .247059 rg
+BT 1 0 0 1 0 2.5 Tm /F2 10.5 Tf 13 TL (Test protocol and limitations) Tj T* ET
+Q
+Q
+q
+1 0 0 1 48 319.6 cm
+q
+BT 1 0 0 1 0 11.2 Tm 9.2 TL /F1 7.2 Tf .078431 .156863 .247059 rg (\177 Same 39 probe IDs, prompts, tutor system prompt builder, LM Studio API, 4,096-token general output cap, 240-second request timeout, and one completion per) Tj T* (probe. P8 uses a 1,024-token output cap.) Tj T* ET
+Q
+Q
+q
+1 0 0 1 48 304.4 cm
+q
+BT 1 0 0 1 0 2 Tm 9.2 TL /F1 7.2 Tf .078431 .156863 .247059 rg (\177 The default app model stayed set to phi-4-mini-instruct. Reasoning Plus was loaded only for its evaluation; Mini Instruct was reloaded after the run.) Tj T* ET
+Q
+Q
+q
+1 0 0 1 48 280 cm
+q
+BT 1 0 0 1 0 11.2 Tm 9.2 TL /F1 7.2 Tf .078431 .156863 .247059 rg (\177 LM Studio measured Reasoning Plus as 14.7B, 4-bit MLX, 8.26 GB, 16,384 context; Mini Instruct as 3B, Q4_K_M GGUF, 2.49 GB, 8,192 context. Quantization) Tj T* (and runtime format differ, so this is a deployment comparison, not a controlled architecture experiment.) Tj T* ET
+Q
+Q
+q
+1 0 0 1 48 264.8 cm
+q
+BT 1 0 0 1 0 2 Tm 9.2 TL /F1 7.2 Tf .078431 .156863 .247059 rg (\177 One run per prompt does not measure run-to-run reliability. Results are descriptive; no p-values or broad capability claims are warranted.) Tj T* ET
+Q
+Q
+q
+1 0 0 1 48 240.4 cm
+q
+BT 1 0 0 1 0 11.2 Tm 9.2 TL /F1 7.2 Tf .078431 .156863 .247059 rg (\177 Worst-case estimated prompt sizes in the harness are 9,134 English tokens and 20,907 Nepali tokens. The former exceeds Mini's 8K context; the latter exceeds) Tj T* (both loaded windows.) Tj T* ET
+Q
+Q
+q
+1 0 0 1 48 236.4 cm
+Q
+q
+1 0 0 1 48 214 cm
+q
+.078431 .156863 .247059 rg
+BT 1 0 0 1 0 9.8 Tm /F1 6.6 Tf 8.2 TL (Raw runs: evals/runs/phi4-reasoning-plus-verification.json and evals/runs/phi4-mini-instruct-39probe-comparison.json. Harness: scripts/verify_model_limits.py. Score definitions:) Tj T* (scripts/verify_model_limits.py and backend/tests/test_model_verification.py.) Tj T* ET
+Q
+Q
+ 
+
+endstream
+endobj
+xref
+0 15
+0000000000 65535 f 
+0000000015 00000 n 
+0000000365 00000 n 
+0000000444 00000 n 
+0000000493 00000 n 
+0000000682 00000 n 
+0000007600 00000 n 
+0000007641 00000 n 
+0000007748 00000 n 
+0000007860 00000 n 
+0000008050 00000 n 
+0000010685 00000 n 
+0000010876 00000 n 
+0000013735 00000 n 
+0000013926 00000 n 
+trailer
+<<
+/Size 15
+/Root 3 0 R
+/Info 1 0 R
+>>
+startxref
+24845
+%%EOF

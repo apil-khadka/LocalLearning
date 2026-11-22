@@ -411,7 +411,7 @@ def call_lmstudio(
     system_prompt: str,
     messages: list[dict],
     max_output_tokens: int,
-    timeout: float = 90.0,
+    timeout: float = 120.0,
 ) -> dict:
     """Invoke LM Studio /api/v1/chat using LocalServices._lmstudio_payload."""
     payload = LocalServices._lmstudio_payload(
@@ -441,11 +441,24 @@ def call_lmstudio(
             and isinstance(item.get("content"), str)
             and item["content"].strip()
         )
+        reasoning_text = "\n\n".join(
+            item["content"].strip()
+            for item in output_items
+            if isinstance(item, dict)
+            and item.get("type") == "reasoning"
+            and isinstance(item.get("content"), str)
+            and item["content"].strip()
+        )
+        stats = body.get("stats", {})
+        reasoning_tokens = int(stats.get("reasoning_output_tokens") or 0)
+        reasoning_starved = bool(not text and (reasoning_text or reasoning_tokens > 0))
         return {
             "ok": True,
             "latency_s": round(dt, 3),
-            "stats": body.get("stats", {}),
+            "stats": stats,
             "text": text,
+            "reasoning_chars": len(reasoning_text),
+            "reasoning_starved": reasoning_starved,
         }
     except urllib.error.HTTPError as exc:
         dt = time.perf_counter() - t0
@@ -775,6 +788,72 @@ def build_probe_suite() -> list[ProbeSpec]:
             "How many 4-digit even numbers can be formed using the digits {1, 2, 3, 4, 5} without repeating any digit?",
             [],
         ),
+        ProbeSpec(
+            "p6_g8_word_upstream",
+            "P6",
+            "Grade 8 linear system: upstream/downstream boat speed",
+            8,
+            "Mathematics",
+            "en",
+            "explain",
+            "A boat travels 30 km upstream in 3 hours and 30 km downstream in 2 hours. Find the speed of the boat in still water and the speed of the stream.",
+            [],
+        ),
+        ProbeSpec(
+            "p6_g9_geometry_trig",
+            "P6",
+            "Grade 9 right triangle: Pythagoras, area, and exact sin(theta)",
+            9,
+            "Mathematics",
+            "en",
+            "explain",
+            "A right-angled triangle has a hypotenuse of 13 cm and one leg of 5 cm. Find the length of the other leg, the area of the triangle, and the exact value of sin(theta) where theta is the angle opposite the 5 cm side.",
+            [],
+        ),
+        ProbeSpec(
+            "p6_g10_see_compound",
+            "P6",
+            "Grade 10 SEE compound amount & compound interest over 3 years",
+            10,
+            "Mathematics",
+            "en",
+            "explain",
+            "A sum of Rs. 10,000 is invested at 10% per annum compounded annually for 3 years. Calculate the exact compound amount and the compound interest.",
+            [],
+        ),
+        ProbeSpec(
+            "p6_g11_matrix_det",
+            "P6",
+            "Grade 11 3x3 matrix determinant with signed cofactors",
+            11,
+            "Mathematics",
+            "en",
+            "explain",
+            "Compute the exact determinant of the 3x3 matrix [[2, 1, 3], [0, -1, 4], [5, 2, -2]]. Show your steps clearly.",
+            [],
+        ),
+        ProbeSpec(
+            "p6_g12_integral",
+            "P6",
+            "Grade 12 definite integral by substitution from 0 to 2",
+            12,
+            "Mathematics",
+            "en",
+            "explain",
+            "Evaluate the exact definite integral of (3x^2 + 2x) / (x^3 + x^2 + 1) with respect to x from x = 0 to x = 2.",
+            [],
+        ),
+        ProbeSpec(
+            "p6_g12_probability",
+            "P6",
+            "Grade 12 probability without replacement (5 red, 3 blue)",
+            12,
+            "Mathematics",
+            "en",
+            "explain",
+            "A bag contains 5 red balls and 3 blue balls. Two balls are drawn at random without replacement. Find the exact probability as a reduced fraction that both balls are red.",
+            [],
+        ),
         # P7: Bilingual Nepali fidelity
         ProbeSpec(
             "p7_ne_science",
@@ -846,6 +925,8 @@ def evaluate_probe(spec: ProbeSpec, raw: dict) -> dict:
     """Apply deterministic formal predicates to a single probe execution."""
     text = raw.get("text", "")
     ok_http = bool(raw.get("ok"))
+    starved = bool(raw.get("reasoning_starved"))
+    stats = raw.get("stats", {})
     latex_clean, latex_hits = check_latex_clean(text) if ok_http else (True, [])
     no_synth = check_no_synthetic_turn(text) if ok_http else True
 
@@ -855,6 +936,9 @@ def evaluate_probe(spec: ProbeSpec, raw: dict) -> dict:
     if not ok_http:
         passed = False
         details = {"reason": "http_or_runtime_error"}
+    elif starved:
+        passed = False
+        details = {"reason": "reasoning_token_starvation"}
     elif spec.property_id == "P1":
         words = len(text.split())
         random_lecture = any(
@@ -1020,10 +1104,32 @@ def evaluate_probe(spec: ProbeSpec, raw: dict) -> dict:
             ],
             "p6_g10_stoich": [[r"\b2\s*(?:mol|moles)\b"], [r"\b88\s*(?:g|grams)\b"]],
             "p6_g12_calculus": [
-                [r"2\s*\*?\s*\\?ln\(?4\)?", r"2ln\(4\)", r"ln\(16\)"],
-                [r"\b3\s*/\s*2\b", r"\b1\.5\b", r"6\s*/\s*4"],
+                [
+                    r"2\s*\*?\s*\\?(?:ln|log)\s*\(?\s*4\s*\)?",
+                    r"4\s*\*?\s*\\?(?:ln|log)\s*\(?\s*2\s*\)?",
+                    r"\\?(?:ln|log)\s*\(?\s*16\s*\)?",
+                ],
+                [
+                    r"\b3\s*/\s*2\b",
+                    r"\b1\.5\b",
+                    r"6\s*/\s*4",
+                    r"\\frac\{3\}\{2\}",
+                ],
             ],
             "p6_g12_combinatorics": [[r"\b48\b"]],
+            "p6_g8_word_upstream": [
+                [r"\b12\.5\b", r"\b25\s*/\s*2\b", r"\\frac\{25\}\{2\}"],
+                [r"\b2\.5\b", r"\b5\s*/\s*2\b", r"\\frac\{5\}\{2\}"],
+            ],
+            "p6_g9_geometry_trig": [
+                [r"\b12\b"],
+                [r"\b30\b"],
+                [r"\b5\s*/\s*13\b", r"\\frac\{5\}\{13\}"],
+            ],
+            "p6_g10_see_compound": [[r"\b13,?310\b"], [r"\b3,?310\b"]],
+            "p6_g11_matrix_det": [[r"\b23\b"]],
+            "p6_g12_integral": [[r"\\?(?:ln|log_?e?)\s*\(?\s*13\s*\)?"]],
+            "p6_g12_probability": [[r"\b5\s*/\s*14\b", r"\\frac\{5\}\{14\}"]],
         }[spec.id]
         correct = check_numeric_answer(text, rubric)
         passed = no_synth and correct
@@ -1064,12 +1170,16 @@ def evaluate_probe(spec: ProbeSpec, raw: dict) -> dict:
         "latex_hits": latex_hits,
         "no_synthetic_turn": no_synth,
         "latency_s": raw.get("latency_s"),
-        "stats": raw.get("stats", {}),
+        "stats": stats,
+        "reasoning_output_tokens": int(stats.get("reasoning_output_tokens") or 0),
+        "total_output_tokens": int(stats.get("total_output_tokens") or 0),
+        "reasoning_chars": raw.get("reasoning_chars", 0),
+        "reasoning_starved": starved,
         "http_status": raw.get("http_status"),
         "error": raw.get("error"),
         "details": details,
         "response_preview": text[:500] if ok_http else "",
-        "response_text": text[:3000] if ok_http else "",
+        "response_text": text[:6000] if ok_http else "",
     }
 
 
@@ -1103,6 +1213,9 @@ def summarize_results(
         for r in results
         if r["ok"]
         and isinstance(r.get("stats", {}).get("tokens_per_second"), (int, float))
+    ]
+    reasoning_vals = [
+        int(r.get("reasoning_output_tokens") or 0) for r in results if r["ok"]
     ]
 
     matrix = {}
@@ -1138,6 +1251,10 @@ def summarize_results(
         else None,
         "mean_ttft_ms": round(statistics.mean(ttfts) * 1000, 1) if ttfts else None,
         "mean_tok_per_s": round(statistics.mean(tps_vals), 1) if tps_vals else None,
+        "mean_reasoning_tokens": round(statistics.mean(reasoning_vals), 1)
+        if reasoning_vals
+        else None,
+        "max_reasoning_tokens": max(reasoning_vals) if reasoning_vals else None,
     }
     return {
         "generated_at": datetime.now(UTC).replace(microsecond=0).isoformat(),
@@ -1159,6 +1276,22 @@ def main(argv: list[str] | None = None) -> int:
         help="Running Digital Himalaya API URL for metadata",
     )
     parser.add_argument("--out", type=Path, help="Optional JSON output path")
+    parser.add_argument(
+        "--max-output-tokens",
+        type=int,
+        default=0,
+        help="Minimum output token budget per probe (use e.g. 4096 for reasoning models)",
+    )
+    parser.add_argument(
+        "--timeout",
+        type=float,
+        default=120.0,
+        help="Per-probe LM Studio HTTP request timeout in seconds",
+    )
+    parser.add_argument(
+        "--only-properties",
+        help="Comma-separated property IDs to run (e.g. P6 or P4,P6)",
+    )
     args = parser.parse_args(argv)
 
     base_url, model, api_key = resolve_lmstudio_config(
@@ -1190,8 +1323,16 @@ def main(argv: list[str] | None = None) -> int:
     except Exception:  # noqa: BLE001
         services_snapshot = None
 
+    wanted_props = (
+        {p.strip().upper() for p in args.only_properties.split(",") if p.strip()}
+        if args.only_properties
+        else None
+    )
+
     results: list[dict] = []
     for spec in build_probe_suite():
+        if wanted_props and spec.property_id not in wanted_props:
+            continue
         if spec.raw_input_override is not None and spec.raw_system_override is not None:
             sys_prompt = spec.raw_system_override
             msgs = [{"role": "user", "content": spec.raw_input_override}]
@@ -1220,8 +1361,21 @@ def main(argv: list[str] | None = None) -> int:
                 },
             ]
 
+        budget_tokens = spec.max_output_tokens
+        if args.max_output_tokens > 0:
+            budget_tokens = (
+                min(1024, args.max_output_tokens)
+                if spec.property_id == "P8"
+                else max(spec.max_output_tokens, args.max_output_tokens)
+            )
         raw = call_lmstudio(
-            base_url, model, api_key, sys_prompt, msgs, spec.max_output_tokens
+            base_url,
+            model,
+            api_key,
+            sys_prompt,
+            msgs,
+            budget_tokens,
+            timeout=args.timeout,
         )
         evaluated = evaluate_probe(spec, raw)
         results.append(evaluated)
