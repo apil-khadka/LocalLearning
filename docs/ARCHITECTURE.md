@@ -3,7 +3,9 @@
 Students open a static portal and call `/api` on that same origin.
 Only the API talks to chat, embedding, and vector services.
 Chat can use local Ollama, local LM Studio, or a configurable OpenAI-compatible endpoint.
-Embeddings independently use Ollama or a configurable OpenAI-compatible endpoint, and retrieval uses the dedicated Qdrant collection.
+The current local prototype profile uses LM Studio with `phi-4-mini-instruct`; this profile is configured in the ignored `.env` and is not the fresh-install default.
+Embeddings independently use Ollama or a configurable OpenAI-compatible endpoint.
+When embeddings and Qdrant are configured, retrieval uses the dedicated Qdrant collection; otherwise the tutor can fall back to local SQLite FTS5 keyword search over ready books.
 Staff use a different reverse-proxy listener through a local or SSH-forwarded connection.
 
 ```mermaid
@@ -13,9 +15,10 @@ flowchart LR
     Staff[Staff browser via SSH tunnel] --> StaffPortal[Loopback staff listener]
     StaffPortal --> API
     API --> Catalog[SQLite catalog and local files]
-    API --> Chat[Ollama, LM Studio, or OpenAI-compatible chat provider]
+    API --> Chat[LM Studio Phi-4 Mini Instruct in current local profile; other providers configurable]
     API --> Embedder[Ollama or OpenAI-compatible embeddings]
-    API --> Qdrant[Dedicated dh_ Qdrant collection]
+    API --> FTS[SQLite FTS5 local book search]
+    API --> Qdrant[Optional dedicated dh_ Qdrant collection]
     Student --> Kiwix[Approved local Kiwix endpoint]
     Student --> Kolibri[Optional Kolibri service]
     API -. service probe .-> Kolibri
@@ -76,6 +79,7 @@ The Nginx file route replaces the app-wide `frame-ancestors 'none'` policy only 
 
 Ollama receives `/api/embed` requests and, in local-chat mode, `/api/chat` requests.
 LM Studio mode uses `LMSTUDIO_BASE_URL` and `LMSTUDIO_MODEL` (configured in `.env`) with `/api/v1/models` and `/api/v1/chat`.
+The current local evaluation profile sets `CHAT_PROVIDER=lmstudio` and `LMSTUDIO_MODEL=phi-4-mini-instruct`.
 OpenAI-compatible mode uses the configured `CHAT_API_BASE_URL`, `CHAT_API_KEY`, and `CHAT_MODEL` through the OpenAI Python SDK.
 When `EMBED_PROVIDER=openai-compatible`, the separate `EMBED_API_BASE_URL`, `EMBED_API_KEY`, and `EMBED_MODEL` configure an OpenAI-compatible embeddings endpoint.
 The embedding model is independent from the chat model because not every chat endpoint provides embeddings.

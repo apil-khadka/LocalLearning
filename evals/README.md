@@ -4,6 +4,9 @@ This directory holds the tooling inputs for repeatable evaluation of the tutor.
 The tool records answers and summarizes teacher scores.
 It does not judge answers itself, and it does not measure hallucination.
 
+The fixed Phi-4 model probes are a separate automated check, summarized in the [matched model comparison](../docs/PHI4_MODEL_COMPARISON.md).
+They use heuristic checks and do not replace the teacher-scored procedure in this guide.
+
 ## Rules
 
 - Use only questions written by teachers. Never put learner conversations, names or school records in a question set, run record or score sheet.
@@ -53,3 +56,4 @@ To compare two runs, call `python -m app.evaluation report --help` for the basel
 A small authored set shows how the tutor handled those questions on that day with that model and index.
 It does not establish that answers are correct in general.
 A `textbook` or `note` label means material was supplied to the model, not that the answer was checked against it.
+The local Phi-4 probe report is additional model-specific evidence, not a teacher-approved baseline or school deployment acceptance.

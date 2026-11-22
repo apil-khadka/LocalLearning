@@ -29,7 +29,9 @@ Choose actual model and hardware combinations through measurement, not the names
 ## Initial implementation boundaries
 
 The public repository includes integration code and test doubles, but it does not bundle a model, vector server, downloaded encyclopedia, video channel, school content, or school account system.
-The current private prototype environment has a local CDC collection of 216 PDFs covering Kindergarten through Grade 12 and one cross-grade reference, stored outside Git and not indexed for AI retrieval.
+The current private prototype environment has a local CDC collection of 216 PDFs covering Kindergarten through Grade 12 and one cross-grade reference, stored outside Git.
+Tutor retrieval can search ready books with local SQLite FTS5 keyword matching; embeddings and Qdrant are not configured in the current local profile.
+The current local chat profile uses Phi-4 Mini Instruct through LM Studio; its fixed-probe comparison and limits are recorded in [PHI4_MODEL_COMPARISON.md](PHI4_MODEL_COMPARISON.md).
 The textbook UI supports API-side search and pagination, grade/subject filters, multi-select, inline PDF preview, and visible indexing states.
 Staff can index one saved book per action in small batches after an embedding provider and Qdrant are configured.
 It does not include a management VLAN configuration.

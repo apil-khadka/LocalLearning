@@ -6,7 +6,7 @@ An offline-first learning portal for school networks in Nepal, with local books,
 AI starts disabled.
 Model inference, curriculum quality, Nepali language quality, school Wi-Fi capacity, and power recovery must pass the [deployment acceptance checks](docs/DEMO_SCRIPT.md) on the actual hardware.
 
-[Project website](https://apil-khadka.github.io/LocalLearning/) · [Product brief](PRODUCT.md) · [Build plan](docs/BUILD_PLAN.md) · [Architecture](docs/ARCHITECTURE.md) · [Network design](docs/NETWORK.md) · [Kolibri operations guide](docs/KOLIBRI_GUIDE.md) · [Verification](docs/VERIFICATION.md) · [Teaching notes and evaluation](docs/TEACHING_NOTES.md) · [Production readiness gate](docs/PRODUCTION_READINESS.md)
+[Project website](https://apil-khadka.github.io/LocalLearning/) · [Product brief](PRODUCT.md) · [Build plan](docs/BUILD_PLAN.md) · [Architecture](docs/ARCHITECTURE.md) · [Network design](docs/NETWORK.md) · [Kolibri operations guide](docs/KOLIBRI_GUIDE.md) · [Verification](docs/VERIFICATION.md) · [Phi-4 comparison](docs/PHI4_MODEL_COMPARISON.md) · [Teaching notes and evaluation](docs/TEACHING_NOTES.md) · [Production readiness gate](docs/PRODUCTION_READINESS.md)
 
 ## What is here
 
@@ -109,8 +109,8 @@ To switch chat to local Ollama, use `CHAT_PROVIDER=ollama` and set `OLLAMA_BASE_
 To switch chat to local LM Studio, use `CHAT_PROVIDER=lmstudio` and configure `LMSTUDIO_BASE_URL` and `LMSTUDIO_MODEL` in `.env`.
 To switch to another OpenAI-compatible service, change `CHAT_API_BASE_URL`, `CHAT_API_KEY`, and `CHAT_MODEL`.
 Clear `CHAT_REASONING_EFFORT` if the new service does not support Muse-style reasoning controls.
-Textbook retrieval uses the separately configured embedding provider and Qdrant collection.
-With either one unavailable, chat can still return a clearly labeled general explanation without textbook citations.
+When embeddings or Qdrant are not configured, tutor retrieval can use local SQLite FTS5 keyword search.
+If configured vector services fail, the API returns an error rather than silently claiming a general answer was grounded.
 
 Set a random one-time administrator setup token in `.env` using a password manager or a local generator.
 For example, `python3 -c 'import secrets; print(secrets.token_urlsafe(48))'` generates a value to copy into `ADMIN_TOKEN`.
@@ -145,6 +145,11 @@ Open `/login` to sign in; on an empty database, the page offers the one-time sch
 For loopback HTTP development, use `REQUIRE_AUTH=true` and `AUTH_COOKIE_SECURE=false`; keep secure cookies enabled when serving over HTTPS.
 Store local administrator credentials in the ignored `private-local/` directory and remove the one-time `ADMIN_TOKEN` after setup.
 For the local Phi tutor, set `AI_ENABLED=true`, `CHAT_PROVIDER=lmstudio`, `LMSTUDIO_BASE_URL=http://host.docker.internal:1234`, and `LMSTUDIO_MODEL=phi-4-mini-instruct` in `.env`, clear `CHAT_REASONING_EFFORT`, then load only that model in LM Studio.
+The current local prototype uses this model profile.
+The matched 39-probe comparison found a speed/accuracy trade-off: Reasoning Plus scored 30/39 primary probes versus 25/39 for Mini Instruct, while Mini Instruct's mean response time was about 27.6 times shorter.
+The fixed math set scored 12/13 for Reasoning Plus, including one automated false negative, and 6/13 for Mini Instruct; both models scored only 1/3 Nepali probes.
+These single-run checks do not replace teacher scoring or school-hardware acceptance.
+See the [full results and limitations](docs/PHI4_MODEL_COMPARISON.md), the [matched report PDF](output/pdf/phi4-reasoning-plus-vs-mini-instruct-report.pdf), and the [standalone Reasoning Plus report](output/pdf/phi4-reasoning-plus-independent-report.pdf).
 After creating that administrator, use the admin dashboard to create teacher accounts and assign classes. Teachers sign in to their own dashboard to create learner accounts. Share each generated one-time password locally; each new account must change it at first sign-in.
 Kolibri is an optional Compose profile so the base application does not pull or start the education service unless requested.
 Set `KOLIBRI_PUBLIC_URL=http://127.0.0.1:8092` and `KOLIBRI_PROBE_URL=http://kolibri:8080` in `.env`, then run `make education-up` to start and connect it alongside the portal.

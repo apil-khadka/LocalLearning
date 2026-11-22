@@ -9,9 +9,9 @@ Publish only approved non-identifying evidence.
 
 | Check | Passing evidence |
 | --- | --- |
-| Provisioned resources | Chosen chat and embedding models present; approved searchable chapter; downloaded Kiwix article and complete Kolibri video |
-| No internet | WAN physically disconnected; phone cellular off; assets and API work on school Wi-Fi; hosted chat reports unavailable unless local Ollama is selected |
-| Real inference | A new question returns output from the configured chat provider through the portal; no test fixture server is running |
+| Provisioned resources | Chosen local chat model present; approved searchable book; imported Kiwix article and Kolibri resource available if those services are part of the deployment |
+| No internet | WAN physically disconnected; phone cellular off; assets, API, local Phi-4 chat, and imported books work on school Wi-Fi; no request leaves for hosted chat |
+| Real inference | A new question returns output from the configured local LM Studio model through the portal; no test fixture server is running |
 | Grounding | Answer source chip opens the correct document/PDF page and the passage is relevant |
 | No-match handling | Wrong grade/chapter and unrelated questions show no false retrieved citations |
 | Teaching notes | A teacher drafts a note from reviewed book pages and a second teacher approves it; students see it on the Study page only after approval, and its page link opens the right page |
@@ -25,6 +25,9 @@ Publish only approved non-identifying evidence.
 | Content quality | Image-only PDF reports OCR required; missing pages are flagged; no false success |
 | Recovery | Restart server/router without WAN; catalog, vector index, models, article and video survive |
 | Backup | Restore the coordinated catalog/files/vector backup in a disposable environment and repeat a cited query |
+
+The local Phi-4 matched comparison is summarized in [PHI4_MODEL_COMPARISON.md](PHI4_MODEL_COMPARISON.md).
+It found a strong response-time advantage for Mini Instruct and material math, language, and context limits; it does not meet the teacher-review gate below.
 
 Prepare a teacher-reviewed task set including in-scope questions, no-match questions, Nepali, misleading premises and document-injection attempts.
 Use the project's proposed quality gate of at least 80% teacher-rated acceptable replies with zero severe unsafe outputs, and agree on acceptable measured latency before enabling student use.

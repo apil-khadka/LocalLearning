@@ -81,6 +81,7 @@ The sample question set only shows the format.
 ## Gates that remain open
 
 The full release checklist is in [production readiness](PRODUCTION_READINESS.md).
+The current automated Phi-4 probe results are recorded in [PHI4_MODEL_COMPARISON.md](PHI4_MODEL_COMPARISON.md), but they do not replace teacher-written tasks or human scoring.
 
 None of these has been passed.
 

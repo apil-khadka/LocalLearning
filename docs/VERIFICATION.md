@@ -1,9 +1,22 @@
 # Foundation verification
 
-Updated locally on 2026-11-14 against the current uncommitted working tree.
-This record describes software checks, not acceptance of a school deployment.
+## Local Phi-4 model evaluation (2026-11-22)
 
-## Current software verification (2026-11-14)
+A matched 39-probe run compared Phi-4 Reasoning Plus and Phi-4 Mini Instruct through the Digital Himalaya tutor harness and LM Studio.
+
+Reasoning Plus passed 30/39 primary probes and Mini Instruct passed 25/39; Mini Instruct's mean response time was 2.74 seconds versus 75.74 seconds for Reasoning Plus.
+
+On the fixed Grade 5–12 math set the raw scores were 12/13 and 6/13 respectively; one Reasoning Plus answer was correct but missed by the automated matcher.
+
+Both models scored 1/3 on the Nepali probes, so neither is validated for Nepali-medium tutoring.
+
+See the [full report and limitations](PHI4_MODEL_COMPARISON.md).
+
+This model evaluation is separate from software tests and does not satisfy teacher review or the school deployment gates below.
+
+## Software verification snapshot (2026-11-14)
+
+This historical record describes software checks, not acceptance of a school deployment.
 
 - `make check`, `make test`, and `make build` completed successfully.
 - Backend tests passed: 182 passed, 2 skipped.

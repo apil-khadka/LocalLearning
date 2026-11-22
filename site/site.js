@@ -13,11 +13,11 @@ const routes = {
     nodes: [
       ['A learner’s question', 'Grade, subject, chapter and chosen language'],
       ['Private application API', 'Validate input and retrieve relevant passages'],
-      ['Selected chat provider', 'Local Ollama or a configurable OpenAI-compatible API'],
+      ['Selected chat provider', 'LM Studio serving Phi-4 Mini Instruct in the current local profile'],
       ['Answer and source chips', 'Retrieved pages to check with a teacher'],
     ],
     caption:
-      'Local Ollama keeps chat on the school network. A hosted provider receives the question, recent conversation, and retrieved passages. If no passage matches, there are no textbook source chips.',
+      'The current local LM Studio profile keeps Phi-4 Mini Instruct requests on the host. A hosted provider receives the question, recent conversation, and retrieved passages. Local SQLite FTS5 keyword search can supply book excerpts; no match means the answer is labeled general.',
   },
   staff: {
     nodes: [

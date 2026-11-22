@@ -1,4 +1,4 @@
-"""Formal verification harness and empirical limit profiler for the configured Tutor LLM.
+"""Deterministic model probe suite and empirical boundary profiler for the tutor LLM.
 
 Reads the active model configuration from `.env` / environment variables or CLI flags
 (never hardcoding a model identifier) and evaluates machine-checkable invariants P1..P10
@@ -492,7 +492,7 @@ def fetch_lmstudio_model_info(base_url: str, model: str, api_key: str) -> dict:
 
 
 def build_probe_suite() -> list[ProbeSpec]:
-    """Define the 29 formal verification probes across P1..P8 (plus aggregated P9 & P10)."""
+    """Define the 39 fixed P1..P8 probes; P9 and P10 are derived summaries."""
     filler = "The mountain river flows past terraced hills in Nepal every morning. "
     return [
         # P1: Conversational discipline & format hygiene
@@ -922,7 +922,7 @@ def build_probe_suite() -> list[ProbeSpec]:
 
 
 def evaluate_probe(spec: ProbeSpec, raw: dict) -> dict:
-    """Apply deterministic formal predicates to a single probe execution."""
+    """Apply deterministic evaluation predicates to a single probe execution."""
     text = raw.get("text", "")
     ok_http = bool(raw.get("ok"))
     starved = bool(raw.get("reasoning_starved"))

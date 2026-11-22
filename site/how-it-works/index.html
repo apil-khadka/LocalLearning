@@ -35,9 +35,9 @@
         <div>
           <h1>From a school library to a question worth checking.</h1>
           <p class="lead">
-            Books and installed lessons can stay on the school network. The tutor is optional. The
-            portal and Kolibri demo facility now run locally; tutor retrieval and course imports are
-            still to be completed.
+            Books and installed lessons can stay on the school network. The portal, local book
+            search, LM Studio Phi-4 test profile, and one PhET Kolibri channel now run in development.
+            Student LAN access and school acceptance are still ahead.
           </p>
           <div class="actions">
             <a class="button primary" href="../project/">See what is ready</a>
@@ -46,10 +46,17 @@
         </div>
         <aside class="flow-summary" aria-label="Current system boundaries">
           <p class="flow-summary-title">Current boundaries</p>
-          <p><span class="state-mark local"></span><strong>Core portal</strong> on the LAN</p>
-          <p><span class="state-mark optional"></span><strong>AI tutor</strong> off by default</p>
           <p>
-            <span class="state-mark local"></span><strong>Kolibri</strong> provisioned, no channels
+            <span class="state-mark local"></span><strong>Core portal</strong> local on host; school
+            LAN pending
+          </p>
+          <p>
+            <span class="state-mark optional"></span><strong>AI tutor</strong> Phi-4 tested locally;
+            off in a fresh setup
+          </p>
+          <p>
+            <span class="state-mark local"></span><strong>Kolibri</strong> one PhET channel, eight
+            resources
           </p>
           <p>
             <span class="state-mark pending"></span><strong>School pilot</strong> not yet verified
@@ -83,11 +90,12 @@
           <li class="journey-step">
             <span class="journey-number" aria-hidden="true">2</span>
             <div>
-              <h3>Students open the portal over school Wi-Fi.</h3>
+              <h3>Students open the portal over school Wi-Fi after LAN setup.</h3>
               <p>
-                The student browser connects to the local portal. The private prototype catalog has
-                216 CDC PDFs assigned across Kindergarten through Grade 12. Kolibri is reachable as
-                a separate service, but its channels still need to be imported.
+                The student browser will connect to the local portal. The current Docker ports bind
+                to the host loopback address, so other devices cannot reach them yet. The private
+                prototype catalog has 216 CDC PDFs, and Kolibri has one imported PhET channel with
+                eight resources.
               </p>
               <span class="journey-state">Portal and file access tested</span>
             </div>
@@ -97,13 +105,12 @@
             <div>
               <h3>Students ask when the school enables the tutor.</h3>
               <p>
-                With local embeddings and Qdrant configured, the API can search approved textbook
-                passages. Chat can use local Ollama or a configured OpenAI-compatible provider. A
-                hosted provider receives the question, recent conversation, and retrieved excerpts.
+                The tutor currently uses local SQLite FTS5 keyword search when embedding and Qdrant
+                services are not configured. The development profile sends the prompt to LM Studio
+                running Phi-4 Mini Instruct on the same host. A hosted provider is a separate option
+                that receives the question, recent conversation, and retrieved excerpts.
               </p>
-              <span class="journey-state"
-                >AI disabled by default · Qdrant unconfigured locally</span
-              >
+              <span class="journey-state">39-probe model comparison complete · school review open</span>
             </div>
           </li>
           <li class="journey-step">
@@ -172,9 +179,9 @@
                   <img
                     class="story-frame"
                     data-story-frame="3"
-                    data-caption="The tutor screen has grade, subject, and chapter selectors. AI stays off by default until retrieval and review are ready."
+                    data-caption="Earlier tutor-screen capture. The current local test profile uses Phi-4 Mini Instruct; a fresh setup still keeps AI disabled by default."
                     src="../assets/screenshots/flow/tutor-ready.jpg"
-                    alt="Current tutor interface with grade, subject, and chapter selectors and a question box; AI is off by default."
+                    alt="Earlier capture of the tutor interface with grade, subject, and chapter selectors; it predates the local Phi-4 evaluation."
                     width="1440"
                     height="900"
                     aria-hidden="true"
@@ -182,9 +189,9 @@
                   <img
                     class="story-frame"
                     data-story-frame="4"
-                    data-caption="Kolibri now has a provisioned local facility. Its separate channel manager is ready, but no courses have been imported."
+                    data-caption="Earlier Kolibri setup capture, before the local PhET channel was imported. The current demo catalog lists one channel with eight resources."
                     src="../assets/screenshots/flow/kolibri-management.jpg"
-                    alt="Kolibri channel manager open for the local facility, showing that no channels have been installed yet."
+                    alt="Earlier capture of the Kolibri channel manager before the local PhET channel was imported."
                     width="1440"
                     height="900"
                     aria-hidden="true"
@@ -202,8 +209,8 @@
               <li class="story-scene is-active" data-story-step="0" aria-current="step">
                 <h3>Start with resources on the school server.</h3>
                 <p>
-                  The home screen shows the local connection and which optional services are
-                  reachable or still unconfigured. Kolibri is now reachable from the portal.
+                  The home screen shows which local services are reachable. The development setup
+                  now has a local Phi-4 tutor profile and a reachable Kolibri PhET channel.
                 </p>
               </li>
               <li class="story-scene" data-story-step="1">
@@ -224,26 +231,27 @@
               <li class="story-scene" data-story-step="3">
                 <h3>Choose a grade, subject, and chapter.</h3>
                 <p>
-                  The interface is ready for questions, but AI remains disabled and the local book
-                  catalog has not been indexed. That boundary is visible in the current setup.
+                  The local test profile returns real Phi-4 replies and searches ready books with
+                  SQLite FTS5. A fresh deployment still keeps AI disabled until an operator enables it.
                 </p>
               </li>
               <li class="story-scene" data-story-step="4">
-                <h3>Kolibri is provisioned; course import is next.</h3>
+                <h3>Kolibri has one local PhET channel.</h3>
                 <p>
-                  The local facility is configured and reachable from the portal. Kolibri keeps its
-                  own accounts and course progress; no channels or learner accounts have been
-                  imported yet.
+                  The local facility is configured and reachable from the portal, with one imported
+                  PhET channel and eight resources. Kolibri keeps its own accounts and course
+                  progress; school classes and learner accounts are not configured.
                 </p>
               </li>
             </ol>
           </div>
           <div class="walkthrough-film">
             <div>
-              <h3>Watch the updated local prototype flow</h3>
+              <h3>Watch an earlier prototype walkthrough</h3>
               <p>
-                Silent capture of the current portal, catalog, CC0 sample reader, tutor setup, and
-                Kolibri channel manager. Private K–12 PDFs are not included in this public website.
+                Silent capture of an earlier portal, catalog, CC0 sample reader, tutor setup, and
+                Kolibri channel manager. It predates the Phi-4 evaluation and PhET import; private
+                K–12 PDFs are not included in this public website.
               </p>
             </div>
             <video
@@ -252,7 +260,7 @@
               playsinline
               preload="metadata"
               poster="../assets/screenshots/flow/textbook-catalog.jpg"
-              aria-label="Silent screen recording of the current portal, K–12 catalog, sample book reader, tutor setup, and Kolibri channel manager"
+              aria-label="Silent screen recording of an earlier portal, K–12 catalog, sample book reader, tutor setup, and Kolibri channel manager"
             >
               <source src="../assets/videos/prototype-walkthrough.mp4" type="video/mp4" />
               <a href="../assets/videos/prototype-walkthrough.mp4">Download the MP4 walkthrough</a>
@@ -270,15 +278,15 @@
               <ul>
                 <li>The portal and books already imported into its local catalog.</li>
                 <li>Kolibri channels already installed on the school server.</li>
-                <li>Chat handled by a reachable local Ollama service, when enabled.</li>
+                <li>Chat handled by a reachable local LM Studio Phi-4 service, when enabled.</li>
               </ul>
             </div>
             <div>
               <h3>Needs setup or an internet connection</h3>
               <ul>
                 <li>Hosted AI calls and downloading new material from online providers.</li>
-                <li>Local tutor retrieval until Ollama embeddings and Qdrant are configured.</li>
-                <li>Kolibri lessons until staff import approved channels.</li>
+                <li>Semantic vector retrieval until embeddings and Qdrant are configured; local keyword search is available.</li>
+                <li>Additional Kolibri lessons, classes, and learner accounts until school staff set them up.</li>
               </ul>
             </div>
           </div>

@@ -55,7 +55,7 @@ When reporting a failure, provide the request ID, action, time and observed stat
 Inspect upstream service logging/retention settings separately.
 
 The browser does not call model/vector services or external assets directly.
-The API can use local Ollama or a configured OpenAI-compatible chat provider.
+The API can use local Ollama, local LM Studio, or a configured OpenAI-compatible chat provider.
 With a hosted provider selected, prompts, prior conversation turns, learner attempts, and retrieved textbook excerpts are sent from the API to that provider.
 Review its privacy, retention, and data-processing terms before sending student data; use non-identifying test prompts during initial integration.
 Network egress policy remains the operator's responsibility.

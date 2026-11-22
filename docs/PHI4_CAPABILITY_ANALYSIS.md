@@ -1,4 +1,10 @@
-# Formal Verification & Capability Analysis of `phi-4-mini-instruct`
+# Phi-4 Mini Instruct Capability Boundary Analysis
+
+This is a separate single-model probe report and should not be combined with the later matched 39-probe comparison in [PHI4_MODEL_COMPARISON.md](PHI4_MODEL_COMPARISON.md).
+
+The matched comparison is the current model-selection summary; the results below preserve the earlier 33-probe run and its measurements.
+
+The harness has since been expanded to 39 primary probes, so this report's historical results cannot be reproduced by running the current suite without restoring the earlier probe set.
 
 Date: 2026-11-22  
 Target System: **Digital Himalaya** offline school learning portal (`api` + `portal` + LM Studio REST v1 `/api/v1/chat`)  
@@ -26,9 +32,9 @@ Measured live from LM Studio `/api/v1/models`, `GET /api/services`, and `/data/c
 
 ---
 
-## 2. Formal Verification Methodology
+## 2. Probe Method
 
-Rather than subjective impressions, [`scripts/verify_model_limits.py`](../scripts/verify_model_limits.py) defines 33 deterministic probes across 10 formal properties ($P_1 \dots P_{10}$) routed through Digital Himalaya's exact production prompt builder (`backend/app/tutor.py`) and LM Studio payload serializer (`LocalServices._lmstudio_payload`):
+The earlier run used 33 deterministic probes across 10 evaluation properties ($P_1 \dots P_{10}$) routed through Digital Himalaya's production prompt builder (`backend/app/tutor.py`) and LM Studio payload serializer (`LocalServices._lmstudio_payload`):
 
 - **$P_1$ Conversational Discipline & Format Hygiene**: Short greetings (`"hi"`, `"thanks"`, `"नमस्ते"`) must stay brief ($\le 95$ words), must never launch an unsolicited science/math lecture, and must never echo raw JSON keys (`"untrusted_textbook_excerpts"`) or invent synthetic follow-up turns.
 - **$P_2$ Grounded Citation & Follow-Up Continuity**: With textbook excerpts supplied (real CDC Grade 8 passages on pages `157` and `162`), the model must cite only supplied page numbers ($\text{CitedPages}(y) \subseteq \text{AllowedPages}(x)$), include real-world significance ("why it matters") when apt, and resolve pronoun follow-ups across turns.
@@ -43,7 +49,7 @@ Rather than subjective impressions, [`scripts/verify_model_limits.py`](../script
 
 ---
 
-## 3. Formal Verification Results Matrix
+## 3. Probe Results Matrix
 
 Executed live against `phi-4-mini-instruct` (`n_ctx = 8192`) via [`scripts/verify_model_limits.py`](../scripts/verify_model_limits.py) (`evals/runs/phi4-verification.json`):
 

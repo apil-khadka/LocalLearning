@@ -34,8 +34,9 @@
         <div class="hero-copy">
           <h1>Learning shouldn’t<br />depend on a signal.</h1>
           <p class="lead">
-            A school library, lessons, and a carefully supervised AI tutor. Hosted at school.
-            Reached over Wi-Fi. Built for places where the internet cannot be taken for granted.
+            A school library and lessons, with an optional AI tutor designed for teacher-supervised
+            use. Hosted at school. Reached over Wi-Fi. Built for places where the internet cannot be
+            taken for granted.
           </p>
           <div class="actions">
             <a class="button primary" href="how-it-works/">Follow the learning flow</a
@@ -46,8 +47,8 @@
             >
           </div>
           <p class="honesty">
-            Open-source software under development. School deployment and real-model educational
-            review are still ahead.
+            Open-source software under development. Phi-4 probes are complete; teacher review and
+            school deployment are still ahead.
           </p>
         </div>
         <figure
@@ -93,7 +94,8 @@
             The school server does the work. A phone, laptop, or classroom display opens the same
             local website. After provisioning, the library stays inside the school network. An
             optional hosted AI provider needs internet access and receives the learner's question
-            and relevant conversation context; a local Ollama provider keeps chat on the LAN.
+            and relevant conversation context. The current local development profile uses
+            Phi-4 Mini Instruct through LM Studio, so tutor requests stay on the host.
           </p>
         </div>
         <div class="resource-overview">
@@ -110,8 +112,10 @@
             <div>
               <h3>A tutor with sources to check</h3>
               <p>
-                Local model answers with retrieved page references. Optional, teacher supervised,
-                and off by default.
+                A matched 39-probe run scored Reasoning Plus 30/39 and Mini Instruct 25/39; Mini
+                Instruct was about 27.6 times faster. These checks do not validate either model for
+                classroom or Nepali-medium tutoring. The current local profile uses Mini Instruct.
+                <a href="project/#model-evaluation">Read the Phi-4 results</a>.
               </p>
             </div>
           </article>
@@ -119,8 +123,9 @@
             <div>
               <h3>Reference and lessons</h3>
               <p>
-                Kolibri adds offline-ready lessons, quizzes, and teacher tools. The service is
-                connected, but its channels are still empty. <a href="kolibri/">Explore Kolibri</a>.
+                The local Kolibri demo has one PhET Interactive Simulations channel with eight
+                resources. School classes and learner accounts are not set up.
+                <a href="kolibri/">Explore Kolibri</a>.
               </p>
             </div>
           </article>
@@ -172,8 +177,9 @@
               <h2>A clear path through a protected school network.</h2>
             </div>
             <p>
-              Student access and staff administration have different jobs. Chat can use local Ollama
-              or a configurable OpenAI-compatible provider, with its data path made explicit.
+              Student access and staff administration have different jobs. The local test profile
+              uses LM Studio with Phi-4 Mini Instruct; hosted providers are separate options and
+              send prompts outside the school network.
             </p>
           </div>
           <div class="route-picker" role="group" aria-label="Explore a network path">
@@ -234,18 +240,19 @@
               <h3>Connect to the separate classroom service</h3>
               <p>
                 The local facility and admin account are configured, and the portal reports the
-                service reachable. Channel content and learner accounts stay in Kolibri and have not
-                been imported yet.
+                service reachable. One PhET channel with eight resources is imported; learner
+                accounts and classes still need school-specific setup.
               </p>
             </div>
           </li>
           <li>
             <span class="milestone next">Next integration gate</span>
             <div>
-              <h3>Ground tutor answers in reviewed pages</h3>
+              <h3>Review and improve tutor answers</h3>
               <p>
-                Configure local embeddings and Qdrant, index a teacher-reviewed chapter, and check
-                cited answers, no-match cases, and Nepali quality. AI remains off by default.
+                The local tutor can use SQLite full-text search while vector services are
+                unconfigured. The Phi-4 probes show math and language limits; teacher-scored source,
+                accuracy, and Nepali review remain open. AI remains off by default.
               </p>
             </div>
           </li>
@@ -290,8 +297,8 @@
           <p>
             <span class="evidence-dot"></span><strong>Retrieval protocol checked</strong
             ><span
-              >Qdrant storage and filtered retrieval were tested with a disposable service; no
-              Qdrant endpoint is configured in the current local stack.</span
+              >Local SQLite FTS5 search is available; Qdrant storage and filtered retrieval were
+              tested with a disposable service but are not configured in the current local stack.</span
             >
           </p>
           <p>
